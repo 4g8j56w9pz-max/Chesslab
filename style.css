@@ -1,0 +1,252 @@
+:root {
+  --board-size: 640px;
+  --piece-size: 42px;
+  --glow: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at center, #330000 0%, #090909 55%, #000 100%);
+  color: white;
+  font-family: Arial, sans-serif;
+  overflow-x: auto;
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 28px;
+  width: 100%;
+  padding: 28px;
+}
+
+section {
+  flex: 0 0 auto;
+}
+
+.game-area {
+  max-width: var(--board-size);
+}
+
+h1 {
+  margin: 0 0 8px;
+  color: #ffcc33;
+  text-shadow: 0 0 12px #ff0000;
+}
+
+.player-bar,
+.captured-area {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.player-card,
+.captured-box,
+.score-row {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 204, 51, 0.45);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.player-card input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px;
+  border: 1px solid #6b2200;
+  background: #150606;
+  color: #fff4b0;
+}
+
+#status {
+  margin: 12px 0 10px;
+  font-weight: bold;
+}
+
+#board {
+  width: var(--board-size);
+  height: var(--board-size);
+  min-width: var(--board-size);
+  min-height: var(--board-size);
+
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+
+  border: 6px solid #3a1700;
+  box-shadow: 0 0 var(--glow) #ff0000;
+  background: #111;
+}
+
+.square {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  position: relative;
+}
+
+.square::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.square img {
+  width: var(--piece-size);
+  height: var(--piece-size);
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  transition: transform 0.15s ease;
+}
+
+.square:hover img {
+  transform: scale(1.05);
+}
+
+.light {
+  background: #e7dfc7;
+}
+
+.dark {
+  background: #c40019;
+}
+
+.selected {
+  outline: 5px solid #ffcc33;
+  outline-offset: -5px;
+  z-index: 2;
+}
+
+.legal {
+  box-shadow: inset 0 0 0 5px rgba(0, 255, 120, 0.75);
+}
+
+.legal::after {
+  background: radial-gradient(circle, rgba(0, 255, 120, 0.65) 0 14%, transparent 16%);
+}
+
+.capture::after {
+  background: radial-gradient(circle, transparent 0 42%, rgba(255, 204, 51, 0.72) 44% 55%, transparent 57%);
+}
+
+.panel {
+  flex: 0 0 240px;
+  width: 240px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.72);
+  border: 2px solid #ffcc33;
+  border-radius: 12px;
+  box-shadow: 0 0 14px rgba(255, 204, 51, 0.35);
+}
+
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.score-row span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.captured-area {
+  margin-top: 14px;
+}
+
+.captured-box h3 {
+  margin: 0 0 8px;
+  color: #fff4b0;
+}
+
+.captured-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 5px;
+  min-height: 42px;
+}
+
+.captured-pieces img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.75));
+}
+
+button {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+select {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px;
+  border: 1px solid #6b2200;
+  background: #150606;
+  color: #fff4b0;
+}
+
+h2 {
+  margin-top: 14px;
+  color: #fff4b0;
+}
+
+label {
+  display: block;
+  margin: 14px 0;
+  font-weight: bold;
+}
+
+input[type="range"] {
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  .app {
+    align-items: center;
+    flex-direction: column;
+  }
+
+  #board {
+    width: min(var(--board-size), 92vw);
+    height: min(var(--board-size), 92vw);
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .game-area,
+  .panel {
+    width: min(100%, 92vw);
+    max-width: 760px;
+  }
+}
+
+@media (max-width: 560px) {
+  .player-bar,
+  .captured-area {
+    grid-template-columns: 1fr;
+  }
+}

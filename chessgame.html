@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Father-Son Chess Mod Sandbox</title>
+<style>
+  :root{
+    --board-size:640px; --light:#f0d9b5; --dark:#b58863; --gap:0px; --radius:10px;
+    --piece-size:52px; --piece-scale:1; --piece-rotate:0deg; --piece-shadow:2px; --bg:#111827; --panel:#1f2937;
+  }
+  *{box-sizing:border-box} body{margin:0;font-family:system-ui,Segoe UI,Arial;background:var(--bg);color:#f9fafb;}
+  header{padding:18px 22px;border-bottom:1px solid #374151;background:#0b1220}
+  h1{margin:0;font-size:22px} .sub{opacity:.8;margin-top:4px}
+  main{display:grid;grid-template-columns:minmax(320px,1fr) 380px;gap:18px;padding:18px;align-items:start}
+  #board{width:var(--board-size);height:var(--board-size);max-width:calc(100vw - 440px);max-height:calc(100vw - 440px);display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);gap:var(--gap);border-radius:var(--radius);overflow:hidden;margin:auto;box-shadow:0 20px 45px #0008;background:#000}
+  .square{display:flex;align-items:center;justify-content:center;user-select:none;position:relative;cursor:pointer;transition:.12s transform,.12s filter}
+  .square.light{background:var(--light)} .square.dark{background:var(--dark)}
+  .square.selected{outline:4px solid #facc15;outline-offset:-4px;filter:brightness(1.1)}
+  .coord{position:absolute;font-size:10px;opacity:.55;left:4px;bottom:3px;color:#111}
+  .piece{font-size:calc(var(--piece-size) * var(--piece-scale));line-height:1;filter:drop-shadow(0 calc(var(--piece-shadow)*1px) calc(var(--piece-shadow)*1.6px) #000a);transform:rotate(var(--piece-rotate));transition:.12s transform,.12s font-size}
+  aside{background:var(--panel);border:1px solid #374151;border-radius:14px;padding:14px;box-shadow:0 10px 30px #0006;max-height:calc(100vh - 100px);overflow:auto}
+  section{border-top:1px solid #374151;margin-top:12px;padding-top:12px} section:first-child{border-top:0;margin-top:0;padding-top:0}
+  label{display:grid;grid-template-columns:1fr 90px;gap:10px;align-items:center;margin:9px 0;font-size:14px} input[type=range]{width:100%} input[type=color]{width:90px;height:32px;border:0;border-radius:6px} select,button,input[type=text]{width:100%;padding:9px;border-radius:8px;border:1px solid #4b5563;background:#111827;color:#f9fafb}
+  button{cursor:pointer;background:#374151;margin-top:8px} button:hover{background:#4b5563}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hint{font-size:12px;opacity:.78;line-height:1.35}.pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#111827;border:1px solid #374151;font-size:12px;margin:3px 3px 0 0}
+  @media (max-width:900px){main{grid-template-columns:1fr} #board{max-width:94vw;max-height:94vw} aside{max-height:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Chess Mod Sandbox</h1>
+  <div class="sub">Click a piece, then click a destination. This is a creativity board first; legality engine comes later.</div>
+</header>
+<main>
+  <div id="board" aria-label="Chess board"></div>
+  <aside>
+    <section>
+      <label>Preset<select id="preset"></select></label>
+      <div class="row"><button id="resetPieces">Reset Pieces</button><button id="flipBoard">Flip Board</button></div>
+      <button id="randomize">Randomize Look</button>
+      <p class="hint">Rule #1 for learning with your son: sliders first, perfect chess engine later. Make it feel magical before making it strict.</p>
+    </section>
+    <section>
+      <h3>Board Sliders</h3>
+      <label>Board size <input id="boardSize" type="range" min="360" max="760" value="640"></label>
+      <label>Square gap <input id="gap" type="range" min="0" max="10" value="0"></label>
+      <label>Corner round <input id="radius" type="range" min="0" max="32" value="10"></label>
+      <label>Light square <input id="light" type="color" value="#f0d9b5"></label>
+      <label>Dark square <input id="dark" type="color" value="#b58863"></label>
+      <label>Background <input id="bg" type="color" value="#111827"></label>
+    </section>
+    <section>
+      <h3>Piece Sliders</h3>
+      <label>Piece size <input id="pieceSize" type="range" min="28" max="84" value="52"></label>
+      <label>Piece scale <input id="pieceScale" type="range" min="70" max="150" value="100"></label>
+      <label>Rotation <input id="pieceRotate" type="range" min="-25" max="25" value="0"></label>
+      <label>Shadow <input id="pieceShadow" type="range" min="0" max="8" value="2"></label>
+      <label>Piece set<select id="pieceSet"></select></label>
+    </section>
+    <section>
+      <h3>Build-a-Piece</h3>
+      <div class="hint">Replace piece symbols with letters or emojis. Example: White king = 🦁, black queen = 🐉.</div>
+      <label>Piece key<select id="pieceKey"></select></label>
+      <label>Symbol<input id="symbolInput" type="text" maxlength="4" value=""></label>
+      <button id="applySymbol">Apply Symbol</button>
+    </section>
+    <section><h3>Preset Ideas Included</h3><div id="presetList"></div></section>
+  </aside>
+</main>
+<script>
+const START = ['rnbqkbnr','pppppppp','........','........','........','........','PPPPPPPP','RNBQKBNR'];
+const sets = {
+  Classic:{K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'},
+  Letters:{K:'K',Q:'Q',R:'R',B:'B',N:'N',P:'P',k:'k',q:'q',r:'r',b:'b',n:'n',p:'p'},
+  Animals:{K:'🦁',Q:'🦊',R:'🐘',B:'🦉',N:'🐴',P:'🐣',k:'🐲',q:'🦇',r:'🦏',b:'🦂',n:'🐺',p:'🐜'},
+  Space:{K:'🚀',Q:'🛸',R:'🛰️',B:'☄️',N:'👽',P:'⭐',k:'🪐',q:'🌌',r:'🌕',b:'🌠',n:'🛸',p:'✨'},
+  Dungeon:{K:'🧙',Q:'🧝',R:'🏰',B:'🧌',N:'🐉',P:'🛡️',k:'👑',q:'🧛',r:'🗿',b:'💀',n:'🐺',p:'🕷️'}
+};
+const presets = [
+ ['Classic Wood','#f0d9b5','#b58863','#111827',0,10,52,100,0,2,'Classic'],['Tournament Green','#eeeed2','#769656','#0f172a',0,4,54,100,0,2,'Classic'],['Rocket Red','#fff1f2','#DE3341','#111827',2,12,54,105,0,3,'Classic'],['Ice Board','#e0f2fe','#38bdf8','#0c4a6e',3,18,52,100,0,2,'Classic'],['Candy Land','#fce7f3','#fb7185','#4c0519',4,20,58,110,0,3,'Animals'],['Space Battle','#020617','#334155','#000000',2,8,52,115,0,4,'Space'],['Dungeon Raid','#d6d3d1','#57534e','#1c1917',1,6,56,105,0,4,'Dungeon'],['Lego Bright','#fef08a','#2563eb','#111827',5,6,52,100,0,1,'Letters'],['Neon Cyber','#22d3ee','#a855f7','#020617',3,2,54,110,0,6,'Letters'],['Desert','#fde68a','#92400e','#451a03',1,16,52,100,0,2,'Classic'],['Ocean','#ccfbf1','#0f766e','#042f2e',2,14,52,100,0,3,'Animals'],['Forest','#dcfce7','#166534','#052e16',1,12,52,100,0,3,'Animals'],['Monochrome','#f5f5f5','#404040','#171717',0,0,52,100,0,2,'Classic'],['Gold Royal','#fef3c7','#b45309','#111827',2,16,58,112,0,5,'Classic'],['Tiny Pieces','#f0d9b5','#b58863','#111827',0,10,38,85,0,1,'Classic'],['Giant Pieces','#f0d9b5','#b58863','#111827',0,10,70,120,0,3,'Classic'],['Tilted Chaos','#ddd6fe','#7c3aed','#1e1b4b',2,10,56,110,14,4,'Space'],['Checkers-ish','#ffffff','#ef4444','#111827',0,0,54,100,0,2,'Letters'],['Night Mode','#1f2937','#4b5563','#030712',1,10,52,100,0,4,'Classic'],['Minecraft-ish','#bbf7d0','#15803d','#14532d',4,2,52,100,0,1,'Letters'],['Royal Purple','#ede9fe','#6d28d9','#1e1b4b',2,20,56,108,0,4,'Classic'],['Fire vs Ice','#fee2e2','#2563eb','#111827',3,16,56,110,0,4,'Space'],['Notebook','#ffffff','#d1d5db','#111827',1,0,48,100,0,0,'Letters'],['Toy Box','#fed7aa','#10b981','#111827',6,24,60,115,-8,3,'Animals'],['Boss Battle','#111827','#991b1b','#000000',2,12,58,118,0,7,'Dungeon']
+];
+let board=[], selected=null, flipped=false, currentSet={...sets.Classic};
+function reset(){board=START.map(r=>r.split('')); selected=null; draw();}
+function sqName(r,c){return 'abcdefgh'[c]+(8-r)}
+function draw(){const el=document.getElementById('board'); el.innerHTML=''; for(let vr=0;vr<8;vr++){for(let vc=0;vc<8;vc++){let r=flipped?7-vr:vr,c=flipped?7-vc:vc; const s=document.createElement('div'); s.className='square '+(((r+c)%2)?'dark':'light'); if(selected&&selected.r===r&&selected.c===c)s.classList.add('selected'); s.onclick=()=>clickSquare(r,c); const piece=board[r][c]; if(piece!=='.'){const p=document.createElement('div'); p.className='piece'; p.textContent=currentSet[piece]||piece; s.appendChild(p);} const co=document.createElement('span'); co.className='coord'; co.textContent=sqName(r,c); s.appendChild(co); el.appendChild(s);}}}
+function clickSquare(r,c){ if(!selected && board[r][c]!=='.'){selected={r,c}; draw(); return;} if(selected){board[r][c]=board[selected.r][selected.c]; board[selected.r][selected.c]='.'; selected=null; draw();}}
+function cssVar(name,val){document.documentElement.style.setProperty(name,val)}
+function applyPreset(i){const p=presets[i]; document.getElementById('light').value=p[1];document.getElementById('dark').value=p[2];document.getElementById('bg').value=p[3];document.getElementById('gap').value=p[4];document.getElementById('radius').value=p[5];document.getElementById('pieceSize').value=p[6];document.getElementById('pieceScale').value=p[7];document.getElementById('pieceRotate').value=p[8];document.getElementById('pieceShadow').value=p[9];document.getElementById('pieceSet').value=p[10]; updateAll();}
+function updateAll(){cssVar('--light',light.value);cssVar('--dark',dark.value);cssVar('--bg',bg.value);cssVar('--gap',gap.value+'px');cssVar('--radius',radius.value+'px');cssVar('--board-size',boardSize.value+'px');cssVar('--piece-size',pieceSize.value+'px');cssVar('--piece-scale',pieceScale.value/100);cssVar('--piece-rotate',pieceRotate.value+'deg');cssVar('--piece-shadow',pieceShadow.value);currentSet={...sets[pieceSet.value]}; draw();}
+function init(){preset.innerHTML=presets.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join(''); pieceSet.innerHTML=Object.keys(sets).map(k=>`<option>${k}</option>`).join(''); pieceKey.innerHTML='KQRBNPkqrbnp'.split('').map(k=>`<option>${k} = ${sets.Classic[k]}</option>`).join(''); presetList.innerHTML=presets.map(p=>`<span class="pill">${p[0]}</span>`).join(''); document.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',()=>{ if(x.id==='preset')applyPreset(+x.value); else if(x.id!=='pieceKey'&&x.id!=='symbolInput')updateAll(); })); resetPieces.onclick=reset; flipBoard.onclick=()=>{flipped=!flipped;draw()}; randomize.onclick=()=>applyPreset(Math.floor(Math.random()*presets.length)); pieceKey.oninput=()=>symbolInput.value=currentSet[pieceKey.value[0]]||''; applySymbol.onclick=()=>{currentSet[pieceKey.value[0]]=symbolInput.value||'?'; draw();}; pieceKey.oninput(); reset(); updateAll();}
+init();
+</script>
+</body>
+</html>
