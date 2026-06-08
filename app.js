@@ -30,6 +30,7 @@ let botMoveTimer = null;
 let moveHistory = [];
 let gameStartedAt = null;
 let activeGameRecordSaved = false;
+let lastKingDangerKey = "none";
 
 const localGameRecordsKey = "chesslab.localGameRecords";
 const maxLocalGameRecords = 12;
@@ -87,6 +88,7 @@ function createStartingBoard() {
   moveHistory = [];
   gameStartedAt = new Date().toISOString();
   activeGameRecordSaved = false;
+  lastKingDangerKey = "none";
   updateStatus();
   updateCapturedPieces();
   updateScoreboard();
@@ -97,6 +99,16 @@ function createStartingBoard() {
 
 function renderBoard() {
   boardElement.innerHTML = "";
+
+  const dangerState = getKingDangerState();
+  const dangerKey = getKingDangerKey(dangerState);
+  const dangerIsFresh = dangerKey !== lastKingDangerKey;
+  lastKingDangerKey = dangerKey;
+
+  boardElement.classList.toggle("is-check", dangerState.type === "check");
+  boardElement.classList.toggle("is-checkmate", dangerState.type === "checkmate");
+  boardElement.classList.toggle("danger-fresh", dangerIsFresh && dangerState.type !== "none");
+  boardElement.classList.toggle("checkmate-fresh", dangerIsFresh && dangerState.type === "checkmate");
 
   for (let visualRow = 0; visualRow < 8; visualRow++) {
     for (let visualCol = 0; visualCol < 8; visualCol++) {
@@ -118,6 +130,34 @@ function renderBoard() {
 
       square.dataset.row = row;
       square.dataset.col = col;
+
+      if (
+        dangerState.king &&
+        dangerState.king.row === row &&
+        dangerState.king.col === col
+      ) {
+        square.classList.add(
+          dangerState.type === "checkmate" ? "checkmate-king" : "checked-king"
+        );
+
+        if (dangerIsFresh) {
+          square.classList.add(
+            dangerState.type === "checkmate"
+              ? "checkmate-king-fresh"
+              : "checked-king-fresh"
+          );
+        }
+      }
+
+      if (
+        dangerState.attackers.some(attacker => attacker.row === row && attacker.col === col)
+      ) {
+        square.classList.add("checking-piece");
+
+        if (dangerIsFresh) {
+          square.classList.add("checking-piece-fresh");
+        }
+      }
 
       const piece = board[row][col];
       const selectedPiece = selectedSquare
@@ -556,6 +596,65 @@ function updateCastlingRights(piece, fromRow, fromCol, toRow, toCol, capturedPie
   }
 }
 
+function getKingDangerState() {
+  const outcome = getGameOutcome();
+
+  if (!outcome.inCheck) {
+    return { type: "none", king: null, attackers: [] };
+  }
+
+  const king = findKing(currentTurn);
+
+  if (!king) {
+    return { type: "none", king: null, attackers: [] };
+  }
+
+  return {
+    type: outcome.type === "checkmate" ? "checkmate" : "check",
+    king,
+    attackers: getCheckingPieces(king.row, king.col, currentTurn)
+  };
+}
+
+function getCheckingPieces(kingRow, kingCol, checkedColor) {
+  const attackerColor = checkedColor === "w" ? "b" : "w";
+  const attackers = [];
+
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 8; col++) {
+      const piece = board[row][col];
+
+      if (
+        piece &&
+        piece[0] === attackerColor &&
+        canPieceAttackSquare(row, col, kingRow, kingCol, piece)
+      ) {
+        attackers.push({ row, col });
+      }
+    }
+  }
+
+  return attackers;
+}
+
+function getKingDangerKey(dangerState) {
+  if (dangerState.type === "none" || !dangerState.king) {
+    return "none";
+  }
+
+  const attackerKey = dangerState.attackers
+    .map(attacker => attacker.row + "," + attacker.col)
+    .sort()
+    .join("|");
+
+  return [
+    dangerState.type,
+    dangerState.king.row,
+    dangerState.king.col,
+    attackerKey
+  ].join(":");
+}
+
 function clearRookCastlingRight(color, row, col) {
   const homeRow = color === "w" ? 7 : 0;
 
@@ -604,15 +703,18 @@ function isInsideBoard(row, col) {
 
 function updateStatus() {
   const outcome = getGameOutcome();
+  statusElement.classList.remove("status-check", "status-checkmate", "status-stalemate");
 
   if (outcome.type === "checkmate") {
     statusElement.textContent = outcome.loser + " is checkmated";
+    statusElement.classList.add("status-checkmate");
     saveCompletedGameRecord(outcome);
     return;
   }
 
   if (outcome.type === "stalemate") {
     statusElement.textContent = "Stalemate";
+    statusElement.classList.add("status-stalemate");
     saveCompletedGameRecord(outcome);
     return;
   }
@@ -620,6 +722,10 @@ function updateStatus() {
   statusElement.textContent = outcome.inCheck
     ? outcome.playerName + " is in check"
     : outcome.playerName + " to move";
+
+  if (outcome.inCheck) {
+    statusElement.classList.add("status-check");
+  }
 }
 
 function getGameOutcome() {
