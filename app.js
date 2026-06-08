@@ -11,6 +11,11 @@ const blackScoreNameElement = document.getElementById("blackScoreName");
 const gameModeSelect = document.getElementById("gameMode");
 const botDifficultySelect = document.getElementById("botDifficulty");
 const botDifficultyRow = document.getElementById("botDifficultyRow");
+const saveRecordBtn = document.getElementById("saveRecordBtn");
+const clearRecordsBtn = document.getElementById("clearRecordsBtn");
+const recordSummaryElement = document.getElementById("recordSummary");
+const recordListElement = document.getElementById("recordList");
+const moveLogElement = document.getElementById("moveLog");
 
 let selectedSquare = null;
 let currentTurn = "w";
@@ -22,6 +27,12 @@ let castlingRights = {};
 let gameMode = "local";
 let botDifficulty = "easy";
 let botMoveTimer = null;
+let moveHistory = [];
+let gameStartedAt = null;
+let activeGameRecordSaved = false;
+
+const localGameRecordsKey = "chesslab.localGameRecords";
+const maxLocalGameRecords = 12;
 
 const pieceScores = {
   p: 1,
@@ -73,9 +84,13 @@ function createStartingBoard() {
     w: { kingSide: true, queenSide: true },
     b: { kingSide: true, queenSide: true }
   };
+  moveHistory = [];
+  gameStartedAt = new Date().toISOString();
+  activeGameRecordSaved = false;
   updateStatus();
   updateCapturedPieces();
   updateScoreboard();
+  updateMoveLog();
   renderBoard();
   scheduleBotMove();
 }
@@ -196,6 +211,19 @@ function applyMove(fromRow, fromCol, toRow, toCol, options = {}) {
   const capturedPiece = enPassantCapture
     ? board[fromRow][toCol]
     : board[toRow][toCol];
+  const promotedPiece = getPromotedPiece(movingPiece, toRow);
+  const moveRecord = shouldRender
+    ? createMoveRecord(
+        movingPiece,
+        promotedPiece,
+        capturedPiece,
+        fromRow,
+        fromCol,
+        toRow,
+        toCol,
+        enPassantCapture
+      )
+    : null;
 
   if (capturedPiece) {
     if (movingColor === "w") {
@@ -205,7 +233,7 @@ function applyMove(fromRow, fromCol, toRow, toCol, options = {}) {
     }
   }
 
-  board[toRow][toCol] = getPromotedPiece(movingPiece, toRow);
+  board[toRow][toCol] = promotedPiece;
   board[fromRow][fromCol] = "";
 
   if (enPassantCapture) {
@@ -223,9 +251,11 @@ function applyMove(fromRow, fromCol, toRow, toCol, options = {}) {
   currentTurn = currentTurn === "w" ? "b" : "w";
 
   if (shouldRender) {
+    recordMove(moveRecord);
     updateStatus();
     updateCapturedPieces();
     updateScoreboard();
+    updateMoveLog();
     renderBoard();
     scheduleBotMove();
   }
@@ -573,23 +603,63 @@ function isInsideBoard(row, col) {
 }
 
 function updateStatus() {
+  const outcome = getGameOutcome();
+
+  if (outcome.type === "checkmate") {
+    statusElement.textContent = outcome.loser + " is checkmated";
+    saveCompletedGameRecord(outcome);
+    return;
+  }
+
+  if (outcome.type === "stalemate") {
+    statusElement.textContent = "Stalemate";
+    saveCompletedGameRecord(outcome);
+    return;
+  }
+
+  statusElement.textContent = outcome.inCheck
+    ? outcome.playerName + " is in check"
+    : outcome.playerName + " to move";
+}
+
+function getGameOutcome() {
   const playerName = getPlayerLabel(currentTurn);
   const inCheck = isKingInCheck(currentTurn);
   const hasLegalMove = hasAnyLegalMove(currentTurn);
 
   if (inCheck && !hasLegalMove) {
-    statusElement.textContent = playerName + " is checkmated";
-    return;
+    const winnerColor = currentTurn === "w" ? "b" : "w";
+    const winner = getPlayerLabel(winnerColor);
+
+    return {
+      type: "checkmate",
+      winner,
+      loser: playerName,
+      result: winner + " won by checkmate",
+      playerName,
+      inCheck
+    };
   }
 
   if (!inCheck && !hasLegalMove) {
-    statusElement.textContent = "Stalemate";
-    return;
+    return {
+      type: "stalemate",
+      winner: null,
+      loser: null,
+      result: "Draw by stalemate",
+      playerName,
+      inCheck
+    };
   }
 
-  statusElement.textContent = inCheck
-    ? playerName + " is in check"
-    : playerName + " to move";
+  return {
+    type: "active",
+    winner: null,
+    loser: null,
+    result: "In progress",
+    playerName,
+    inCheck
+  };
 }
 
 function hasAnyLegalMove(color) {
@@ -859,7 +929,210 @@ function getCaptureScore(pieces) {
   return pieces.reduce((total, piece) => total + pieceScores[piece[1]], 0);
 }
 
+function createMoveRecord(
+  movingPiece,
+  promotedPiece,
+  capturedPiece,
+  fromRow,
+  fromCol,
+  toRow,
+  toCol,
+  enPassantCapture
+) {
+  const moveNumber = Math.floor(moveHistory.length / 2) + 1;
+  const color = movingPiece[0];
+  const pieceType = movingPiece[1];
+  const from = getSquareName(fromRow, fromCol);
+  const to = getSquareName(toRow, toCol);
+  const promoted = promotedPiece !== movingPiece ? promotedPiece[1].toUpperCase() : "";
+  const castle = pieceType === "k" && Math.abs(toCol - fromCol) === 2;
+  const notation = castle
+    ? toCol > fromCol
+      ? "O-O"
+      : "O-O-O"
+    : getPieceLetter(pieceType) +
+      from +
+      (capturedPiece ? "x" : "-") +
+      to +
+      (promoted ? "=" + promoted : "") +
+      (enPassantCapture ? " e.p." : "");
+
+  return {
+    moveNumber,
+    color,
+    piece: movingPiece,
+    from,
+    to,
+    capturedPiece: capturedPiece || "",
+    notation
+  };
+}
+
+function recordMove(moveRecord) {
+  if (!moveRecord) return;
+
+  moveHistory.push(moveRecord);
+}
+
+function getSquareName(row, col) {
+  return "abcdefgh"[col] + String(8 - row);
+}
+
+function getPieceLetter(pieceType) {
+  if (pieceType === "p") return "";
+
+  return pieceType.toUpperCase();
+}
+
+function updateMoveLog() {
+  if (!moveHistory.length) {
+    moveLogElement.textContent = "No moves yet";
+    return;
+  }
+
+  moveLogElement.textContent = formatMoveHistory(moveHistory);
+}
+
+function formatMoveHistory(moves) {
+  const pairs = [];
+
+  for (let index = 0; index < moves.length; index += 2) {
+    const whiteMove = moves[index];
+    const blackMove = moves[index + 1];
+    const blackText = blackMove ? " " + blackMove.notation : "";
+    pairs.push(whiteMove.moveNumber + ". " + whiteMove.notation + blackText);
+  }
+
+  return pairs.join("  ");
+}
+
+function saveCompletedGameRecord(outcome) {
+  if (activeGameRecordSaved || !moveHistory.length) return;
+
+  saveLocalGameRecord(outcome);
+  activeGameRecordSaved = true;
+}
+
+function saveCurrentGameRecord() {
+  if (!moveHistory.length) {
+    recordSummaryElement.textContent = "Make at least one move before saving a record.";
+    return;
+  }
+
+  saveLocalGameRecord(getGameOutcome());
+}
+
+function saveLocalGameRecord(outcome) {
+  const records = loadLocalGameRecords();
+  const now = new Date();
+  const record = {
+    id: String(now.getTime()),
+    savedAt: now.toISOString(),
+    startedAt: gameStartedAt,
+    mode: gameMode === "bot" ? "Vs Bot (" + botDifficulty + ")" : "Local Two Player",
+    whiteName: whiteNameInput.value || "White",
+    blackName: gameMode === "bot" ? "Bot" : blackNameInput.value || "Black",
+    result: outcome.result,
+    moves: moveHistory.map(move => ({ ...move })),
+    whiteCaptured: capturedByWhite.slice(),
+    blackCaptured: capturedByBlack.slice()
+  };
+
+  records.unshift(record);
+  if (saveLocalGameRecords(records.slice(0, maxLocalGameRecords))) {
+    renderLocalGameRecords();
+  }
+}
+
+function loadLocalGameRecords() {
+  try {
+    const rawRecords = window.localStorage.getItem(localGameRecordsKey);
+    const records = rawRecords ? JSON.parse(rawRecords) : [];
+
+    return Array.isArray(records) ? records : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveLocalGameRecords(records) {
+  try {
+    window.localStorage.setItem(localGameRecordsKey, JSON.stringify(records));
+    return true;
+  } catch (error) {
+    recordSummaryElement.textContent = "Could not save records in this browser.";
+    return false;
+  }
+}
+
+function clearLocalGameRecords() {
+  if (!window.confirm("Clear all saved local game records?")) return;
+
+  try {
+    window.localStorage.removeItem(localGameRecordsKey);
+  } catch (error) {
+    recordSummaryElement.textContent = "Could not clear records in this browser.";
+    return;
+  }
+
+  renderLocalGameRecords();
+}
+
+function renderLocalGameRecords() {
+  const records = loadLocalGameRecords();
+
+  recordListElement.innerHTML = "";
+  recordSummaryElement.textContent = records.length
+    ? records.length + " saved game" + (records.length === 1 ? "" : "s")
+    : "No saved games yet";
+
+  records.forEach(record => {
+    const card = document.createElement("div");
+    card.className = "record-card";
+
+    const title = document.createElement("strong");
+    title.textContent = record.result;
+
+    const details = document.createElement("span");
+    details.textContent =
+      formatRecordDate(record.savedAt) +
+      " | " +
+      record.whiteName +
+      " vs " +
+      record.blackName +
+      " | " +
+      record.mode +
+      " | " +
+      record.moves.length +
+      " moves";
+
+    const moves = document.createElement("span");
+    moves.className = "record-moves";
+    moves.textContent = formatMoveHistory(record.moves);
+
+    card.appendChild(title);
+    card.appendChild(details);
+    card.appendChild(moves);
+    recordListElement.appendChild(card);
+  });
+}
+
+function formatRecordDate(value) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return "Unknown date";
+
+  return date.toLocaleString([], {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
 document.getElementById("resetBtn").addEventListener("click", createStartingBoard);
+saveRecordBtn.addEventListener("click", saveCurrentGameRecord);
+clearRecordsBtn.addEventListener("click", clearLocalGameRecords);
 
 document.getElementById("flipBtn").addEventListener("click", () => {
   boardFlipped = !boardFlipped;
@@ -896,5 +1169,6 @@ blackNameInput.addEventListener("input", () => {
   }
 });
 
+renderLocalGameRecords();
 createStartingBoard();
 updateBotControls();

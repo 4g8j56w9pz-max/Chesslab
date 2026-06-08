@@ -168,6 +168,71 @@ h1 {
   white-space: nowrap;
 }
 
+.record-summary,
+.move-log,
+.record-card {
+  border: 1px solid rgba(255, 204, 51, 0.32);
+  background: rgba(21, 6, 6, 0.78);
+  color: #fff4b0;
+}
+
+.record-summary,
+.move-log {
+  padding: 9px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.record-list {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 10px;
+}
+
+.record-card {
+  padding: 9px;
+  border-radius: 8px;
+}
+
+.record-card strong,
+.record-card span {
+  display: block;
+}
+
+.record-card strong {
+  color: #ffcc33;
+  font-size: 14px;
+}
+
+.record-card span {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.record-moves {
+  max-height: 74px;
+  margin-top: 6px;
+  overflow: auto;
+  color: #fef3c7;
+}
+
+.move-log {
+  max-height: 120px;
+  overflow: auto;
+}
+
+.danger-button {
+  border: 1px solid #991b1b;
+  background: #5b1111;
+  color: #fff4b0;
+}
+
+.danger-button:hover {
+  background: #7f1d1d;
+}
+
 .captured-area {
   margin-top: 14px;
 }
