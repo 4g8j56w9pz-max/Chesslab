@@ -110,6 +110,12 @@ function renderBoard() {
   boardElement.classList.toggle("danger-fresh", dangerIsFresh && dangerState.type !== "none");
   boardElement.classList.toggle("checkmate-fresh", dangerIsFresh && dangerState.type === "checkmate");
 
+  if (dangerIsFresh && dangerState.type !== "none") {
+    window.setTimeout(() => {
+      boardElement.classList.remove("danger-fresh", "checkmate-fresh");
+    }, 850);
+  }
+
   for (let visualRow = 0; visualRow < 8; visualRow++) {
     for (let visualCol = 0; visualCol < 8; visualCol++) {
       const row = boardFlipped ? 7 - visualRow : visualRow;
@@ -193,6 +199,8 @@ function renderBoard() {
       boardElement.appendChild(square);
     }
   }
+
+  renderDangerOverlay(dangerState);
 }
 
 function handleSquareClick(event) {
@@ -600,20 +608,45 @@ function getKingDangerState() {
   const outcome = getGameOutcome();
 
   if (!outcome.inCheck) {
-    return { type: "none", king: null, attackers: [] };
+    return { type: "none", king: null, attackers: [], winner: null };
   }
 
   const king = findKing(currentTurn);
 
   if (!king) {
-    return { type: "none", king: null, attackers: [] };
+    return { type: "none", king: null, attackers: [], winner: null };
   }
+
+  const winnerColor = outcome.type === "checkmate"
+    ? (currentTurn === "w" ? "b" : "w")
+    : null;
 
   return {
     type: outcome.type === "checkmate" ? "checkmate" : "check",
     king,
-    attackers: getCheckingPieces(king.row, king.col, currentTurn)
+    attackers: getCheckingPieces(king.row, king.col, currentTurn),
+    winner: winnerColor ? getPlayerLabel(winnerColor) : null
   };
+}
+
+function renderDangerOverlay(dangerState) {
+  if (dangerState.type === "none") return;
+
+  const overlay = document.createElement("div");
+  overlay.classList.add("danger-overlay");
+
+  if (dangerState.type === "checkmate") {
+    overlay.classList.add("checkmate-overlay");
+    overlay.innerHTML = `
+      <strong>CHECKMATE</strong>
+      <span>${dangerState.winner} wins</span>
+    `;
+  } else {
+    overlay.classList.add("check-overlay");
+    overlay.textContent = "CHECK!";
+  }
+
+  boardElement.appendChild(overlay);
 }
 
 function getCheckingPieces(kingRow, kingCol, checkedColor) {
@@ -720,7 +753,7 @@ function updateStatus() {
   }
 
   statusElement.textContent = outcome.inCheck
-    ? outcome.playerName + " is in check"
+    ? "CHECK! " + outcome.playerName + " is in check"
     : outcome.playerName + " to move";
 
   if (outcome.inCheck) {
