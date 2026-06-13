@@ -17,7 +17,6 @@ const tryAgainButton = document.getElementById("try-again");
 const lineupElement = document.getElementById("lineup");
 const moveHintElement = document.getElementById("move-hint");
 const playerNameInput = document.getElementById("player-name");
-const logScoreButton = document.getElementById("log-score");
 const clearLeaderboardButton = document.getElementById("clear-leaderboard");
 const leaderboardStatusElement = document.getElementById("leaderboard-status");
 const leaderboardElement = document.getElementById("leaderboard");
@@ -123,10 +122,11 @@ const state = {
   hasReachedMidnight: false,
   newTiles: [],
   lastMoveMessage: "Swipe the board. All tiles slide to the wall, matching pairs merge, then a new tile appears.",
-  leaderboardMessage: "Scores auto-log at game over.",
+  leaderboardMessage: "Finished games auto-log here.",
   leaderboard: loadLeaderboard(),
   moves: 0,
-  runId: createRunId()
+  runId: createRunId(),
+  scoreLogged: false
 };
 
 function createEmptyGrid() {
@@ -211,8 +211,9 @@ function startNewGame() {
   state.newTiles = [];
   state.moves = 0;
   state.runId = createRunId();
+  state.scoreLogged = false;
   state.lastMoveMessage = "New shift started. Swipe any direction to slide every tile on the board.";
-  state.leaderboardMessage = "Scores auto-log at game over.";
+  state.leaderboardMessage = "Finished games auto-log here.";
   spawnTile(true);
   spawnTile(true);
   render();
@@ -282,7 +283,7 @@ function handleMove(direction) {
   state.lastMoveMessage = createMoveMessage(direction, move.gained, spawnedTile);
 
   if (state.gameOver) {
-    logCurrentScore("Game over score logged.", false);
+    logCompletedGame(false);
   }
 
   render();
@@ -559,12 +560,8 @@ function createMoveMessage(direction, gained, spawnedTile) {
   return `${directionLabel}: tiles slid to open spaces, then a new ${spawnLabel} appeared.`;
 }
 
-function logCurrentScore(message = "Score logged.", shouldRender = true) {
-  if (state.moves === 0) {
-    state.leaderboardMessage = "Make one move before logging a score.";
-    if (shouldRender) {
-      renderLeaderboard();
-    }
+function logCompletedGame(shouldRender = true) {
+  if (state.scoreLogged || !state.gameOver || state.moves === 0) {
     return;
   }
 
@@ -582,7 +579,8 @@ function logCurrentScore(message = "Score logged.", shouldRender = true) {
     .slice(0, MAX_LEADERBOARD_ENTRIES);
 
   if (saveLeaderboard(state.leaderboard)) {
-    state.leaderboardMessage = message;
+    state.scoreLogged = true;
+    state.leaderboardMessage = `Finished game logged for ${entry.name}.`;
   }
 
   if (shouldRender) {
@@ -757,9 +755,6 @@ function getSwipeDirection(deltaX, deltaY) {
 
 newGameButton.addEventListener("click", startNewGame);
 tryAgainButton.addEventListener("click", startNewGame);
-logScoreButton.addEventListener("click", () => {
-  logCurrentScore("Current run logged.");
-});
 clearLeaderboardButton.addEventListener("click", () => {
   if (!window.confirm("Clear the local leaderboard on this device?")) {
     return;
