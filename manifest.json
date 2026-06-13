@@ -1,0 +1,19 @@
+{
+  "name": "Midnight Pizzeria Merge",
+  "short_name": "Pizzeria Merge",
+  "description": "A mobile-first haunted animatronic pizzeria merge game built with vanilla HTML, CSS, and JavaScript.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#DE3341",
+  "background_color": "#080609",
+  "icons": [
+    {
+      "src": "icons/midnight-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

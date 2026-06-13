@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Midnight Pizzeria Merge icon</title>
+  <desc id="desc">Original haunted pizzeria bear-mask arcade icon.</desc>
+  <rect width="512" height="512" rx="96" fill="#080609"/>
+  <path d="M0 360h512v152H0z" fill="#141014"/>
+  <path d="M0 360h64v64H0zm128 0h64v64h-64zm128 0h64v64h-64zm128 0h64v64h-64zM64 424h64v64H64zm128 0h64v64h-64zm128 0h64v64h-64zm128 0h64v64h-64z" fill="#21151b"/>
+  <circle cx="178" cy="168" r="58" fill="#5c3318" stroke="#ffd166" stroke-width="16"/>
+  <circle cx="334" cy="168" r="58" fill="#5c3318" stroke="#ffd166" stroke-width="16"/>
+  <path d="M126 262c0-83 55-143 130-143s130 60 130 143c0 88-50 145-130 145s-130-57-130-145Z" fill="#8b561e" stroke="#ffd166" stroke-width="18"/>
+  <path d="M188 258h50m86 0h-50" stroke="#fff7ed" stroke-width="22" stroke-linecap="round"/>
+  <path d="M229 327h54m-27-38v42" stroke="#fff7ed" stroke-width="18" stroke-linecap="round"/>
+  <path d="M180 104h152" stroke="#DE3341" stroke-width="22" stroke-linecap="round"/>
+  <path d="M96 96 72 40m344 56 24-56M64 262H24m424 0h40" stroke="#DE3341" stroke-width="18" stroke-linecap="round"/>
+</svg>

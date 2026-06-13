@@ -2,112 +2,74 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FNAF ChessLab</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#DE3341" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Pizzeria Merge" />
+  <title>Midnight Pizzeria Merge</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/midnight-icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/midnight-icon.svg" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-  <main class="app">
-
-    <section class="game-area">
-      <h1>FNAF ChessLab</h1>
-
-      <div class="player-bar">
-        <div class="player-card">
-          <label for="whiteName">White Player</label>
-          <input id="whiteName" type="text" value="Player 1" />
-        </div>
-
-        <div class="player-card">
-          <label for="blackName">Black Player</label>
-          <input id="blackName" type="text" value="Player 2" />
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="legacy-link" href="chesslab.html">ChessLab</a>
+      <div class="brand">
+        <span class="brand-badge" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <path d="M18 29c0-8 6-15 14-15s14 7 14 15v15c0 6-5 10-14 10s-14-4-14-10V29Z" />
+            <path d="M21 17c-3-7 3-11 8-6M43 17c3-7-3-11-8-6" />
+            <circle cx="26" cy="32" r="4" />
+            <circle cx="38" cy="32" r="4" />
+            <path d="M28 43h8M31 39h2" />
+          </svg>
+        </span>
+        <div>
+          <p class="eyebrow">Open 12:00 AM</p>
+          <h1>Midnight Pizzeria Merge</h1>
         </div>
       </div>
+      <button id="new-game" class="primary-button" type="button">New Game</button>
+    </header>
 
-      <p id="status">White Player to move</p>
-
-      <div id="board"></div>
-
-      <div class="captured-area">
-        <div class="captured-box">
-          <h3>White Captured</h3>
-          <div id="whiteCaptured" class="captured-pieces"></div>
-        </div>
-
-        <div class="captured-box">
-          <h3>Black Captured</h3>
-          <div id="blackCaptured" class="captured-pieces"></div>
-        </div>
+    <section class="score-panel" aria-label="Game scores">
+      <div class="score-card">
+        <span>Score</span>
+        <strong id="score">0</strong>
+      </div>
+      <div class="score-card">
+        <span>Best</span>
+        <strong id="best-score">0</strong>
+      </div>
+      <div class="score-card status-card">
+        <span>Stage</span>
+        <strong id="game-status">Live</strong>
       </div>
     </section>
 
-    <aside class="panel">
-      <button id="resetBtn">Reset Game</button>
-      <button id="flipBtn">Flip Board</button>
-      <button id="saveRecordBtn">Save Record</button>
+    <main class="game-layout">
+      <section class="board-panel" aria-label="Merge board">
+        <div id="board" class="board" role="grid" aria-rowcount="4" aria-colcount="4" aria-label="Midnight Pizzeria Merge board"></div>
+        <div id="game-over" class="game-over" hidden>
+          <div class="game-over-card" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
+            <p class="eyebrow">Show Closed</p>
+            <h2 id="game-over-title">Game Over</h2>
+            <p id="final-score">Score 0</p>
+            <button id="try-again" class="primary-button" type="button">New Game</button>
+          </div>
+        </div>
+      </section>
 
-      <h2>Game Mode</h2>
+      <aside class="lineup-panel" aria-label="Tile lineup">
+        <h2>Lineup</h2>
+        <ol id="lineup" class="lineup"></ol>
+      </aside>
+    </main>
+  </div>
 
-      <label>
-        Mode
-        <select id="gameMode">
-          <option value="local">Local Two Player</option>
-          <option value="bot">Play vs Bot</option>
-        </select>
-      </label>
-
-      <label id="botDifficultyRow">
-        Bot Difficulty
-        <select id="botDifficulty">
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-        </select>
-      </label>
-
-      <h2>Leaderboard</h2>
-
-      <div class="score-row">
-        <span id="whiteScoreName">Player 1</span>
-        <strong id="whiteScore">0</strong>
-      </div>
-
-      <div class="score-row">
-        <span id="blackScoreName">Player 2</span>
-        <strong id="blackScore">0</strong>
-      </div>
-
-      <h2>Game Records</h2>
-
-      <div id="recordSummary" class="record-summary">No saved games yet</div>
-      <div id="recordList" class="record-list"></div>
-      <button id="clearRecordsBtn" class="danger-button">Clear Records</button>
-
-      <h2>Move Log</h2>
-
-      <div id="moveLog" class="move-log">No moves yet</div>
-
-      <h2>Theme Sliders</h2>
-
-      <label>
-        Board Size
-        <input id="boardSize" type="range" min="420" max="760" value="640" />
-      </label>
-
-      <label>
-        Glow
-        <input id="glow" type="range" min="0" max="40" value="18" />
-      </label>
-
-      <label>
-        Piece Size
-        <input id="pieceSize" type="range" min="28" max="76" value="42" />
-      </label>
-    </aside>
-
-  </main>
-
-  <script src="app.js"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
