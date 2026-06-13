@@ -26,6 +26,24 @@ Then open `http://localhost:8000/`.
 
 The app uses relative paths, so it works from a repository Pages URL such as `https://USERNAME.github.io/REPOSITORY/`.
 
+## Optional global leaderboard
+
+By default, scores are saved locally in each browser. To share scores across all players, create a Supabase project and run the SQL in `supabase-leaderboard.sql` from the Supabase SQL Editor.
+
+Then edit `leaderboard-config.js`:
+
+```js
+window.MPM_LEADERBOARD_CONFIG = {
+  supabaseUrl: "https://YOUR_PROJECT_REF.supabase.co",
+  supabaseAnonKey: "YOUR_SUPABASE_ANON_OR_PUBLISHABLE_KEY",
+  tableName: "pizzeria_leaderboard"
+};
+```
+
+Use only the anon/publishable key in frontend code. Do not put a Supabase service-role key or database password in this repository.
+
+The app still works without this configuration; it will show a local-only leaderboard or local fallback if the global score service is unavailable.
+
 ## Add to iPhone Home Screen
 
 1. Open the GitHub Pages URL in Safari on iPhone.

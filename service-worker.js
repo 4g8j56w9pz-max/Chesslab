@@ -1,7 +1,8 @@
-const CACHE_NAME = "midnight-pizzeria-merge-v4";
+const CACHE_NAME = "midnight-pizzeria-merge-v5";
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./leaderboard-config.js",
   "./styles.css",
   "./app.js",
   "./manifest.json",
