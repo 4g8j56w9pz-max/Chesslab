@@ -1,6 +1,10 @@
 const BOARD_SIZE = 4;
 const WIN_VALUE = 2048;
 const BEST_SCORE_KEY = "midnightPizzeriaMerge.bestScore";
+const USERNAME_KEY = "midnightPizzeriaMerge.username";
+const LEADERBOARD_KEY = "midnightPizzeriaMerge.leaderboard";
+const MAX_LEADERBOARD_ENTRIES = 20;
+const DEFAULT_USERNAME = "Night Guard";
 
 const boardElement = document.getElementById("board");
 const scoreElement = document.getElementById("score");
@@ -12,6 +16,11 @@ const newGameButton = document.getElementById("new-game");
 const tryAgainButton = document.getElementById("try-again");
 const lineupElement = document.getElementById("lineup");
 const moveHintElement = document.getElementById("move-hint");
+const playerNameInput = document.getElementById("player-name");
+const logScoreButton = document.getElementById("log-score");
+const clearLeaderboardButton = document.getElementById("clear-leaderboard");
+const leaderboardStatusElement = document.getElementById("leaderboard-status");
+const leaderboardElement = document.getElementById("leaderboard");
 
 const tileOrder = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
 
@@ -113,7 +122,11 @@ const state = {
   gameOver: false,
   hasReachedMidnight: false,
   newTiles: [],
-  lastMoveMessage: "Swipe the board. All tiles slide to the wall, matching pairs merge, then a new tile appears."
+  lastMoveMessage: "Swipe the board. All tiles slide to the wall, matching pairs merge, then a new tile appears.",
+  leaderboardMessage: "Scores auto-log at game over.",
+  leaderboard: loadLeaderboard(),
+  moves: 0,
+  runId: createRunId()
 };
 
 function createEmptyGrid() {
@@ -136,13 +149,70 @@ function saveBestScore(score) {
   }
 }
 
+function loadUsername() {
+  try {
+    return localStorage.getItem(USERNAME_KEY) || DEFAULT_USERNAME;
+  } catch (error) {
+    return DEFAULT_USERNAME;
+  }
+}
+
+function saveUsername(username) {
+  try {
+    localStorage.setItem(USERNAME_KEY, username);
+  } catch (error) {
+    // Local leaderboard identity is optional if storage is unavailable.
+  }
+}
+
+function loadLeaderboard() {
+  try {
+    const rawEntries = localStorage.getItem(LEADERBOARD_KEY);
+    const entries = rawEntries ? JSON.parse(rawEntries) : [];
+
+    if (!Array.isArray(entries)) {
+      return [];
+    }
+
+    return entries
+      .filter(entry => entry && typeof entry === "object")
+      .map(entry => ({
+        id: String(entry.id || createRunId()),
+        name: String(entry.name || DEFAULT_USERNAME).slice(0, 18),
+        score: Number(entry.score) || 0,
+        highestTile: Number(entry.highestTile) || 0,
+        moves: Number(entry.moves) || 0,
+        finished: Boolean(entry.finished),
+        achievedMidnight: Boolean(entry.achievedMidnight),
+        loggedAt: entry.loggedAt || new Date().toISOString()
+      }))
+      .sort(compareLeaderboardEntries)
+      .slice(0, MAX_LEADERBOARD_ENTRIES);
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveLeaderboard(entries) {
+  try {
+    localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(entries));
+    return true;
+  } catch (error) {
+    state.leaderboardMessage = "Leaderboard could not be saved in this browser.";
+    return false;
+  }
+}
+
 function startNewGame() {
   state.grid = createEmptyGrid();
   state.score = 0;
   state.gameOver = false;
   state.hasReachedMidnight = false;
   state.newTiles = [];
+  state.moves = 0;
+  state.runId = createRunId();
   state.lastMoveMessage = "New shift started. Swipe any direction to slide every tile on the board.";
+  state.leaderboardMessage = "Scores auto-log at game over.";
   spawnTile(true);
   spawnTile(true);
   render();
@@ -196,6 +266,7 @@ function handleMove(direction) {
   state.grid = move.grid;
   state.score += move.gained;
   state.newTiles = [];
+  state.moves += 1;
 
   if (state.score > state.bestScore) {
     state.bestScore = state.score;
@@ -209,6 +280,11 @@ function handleMove(direction) {
   const spawnedTile = spawnTile(true);
   state.gameOver = !hasAvailableMoves(state.grid);
   state.lastMoveMessage = createMoveMessage(direction, move.gained, spawnedTile);
+
+  if (state.gameOver) {
+    logCurrentScore("Game over score logged.", false);
+  }
+
   render();
 }
 
@@ -313,6 +389,7 @@ function render() {
   renderScores();
   renderMoveHint();
   renderLineup();
+  renderLeaderboard();
   renderGameOver();
 }
 
@@ -393,6 +470,49 @@ function renderGameOver() {
   finalScoreElement.textContent = `Score ${formatScore(state.score)}`;
 }
 
+function renderLeaderboard() {
+  leaderboardElement.innerHTML = "";
+  leaderboardStatusElement.textContent = state.leaderboardMessage;
+
+  if (state.leaderboard.length === 0) {
+    const empty = document.createElement("li");
+    empty.className = "leaderboard-empty";
+    empty.textContent = "No logged runs yet.";
+    leaderboardElement.appendChild(empty);
+    return;
+  }
+
+  state.leaderboard.slice(0, 10).forEach((entry, index) => {
+    const item = document.createElement("li");
+    item.className = "leaderboard-entry";
+
+    const rank = document.createElement("span");
+    rank.className = "leaderboard-rank";
+    rank.textContent = `#${index + 1}`;
+
+    const main = document.createElement("span");
+    main.className = "leaderboard-main";
+
+    const name = document.createElement("strong");
+    name.textContent = entry.name;
+
+    const details = document.createElement("small");
+    details.textContent = `${getTileName(entry.highestTile)} | ${entry.moves} moves | ${formatDate(entry.loggedAt)}`;
+
+    main.appendChild(name);
+    main.appendChild(details);
+
+    const score = document.createElement("span");
+    score.className = "leaderboard-score";
+    score.textContent = formatScore(entry.score);
+
+    item.appendChild(rank);
+    item.appendChild(main);
+    item.appendChild(score);
+    leaderboardElement.appendChild(item);
+  });
+}
+
 function createTile(value, mini = false, isNew = false) {
   const theme = getTileTheme(value);
   const tile = document.createElement("div");
@@ -437,6 +557,96 @@ function createMoveMessage(direction, gained, spawnedTile) {
   }
 
   return `${directionLabel}: tiles slid to open spaces, then a new ${spawnLabel} appeared.`;
+}
+
+function logCurrentScore(message = "Score logged.", shouldRender = true) {
+  if (state.moves === 0) {
+    state.leaderboardMessage = "Make one move before logging a score.";
+    if (shouldRender) {
+      renderLeaderboard();
+    }
+    return;
+  }
+
+  const entry = createLeaderboardEntry();
+  const existingIndex = state.leaderboard.findIndex(item => item.id === entry.id);
+
+  if (existingIndex >= 0) {
+    state.leaderboard[existingIndex] = entry;
+  } else {
+    state.leaderboard.push(entry);
+  }
+
+  state.leaderboard = state.leaderboard
+    .sort(compareLeaderboardEntries)
+    .slice(0, MAX_LEADERBOARD_ENTRIES);
+
+  if (saveLeaderboard(state.leaderboard)) {
+    state.leaderboardMessage = message;
+  }
+
+  if (shouldRender) {
+    renderLeaderboard();
+  }
+}
+
+function createLeaderboardEntry() {
+  return {
+    id: state.runId,
+    name: getPlayerName(),
+    score: state.score,
+    highestTile: getHighestTile(state.grid),
+    moves: state.moves,
+    finished: state.gameOver,
+    achievedMidnight: state.hasReachedMidnight,
+    loggedAt: new Date().toISOString()
+  };
+}
+
+function compareLeaderboardEntries(first, second) {
+  if (second.score !== first.score) {
+    return second.score - first.score;
+  }
+
+  if (second.highestTile !== first.highestTile) {
+    return second.highestTile - first.highestTile;
+  }
+
+  if (first.moves !== second.moves) {
+    return first.moves - second.moves;
+  }
+
+  return new Date(second.loggedAt).getTime() - new Date(first.loggedAt).getTime();
+}
+
+function getPlayerName() {
+  const value = playerNameInput.value.trim();
+  return value || DEFAULT_USERNAME;
+}
+
+function getTileName(value) {
+  if (!value) {
+    return "No tile";
+  }
+
+  return `${value} ${getTileTheme(value).label}`;
+}
+
+function formatDate(value) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Unknown";
+  }
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric"
+  });
+}
+
+function createRunId() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 function getTileTheme(value) {
@@ -547,6 +757,23 @@ function getSwipeDirection(deltaX, deltaY) {
 
 newGameButton.addEventListener("click", startNewGame);
 tryAgainButton.addEventListener("click", startNewGame);
+logScoreButton.addEventListener("click", () => {
+  logCurrentScore("Current run logged.");
+});
+clearLeaderboardButton.addEventListener("click", () => {
+  if (!window.confirm("Clear the local leaderboard on this device?")) {
+    return;
+  }
+
+  state.leaderboard = [];
+  state.leaderboardMessage = "Local leaderboard cleared.";
+  saveLeaderboard(state.leaderboard);
+  renderLeaderboard();
+});
+playerNameInput.value = loadUsername();
+playerNameInput.addEventListener("input", () => {
+  saveUsername(getPlayerName());
+});
 
 if ("serviceWorker" in navigator && (location.protocol === "http:" || location.protocol === "https:")) {
   window.addEventListener("load", () => {

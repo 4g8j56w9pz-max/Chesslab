@@ -1,4 +1,4 @@
-const CACHE_NAME = "midnight-pizzeria-merge-v2";
+const CACHE_NAME = "midnight-pizzeria-merge-v3";
 const APP_SHELL = [
   "./",
   "./index.html",

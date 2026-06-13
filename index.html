@@ -87,6 +87,28 @@
         <p class="win-rule">Reach <strong>2048 Midnight Show</strong>. The game ends when the board is full and no neighboring tiles match.</p>
       </section>
 
+      <section class="leaderboard-panel" aria-label="Local leaderboard">
+        <div class="panel-heading">
+          <div>
+            <h2>Local Leaderboard</h2>
+            <p class="panel-note">Saved on this device.</p>
+          </div>
+          <button id="clear-leaderboard" class="ghost-button" type="button">Clear</button>
+        </div>
+
+        <label class="player-field" for="player-name">
+          <span>Player Name</span>
+          <input id="player-name" type="text" maxlength="18" autocomplete="nickname" value="Night Guard" />
+        </label>
+
+        <div class="leaderboard-actions">
+          <button id="log-score" class="secondary-button" type="button">Log Score</button>
+          <p id="leaderboard-status" class="leaderboard-status" aria-live="polite">Scores auto-log at game over.</p>
+        </div>
+
+        <ol id="leaderboard" class="leaderboard-list"></ol>
+      </section>
+
       <aside class="lineup-panel" aria-label="Tile lineup">
         <h2>Lineup</h2>
         <ol id="lineup" class="lineup"></ol>
