@@ -11,6 +11,7 @@ const finalScoreElement = document.getElementById("final-score");
 const newGameButton = document.getElementById("new-game");
 const tryAgainButton = document.getElementById("try-again");
 const lineupElement = document.getElementById("lineup");
+const moveHintElement = document.getElementById("move-hint");
 
 const tileOrder = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
 
@@ -110,7 +111,9 @@ const state = {
   score: 0,
   bestScore: loadBestScore(),
   gameOver: false,
-  hasReachedMidnight: false
+  hasReachedMidnight: false,
+  newTiles: [],
+  lastMoveMessage: "Swipe the board. All tiles slide to the wall, matching pairs merge, then a new tile appears."
 };
 
 function createEmptyGrid() {
@@ -138,8 +141,10 @@ function startNewGame() {
   state.score = 0;
   state.gameOver = false;
   state.hasReachedMidnight = false;
-  spawnTile();
-  spawnTile();
+  state.newTiles = [];
+  state.lastMoveMessage = "New shift started. Swipe any direction to slide every tile on the board.";
+  spawnTile(true);
+  spawnTile(true);
   render();
 }
 
@@ -157,16 +162,22 @@ function getEmptyCells(grid = state.grid) {
   return cells;
 }
 
-function spawnTile() {
+function spawnTile(trackNewTile = false) {
   const emptyCells = getEmptyCells();
 
   if (emptyCells.length === 0) {
-    return false;
+    return null;
   }
 
   const cell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-  state.grid[cell.row][cell.col] = Math.random() < 0.9 ? 2 : 4;
-  return true;
+  const value = Math.random() < 0.9 ? 2 : 4;
+  state.grid[cell.row][cell.col] = value;
+
+  if (trackNewTile) {
+    state.newTiles.push({ row: cell.row, col: cell.col, value });
+  }
+
+  return { row: cell.row, col: cell.col, value };
 }
 
 function handleMove(direction) {
@@ -177,11 +188,14 @@ function handleMove(direction) {
   const move = buildMove(direction, state.grid);
 
   if (!move.changed) {
+    state.lastMoveMessage = "Nothing moved. Pick a direction with open space or a matching neighbor.";
+    renderMoveHint();
     return;
   }
 
   state.grid = move.grid;
   state.score += move.gained;
+  state.newTiles = [];
 
   if (state.score > state.bestScore) {
     state.bestScore = state.score;
@@ -192,8 +206,9 @@ function handleMove(direction) {
     state.hasReachedMidnight = true;
   }
 
-  spawnTile();
+  const spawnedTile = spawnTile(true);
   state.gameOver = !hasAvailableMoves(state.grid);
+  state.lastMoveMessage = createMoveMessage(direction, move.gained, spawnedTile);
   render();
 }
 
@@ -296,6 +311,7 @@ function hasAvailableMoves(grid) {
 function render() {
   renderBoard();
   renderScores();
+  renderMoveHint();
   renderLineup();
   renderGameOver();
 }
@@ -312,12 +328,16 @@ function renderBoard() {
       cell.setAttribute("aria-label", value ? `${getTileTheme(value).label}, ${value}` : "Empty");
 
       if (value) {
-        cell.appendChild(createTile(value));
+        cell.appendChild(createTile(value, false, isNewTile(row, col)));
       }
 
       boardElement.appendChild(cell);
     }
   }
+}
+
+function renderMoveHint() {
+  moveHintElement.textContent = state.lastMoveMessage;
 }
 
 function renderScores() {
@@ -373,10 +393,13 @@ function renderGameOver() {
   finalScoreElement.textContent = `Score ${formatScore(state.score)}`;
 }
 
-function createTile(value, mini = false) {
+function createTile(value, mini = false, isNew = false) {
   const theme = getTileTheme(value);
   const tile = document.createElement("div");
   tile.className = `tile tier-${getTier(value)}${mini ? " tile-mini" : ""}`;
+  if (isNew) {
+    tile.classList.add("is-new");
+  }
   tile.style.setProperty("--tile-bg", theme.bg);
   tile.style.setProperty("--tile-fg", theme.fg);
   tile.style.setProperty("--tile-border", theme.border);
@@ -399,6 +422,21 @@ function createTile(value, mini = false) {
   tile.appendChild(valueElement);
   tile.appendChild(label);
   return tile;
+}
+
+function isNewTile(row, col) {
+  return state.newTiles.some(tile => tile.row === row && tile.col === col);
+}
+
+function createMoveMessage(direction, gained, spawnedTile) {
+  const directionLabel = direction.charAt(0).toUpperCase() + direction.slice(1);
+  const spawnLabel = spawnedTile ? getTileTheme(spawnedTile.value).label : "no new tile";
+
+  if (gained > 0) {
+    return `${directionLabel}: tiles slid to the wall, merged for ${gained} points, then a new ${spawnLabel} appeared.`;
+  }
+
+  return `${directionLabel}: tiles slid to open spaces, then a new ${spawnLabel} appeared.`;
 }
 
 function getTileTheme(value) {

@@ -193,6 +193,20 @@ h2 {
   width: var(--board-size);
 }
 
+.move-hint {
+  min-height: 44px;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  color: #ffe6d0;
+  font-size: 0.88rem;
+  font-weight: 750;
+  line-height: 1.25;
+  border: 1px solid rgba(255, 209, 102, 0.28);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
 .board {
   width: var(--board-size);
   aspect-ratio: 1;
@@ -313,6 +327,10 @@ h2 {
     inset 0 -10px 20px rgba(0, 0, 0, 0.2);
 }
 
+.tile.is-new {
+  animation: tile-arrival 260ms ease-out both;
+}
+
 .game-over {
   position: absolute;
   inset: 0;
@@ -355,6 +373,50 @@ h2 {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
+}
+
+.rules-panel {
+  width: 100%;
+  max-width: var(--board-size);
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.rules-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.rule-card {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.rule-card strong {
+  color: #ffd166;
+  font-size: 0.84rem;
+}
+
+.rule-card span,
+.win-rule {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.28;
+}
+
+.win-rule {
+  margin: 10px 0 0;
+}
+
+.win-rule strong {
+  color: #fff7ed;
 }
 
 .lineup {
@@ -423,6 +485,23 @@ h2 {
   }
 }
 
+@keyframes tile-arrival {
+  0% {
+    transform: scale(0.72);
+    filter: brightness(1.5);
+  }
+
+  70% {
+    transform: scale(1.05);
+    filter: brightness(1.18);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
 @media (min-width: 760px) {
   :root {
     --board-size: min(58vw, 520px);
@@ -466,7 +545,20 @@ h2 {
     justify-items: stretch;
   }
 
+  .board-panel {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .rules-panel {
+    grid-column: 2;
+    grid-row: 1;
+    max-width: none;
+  }
+
   .lineup-panel {
+    grid-column: 2;
+    grid-row: 2;
     max-width: none;
   }
 
