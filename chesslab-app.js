@@ -16,6 +16,11 @@ const clearRecordsBtn = document.getElementById("clearRecordsBtn");
 const recordSummaryElement = document.getElementById("recordSummary");
 const recordListElement = document.getElementById("recordList");
 const moveLogElement = document.getElementById("moveLog");
+const chessLeaderboardScopeElement = document.getElementById("chessLeaderboardScope");
+const chessLeaderboardStatusElement = document.getElementById("chessLeaderboardStatus");
+const chessLeaderboardListElement = document.getElementById("chessLeaderboardList");
+const refreshChessLeaderboardBtn = document.getElementById("refreshChessLeaderboardBtn");
+const clearChessLeaderboardBtn = document.getElementById("clearChessLeaderboardBtn");
 
 let selectedSquare = null;
 let currentTurn = "w";
@@ -30,10 +35,20 @@ let botMoveTimer = null;
 let moveHistory = [];
 let gameStartedAt = null;
 let activeGameRecordSaved = false;
+let activeLeaderboardEntryLogged = false;
 let lastKingDangerKey = "none";
 
 const localGameRecordsKey = "chesslab.localGameRecords";
 const maxLocalGameRecords = 12;
+const localChessLeaderboardKey = "chesslab.localLeaderboard";
+const maxChessLeaderboardEntries = 20;
+const globalChessLeaderboardFetchLimit = 50;
+const defaultWhiteName = "Player 1";
+const defaultBlackName = "Player 2";
+const chessLeaderboardConfig = getChessGlobalLeaderboardConfig();
+let chessLeaderboard = loadChessLeaderboard();
+let chessLeaderboardMessage = getInitialChessLeaderboardMessage();
+let chessLeaderboardScope = getInitialChessLeaderboardScope();
 
 const pieceScores = {
   p: 1,
@@ -88,6 +103,7 @@ function createStartingBoard() {
   moveHistory = [];
   gameStartedAt = new Date().toISOString();
   activeGameRecordSaved = false;
+  activeLeaderboardEntryLogged = false;
   lastKingDangerKey = "none";
   updateStatus();
   updateCapturedPieces();
@@ -742,6 +758,7 @@ function updateStatus() {
     statusElement.textContent = outcome.loser + " is checkmated";
     statusElement.classList.add("status-checkmate");
     saveCompletedGameRecord(outcome);
+    logCompletedChessLeaderboard(outcome);
     return;
   }
 
@@ -749,6 +766,7 @@ function updateStatus() {
     statusElement.textContent = "Stalemate";
     statusElement.classList.add("status-stalemate");
     saveCompletedGameRecord(outcome);
+    logCompletedChessLeaderboard(outcome);
     return;
   }
 
@@ -1017,11 +1035,7 @@ function restoreGameSnapshot(snapshot) {
 }
 
 function getPlayerLabel(color) {
-  if (color === "b" && gameMode === "bot") {
-    return "Bot";
-  }
-
-  return color === "w" ? "White Player" : "Black Player";
+  return getPlayerNameForColor(color);
 }
 
 function updateBotControls() {
@@ -1145,6 +1159,415 @@ function formatMoveHistory(moves) {
   return pairs.join("  ");
 }
 
+function getChessGlobalLeaderboardConfig() {
+  const rawConfig = window.MPM_LEADERBOARD_CONFIG || {};
+  const supabaseUrl = String(rawConfig.supabaseUrl || "").replace(/\/+$/, "");
+  const supabaseAnonKey = String(rawConfig.supabaseAnonKey || "");
+  const requestedTable = String(
+    rawConfig.chessTableName ||
+    rawConfig.chessLeaderboardTableName ||
+    "chesslab_leaderboard"
+  );
+  const tableName = /^[a-zA-Z0-9_]+$/.test(requestedTable)
+    ? requestedTable
+    : "chesslab_leaderboard";
+
+  return {
+    enabled: Boolean(supabaseUrl && supabaseAnonKey),
+    supabaseUrl,
+    supabaseAnonKey,
+    tableName
+  };
+}
+
+function getInitialChessLeaderboardMessage() {
+  return chessLeaderboardConfig.enabled
+    ? "Global chess scores load here. Completed games auto-log online."
+    : "Completed chess games auto-log on this device.";
+}
+
+function getInitialChessLeaderboardScope() {
+  return chessLeaderboardConfig.enabled
+    ? "Global leaderboard"
+    : "Local device only";
+}
+
+function loadChessLeaderboard() {
+  try {
+    const rawEntries = window.localStorage.getItem(localChessLeaderboardKey);
+    const entries = rawEntries ? JSON.parse(rawEntries) : [];
+
+    if (!Array.isArray(entries)) {
+      return [];
+    }
+
+    return entries
+      .map(normalizeChessLeaderboardEntry)
+      .filter(Boolean)
+      .sort(compareChessLeaderboardEntries)
+      .slice(0, maxChessLeaderboardEntries);
+  } catch (error) {
+    return [];
+  }
+}
+
+function normalizeChessLeaderboardEntry(entry) {
+  if (!entry || typeof entry !== "object") {
+    return null;
+  }
+
+  const name = normalizeChessName(entry.name, defaultWhiteName);
+  const opponent = normalizeChessName(entry.opponent, "Opponent");
+  const score = Number(entry.score);
+  const moves = Number(entry.moves) || 0;
+
+  if (!name || !Number.isFinite(score) || score < 0 || moves <= 0) {
+    return null;
+  }
+
+  return {
+    id: String(entry.id || createChessLeaderboardEntryId(entry.color || "w")),
+    name,
+    opponent,
+    score,
+    result: normalizeChessText(entry.result, "Completed game", 80),
+    mode: normalizeChessText(entry.mode, "ChessLab", 40),
+    moves,
+    outcome: normalizeChessOutcome(entry.outcome),
+    color: entry.color === "b" ? "b" : "w",
+    loggedAt: entry.loggedAt || entry.created_at || new Date().toISOString()
+  };
+}
+
+function normalizeChessName(value, fallback) {
+  const text = String(value || fallback).trim().slice(0, 18);
+  return text || fallback;
+}
+
+function normalizeChessText(value, fallback, maxLength) {
+  const text = String(value || fallback).trim().slice(0, maxLength);
+  return text || fallback;
+}
+
+function normalizeChessOutcome(value) {
+  const outcome = String(value || "").toLowerCase();
+  return outcome === "stalemate" ? "stalemate" : "checkmate";
+}
+
+function saveChessLeaderboard(entries) {
+  try {
+    window.localStorage.setItem(localChessLeaderboardKey, JSON.stringify(entries));
+    return true;
+  } catch (error) {
+    chessLeaderboardMessage = "Chess leaderboard could not be saved in this browser.";
+    return false;
+  }
+}
+
+function renderChessLeaderboard() {
+  chessLeaderboardScopeElement.textContent = chessLeaderboardScope;
+  chessLeaderboardStatusElement.textContent = chessLeaderboardMessage;
+  chessLeaderboardListElement.innerHTML = "";
+
+  if (!chessLeaderboard.length) {
+    const empty = document.createElement("li");
+    empty.className = "leaderboard-empty";
+    empty.textContent = chessLeaderboardConfig.enabled
+      ? "No global chess games loaded yet."
+      : "No local completed chess games yet.";
+    chessLeaderboardListElement.appendChild(empty);
+    return;
+  }
+
+  chessLeaderboard.slice(0, 10).forEach((entry, index) => {
+    const item = document.createElement("li");
+    item.className = "leaderboard-entry";
+
+    const rank = document.createElement("span");
+    rank.className = "leaderboard-rank";
+    rank.textContent = "#" + String(index + 1);
+
+    const main = document.createElement("span");
+    main.className = "leaderboard-main";
+
+    const name = document.createElement("strong");
+    name.textContent = entry.name;
+
+    const details = document.createElement("small");
+    details.textContent =
+      entry.result +
+      " vs " +
+      entry.opponent +
+      " | " +
+      entry.moves +
+      " moves | " +
+      formatRecordDate(entry.loggedAt);
+
+    main.appendChild(name);
+    main.appendChild(details);
+
+    const score = document.createElement("span");
+    score.className = "leaderboard-score";
+    score.textContent = formatChessLeaderboardScore(entry.score);
+
+    item.appendChild(rank);
+    item.appendChild(main);
+    item.appendChild(score);
+    chessLeaderboardListElement.appendChild(item);
+  });
+}
+
+function formatChessLeaderboardScore(score) {
+  return score === 1 ? "1 pt" : String(score) + " pts";
+}
+
+function logCompletedChessLeaderboard(outcome, shouldRender = true) {
+  if (
+    activeLeaderboardEntryLogged ||
+    !moveHistory.length ||
+    !["checkmate", "stalemate"].includes(outcome.type)
+  ) {
+    return;
+  }
+
+  const entries = createCompletedChessLeaderboardEntries(outcome);
+
+  if (!entries.length) {
+    activeLeaderboardEntryLogged = true;
+    chessLeaderboardMessage = "Bot-only result saved to game records.";
+    if (shouldRender) {
+      renderChessLeaderboard();
+    }
+    return;
+  }
+
+  let localLeaderboard = loadChessLeaderboard();
+  entries.forEach(entry => {
+    localLeaderboard = upsertChessLeaderboardEntry(localLeaderboard, entry);
+  });
+
+  if (saveChessLeaderboard(localLeaderboard)) {
+    activeLeaderboardEntryLogged = true;
+    chessLeaderboard = localLeaderboard;
+    chessLeaderboardScope = chessLeaderboardConfig.enabled
+      ? "Local pending sync"
+      : "Local device only";
+    chessLeaderboardMessage = chessLeaderboardConfig.enabled
+      ? "Completed game saved locally. Sending chess result online..."
+      : "Completed game logged locally.";
+  } else {
+    activeLeaderboardEntryLogged = true;
+  }
+
+  if (shouldRender) {
+    renderChessLeaderboard();
+  }
+
+  if (chessLeaderboardConfig.enabled) {
+    submitGlobalChessLeaderboardEntries(entries);
+  }
+}
+
+function createCompletedChessLeaderboardEntries(outcome) {
+  const colors = ["w", "b"];
+  const winnerColor = outcome.type === "checkmate"
+    ? (currentTurn === "w" ? "b" : "w")
+    : null;
+
+  return colors
+    .filter(color => !isBotPlayerColor(color))
+    .map(color => createChessLeaderboardEntry(color, outcome, winnerColor))
+    .filter(Boolean);
+}
+
+function createChessLeaderboardEntry(color, outcome, winnerColor) {
+  const opponentColor = color === "w" ? "b" : "w";
+  const score = outcome.type === "stalemate"
+    ? 1
+    : color === winnerColor
+      ? 3
+      : 0;
+
+  return {
+    id: createChessLeaderboardEntryId(color),
+    name: getPlayerNameForColor(color),
+    opponent: getPlayerNameForColor(opponentColor),
+    score,
+    result: getChessLeaderboardResult(outcome.type, color, winnerColor),
+    mode: gameMode === "bot" ? "Vs Bot (" + botDifficulty + ")" : "Local Two Player",
+    moves: moveHistory.length,
+    outcome: outcome.type,
+    color,
+    loggedAt: new Date().toISOString()
+  };
+}
+
+function createChessLeaderboardEntryId(color) {
+  const startedAt = gameStartedAt || new Date().toISOString();
+  return startedAt + "-" + color + "-" + String(moveHistory.length);
+}
+
+function getChessLeaderboardResult(outcomeType, color, winnerColor) {
+  if (outcomeType === "stalemate") {
+    return "Draw by stalemate";
+  }
+
+  return color === winnerColor ? "Win by checkmate" : "Loss by checkmate";
+}
+
+function isBotPlayerColor(color) {
+  return color === "b" && gameMode === "bot";
+}
+
+function getPlayerNameForColor(color) {
+  if (isBotPlayerColor(color)) {
+    return "Bot";
+  }
+
+  const input = color === "w" ? whiteNameInput : blackNameInput;
+  const fallback = color === "w" ? defaultWhiteName : defaultBlackName;
+  return normalizeChessName(input.value, fallback);
+}
+
+function upsertChessLeaderboardEntry(entries, entry) {
+  const nextEntries = entries.slice();
+  const existingIndex = nextEntries.findIndex(item => item.id === entry.id);
+
+  if (existingIndex >= 0) {
+    nextEntries[existingIndex] = entry;
+  } else {
+    nextEntries.push(entry);
+  }
+
+  return nextEntries
+    .sort(compareChessLeaderboardEntries)
+    .slice(0, maxChessLeaderboardEntries);
+}
+
+function getGlobalChessLeaderboardUrl(queryString = "") {
+  return `${chessLeaderboardConfig.supabaseUrl}/rest/v1/${chessLeaderboardConfig.tableName}${queryString}`;
+}
+
+function getGlobalChessLeaderboardHeaders() {
+  return {
+    apikey: chessLeaderboardConfig.supabaseAnonKey,
+    Authorization: `Bearer ${chessLeaderboardConfig.supabaseAnonKey}`
+  };
+}
+
+async function refreshGlobalChessLeaderboard(successMessage = "Global chess leaderboard loaded.") {
+  if (!chessLeaderboardConfig.enabled) {
+    chessLeaderboard = loadChessLeaderboard();
+    chessLeaderboardScope = "Local device only";
+    chessLeaderboardMessage = "Local chess leaderboard loaded.";
+    renderChessLeaderboard();
+    return;
+  }
+
+  chessLeaderboardScope = "Global leaderboard";
+  chessLeaderboardMessage = "Loading global chess leaderboard...";
+  renderChessLeaderboard();
+
+  const query = `?select=name,score,result,opponent,mode,moves,outcome,color,created_at&order=score.desc,moves.asc,created_at.desc&limit=${globalChessLeaderboardFetchLimit}`;
+
+  try {
+    const response = await fetch(getGlobalChessLeaderboardUrl(query), {
+      headers: getGlobalChessLeaderboardHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error("Chess leaderboard fetch failed: " + response.status);
+    }
+
+    const rows = await response.json();
+    chessLeaderboard = rows
+      .map(normalizeChessLeaderboardEntry)
+      .filter(Boolean)
+      .sort(compareChessLeaderboardEntries)
+      .slice(0, maxChessLeaderboardEntries);
+    chessLeaderboardScope = "Global leaderboard";
+    chessLeaderboardMessage = successMessage;
+    renderChessLeaderboard();
+  } catch (error) {
+    chessLeaderboard = loadChessLeaderboard();
+    chessLeaderboardScope = "Local fallback";
+    chessLeaderboardMessage = "Global chess leaderboard unavailable; showing local scores.";
+    renderChessLeaderboard();
+  }
+}
+
+async function submitGlobalChessLeaderboardEntries(entries) {
+  try {
+    const response = await fetch(getGlobalChessLeaderboardUrl(), {
+      method: "POST",
+      headers: {
+        ...getGlobalChessLeaderboardHeaders(),
+        "Content-Type": "application/json",
+        Prefer: "return=minimal"
+      },
+      body: JSON.stringify(entries.map(entry => ({
+        name: entry.name,
+        score: entry.score,
+        result: entry.result,
+        opponent: entry.opponent,
+        mode: entry.mode,
+        moves: entry.moves,
+        outcome: entry.outcome,
+        color: entry.color
+      })))
+    });
+
+    if (!response.ok) {
+      throw new Error("Chess leaderboard submit failed: " + response.status);
+    }
+
+    await refreshGlobalChessLeaderboard("Completed chess game logged globally.");
+  } catch (error) {
+    chessLeaderboard = loadChessLeaderboard();
+    chessLeaderboardScope = "Local fallback";
+    chessLeaderboardMessage = "Global chess log failed; saved locally on this device.";
+    renderChessLeaderboard();
+  }
+}
+
+function compareChessLeaderboardEntries(first, second) {
+  if (second.score !== first.score) {
+    return second.score - first.score;
+  }
+
+  if (first.moves !== second.moves) {
+    return first.moves - second.moves;
+  }
+
+  return new Date(second.loggedAt).getTime() - new Date(first.loggedAt).getTime();
+}
+
+function clearChessLeaderboard() {
+  const message = chessLeaderboardConfig.enabled
+    ? "Clear local fallback chess scores on this device? Global scores stay online."
+    : "Clear the local chess leaderboard on this device?";
+
+  if (!window.confirm(message)) return;
+
+  try {
+    window.localStorage.removeItem(localChessLeaderboardKey);
+  } catch (error) {
+    chessLeaderboardMessage = "Could not clear chess leaderboard in this browser.";
+    renderChessLeaderboard();
+    return;
+  }
+
+  chessLeaderboard = [];
+  chessLeaderboardMessage = "Local chess leaderboard cleared.";
+
+  if (chessLeaderboardConfig.enabled) {
+    refreshGlobalChessLeaderboard("Global chess leaderboard loaded.");
+  } else {
+    chessLeaderboardScope = "Local device only";
+    renderChessLeaderboard();
+  }
+}
+
 function saveCompletedGameRecord(outcome) {
   if (activeGameRecordSaved || !moveHistory.length) return;
 
@@ -1169,8 +1592,8 @@ function saveLocalGameRecord(outcome) {
     savedAt: now.toISOString(),
     startedAt: gameStartedAt,
     mode: gameMode === "bot" ? "Vs Bot (" + botDifficulty + ")" : "Local Two Player",
-    whiteName: whiteNameInput.value || "White",
-    blackName: gameMode === "bot" ? "Bot" : blackNameInput.value || "Black",
+    whiteName: getPlayerNameForColor("w"),
+    blackName: getPlayerNameForColor("b"),
     result: outcome.result,
     moves: moveHistory.map(move => ({ ...move })),
     whiteCaptured: capturedByWhite.slice(),
@@ -1272,6 +1695,10 @@ function formatRecordDate(value) {
 document.getElementById("resetBtn").addEventListener("click", createStartingBoard);
 saveRecordBtn.addEventListener("click", saveCurrentGameRecord);
 clearRecordsBtn.addEventListener("click", clearLocalGameRecords);
+refreshChessLeaderboardBtn.addEventListener("click", () => {
+  refreshGlobalChessLeaderboard();
+});
+clearChessLeaderboardBtn.addEventListener("click", clearChessLeaderboard);
 
 document.getElementById("flipBtn").addEventListener("click", () => {
   boardFlipped = !boardFlipped;
@@ -1301,13 +1728,19 @@ document.getElementById("pieceSize").addEventListener("input", event => {
 
 gameModeSelect.addEventListener("change", updateBotControls);
 botDifficultySelect.addEventListener("change", updateBotControls);
-whiteNameInput.addEventListener("input", updateScoreboard);
+whiteNameInput.addEventListener("input", () => {
+  updateScoreboard();
+  updateStatus();
+});
 blackNameInput.addEventListener("input", () => {
   if (gameMode !== "bot") {
     updateScoreboard();
+    updateStatus();
   }
 });
 
 renderLocalGameRecords();
+renderChessLeaderboard();
+refreshGlobalChessLeaderboard();
 createStartingBoard();
 updateBotControls();

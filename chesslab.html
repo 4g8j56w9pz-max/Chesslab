@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FNAF ChessLab</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="leaderboard-config.js"></script>
 </head>
 
 <body>
@@ -16,12 +17,12 @@
       <div class="player-bar">
         <div class="player-card">
           <label for="whiteName">White Player</label>
-          <input id="whiteName" type="text" value="Player 1" />
+          <input id="whiteName" type="text" maxlength="18" autocomplete="nickname" value="Player 1" />
         </div>
 
         <div class="player-card">
           <label for="blackName">Black Player</label>
-          <input id="blackName" type="text" value="Player 2" />
+          <input id="blackName" type="text" maxlength="18" autocomplete="nickname" value="Player 2" />
         </div>
       </div>
 
@@ -66,7 +67,7 @@
         </select>
       </label>
 
-      <h2>Leaderboard</h2>
+      <h2>Captured Material</h2>
 
       <div class="score-row">
         <span id="whiteScoreName">Player 1</span>
@@ -77,6 +78,17 @@
         <span id="blackScoreName">Player 2</span>
         <strong id="blackScore">0</strong>
       </div>
+
+      <h2>Global Leaderboard</h2>
+
+      <div class="leaderboard-toolbar">
+        <span id="chessLeaderboardScope">Checking score service...</span>
+        <button id="refreshChessLeaderboardBtn" class="compact-button" type="button">Refresh</button>
+      </div>
+
+      <div id="chessLeaderboardStatus" class="leaderboard-status" aria-live="polite">Completed games auto-log here.</div>
+      <ol id="chessLeaderboardList" class="leaderboard-list"></ol>
+      <button id="clearChessLeaderboardBtn" class="danger-button" type="button">Clear Local Scores</button>
 
       <h2>Game Records</h2>
 
