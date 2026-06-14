@@ -1,5 +1,6 @@
 :root {
   --board-size: 640px;
+  --board-actual-size: var(--board-size);
   --piece-size: 42px;
   --glow: 18px;
 }
@@ -8,13 +9,21 @@
   box-sizing: border-box;
 }
 
+html {
+  min-height: 100%;
+  background: #000;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100svh;
   background: radial-gradient(circle at center, #330000 0%, #090909 55%, #000 100%);
   color: white;
   font-family: Arial, sans-serif;
-  overflow-x: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 
 .app {
@@ -23,7 +32,7 @@ body {
   align-items: flex-start;
   gap: 28px;
   width: 100%;
-  padding: 28px;
+  padding: max(18px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(22px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
 }
 
 section {
@@ -31,7 +40,8 @@ section {
 }
 
 .game-area {
-  max-width: var(--board-size);
+  width: var(--board-actual-size);
+  max-width: 100%;
 }
 
 h1 {
@@ -63,6 +73,8 @@ h1 {
   border: 1px solid #6b2200;
   background: #150606;
   color: #fff4b0;
+  font-size: 16px;
+  min-height: 44px;
 }
 
 #status {
@@ -98,10 +110,12 @@ h1 {
 }
 
 #board {
-  width: var(--board-size);
-  height: var(--board-size);
-  min-width: var(--board-size);
-  min-height: var(--board-size);
+  width: var(--board-actual-size);
+  height: var(--board-actual-size);
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  aspect-ratio: 1;
 
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -112,6 +126,9 @@ h1 {
   background: #111;
   position: relative;
   isolation: isolate;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
   transition:
     box-shadow 0.18s ease,
     filter 0.18s ease;
@@ -255,6 +272,8 @@ h1 {
 
   cursor: pointer;
   user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   overflow: hidden;
   position: relative;
 }
@@ -270,6 +289,8 @@ h1 {
 .square img {
   width: var(--piece-size);
   height: var(--piece-size);
+  max-width: 88%;
+  max-height: 88%;
   object-fit: contain;
   display: block;
   pointer-events: none;
@@ -951,19 +972,32 @@ h1 {
 
 button {
   width: 100%;
+  min-height: 44px;
   margin-bottom: 10px;
   padding: 10px;
   font-weight: bold;
+  font-size: 16px;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 select {
   width: 100%;
+  min-height: 44px;
   margin-top: 6px;
   padding: 8px;
   border: 1px solid #6b2200;
   background: #150606;
   color: #fff4b0;
+  font-size: 16px;
+  touch-action: manipulation;
+}
+
+input {
+  font: inherit;
+  font-size: 16px;
+  touch-action: manipulation;
 }
 
 h2 {
@@ -982,26 +1016,50 @@ input[type="range"] {
 }
 
 @media (max-width: 980px) {
+  :root {
+    --board-actual-size: min(var(--board-size), calc(100vw - 32px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+  }
+
   .app {
     align-items: center;
     flex-direction: column;
-  }
-
-  #board {
-    width: min(var(--board-size), 92vw);
-    height: min(var(--board-size), 92vw);
-    min-width: 0;
-    min-height: 0;
+    gap: 16px;
   }
 
   .game-area,
   .panel {
-    width: min(100%, 92vw);
+    width: min(100%, calc(100vw - 32px - env(safe-area-inset-left) - env(safe-area-inset-right)));
     max-width: 760px;
   }
 }
 
 @media (max-width: 560px) {
+  .app {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+
+  h1 {
+    font-size: 24px;
+    line-height: 1.05;
+  }
+
+  .player-bar,
+  .captured-area {
+    gap: 8px;
+  }
+
+  .player-card,
+  .captured-box,
+  .score-row {
+    padding: 8px;
+  }
+
+  .panel {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 360px) {
   .player-bar,
   .captured-area {
     grid-template-columns: 1fr;

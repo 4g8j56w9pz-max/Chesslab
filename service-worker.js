@@ -1,12 +1,27 @@
-const CACHE_NAME = "midnight-pizzeria-merge-v6";
+const CACHE_NAME = "midnight-pizzeria-merge-v7";
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./chesslab.html",
   "./leaderboard-config.js",
   "./styles.css",
+  "./style.css",
   "./app.js",
+  "./chesslab-app.js",
   "./manifest.json",
-  "./icons/midnight-icon.svg"
+  "./icons/midnight-icon.svg",
+  "./pieces/white-pawn.png",
+  "./pieces/white-rook.png",
+  "./pieces/white-knight.png",
+  "./pieces/white-bishop.png",
+  "./pieces/white-queen.png",
+  "./pieces/white-king.png",
+  "./pieces/black-pawn.png",
+  "./pieces/black-rook.png",
+  "./pieces/black-knight.png",
+  "./pieces/black-bishop.png",
+  "./pieces/black-queen.png",
+  "./pieces/black-king.png"
 ];
 
 self.addEventListener("install", event => {
