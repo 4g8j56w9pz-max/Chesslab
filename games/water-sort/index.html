@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#080609" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Water Sort" />
+  <title>Water Sort | Midnight Games</title>
+  <link rel="icon" href="../../icons/midnight-icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="../../icons/midnight-icon.svg" />
+  <link rel="stylesheet" href="./water-sort.css" />
+</head>
+<body>
+  <div class="water-shell">
+    <header class="water-topbar">
+      <div class="brand">
+        <span class="brand-badge" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <path d="M32 5C24 17 15 27 15 39c0 11 8 19 17 19s17-8 17-19C49 27 40 17 32 5Z" />
+            <path d="M23 40c2 6 7 9 13 8" />
+          </svg>
+        </span>
+        <div>
+          <p class="eyebrow">Midnight Games</p>
+          <h1>Water Sort</h1>
+        </div>
+      </div>
+    </header>
+
+    <nav class="game-switcher" aria-label="Game selection">
+      <a class="game-card" href="../../index.html">Merge</a>
+      <a class="game-card" href="../../chesslab.html">Chess</a>
+      <a class="game-card is-active" href="./index.html" aria-current="page">Water Sort</a>
+    </nav>
+
+    <section class="score-panel" aria-label="Water Sort status">
+      <div class="score-card">
+        <span>Level</span>
+        <strong id="level-number">1</strong>
+      </div>
+      <div class="score-card">
+        <span>Moves</span>
+        <strong id="move-count">0</strong>
+      </div>
+      <div class="score-card status-card">
+        <span>Status</span>
+        <strong id="status-label">Sort</strong>
+      </div>
+    </section>
+
+    <main class="water-layout">
+      <section class="puzzle-panel" aria-label="Water Sort puzzle">
+        <p id="game-message" class="game-message" aria-live="polite">Select a tube.</p>
+        <div id="tubes" class="tubes" aria-label="Tubes"></div>
+        <div class="controls" aria-label="Game controls">
+          <button id="undo-button" class="ghost-button" type="button">Undo</button>
+          <button id="restart-button" class="ghost-button" type="button">Restart</button>
+          <button id="next-button" class="primary-button" type="button" hidden>Next Level</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./water-sort.js" defer></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 
 A mobile-first, open-source-style merge game based on classic 2048 mechanics. The theme is an original haunted animatronic pizza-arcade tribute with custom CSS/SVG art, no external dependencies, and no official franchise names, logos, ripped assets, or exact character designs.
 
-The root app is `index.html`. The previous ChessLab page is preserved at `chesslab.html`.
+The root app is `index.html`. The previous ChessLab page is preserved at `chesslab.html`, and Water Sort is available at `games/water-sort/`.
 
 ## Run locally
 

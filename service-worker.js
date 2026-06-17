@@ -1,8 +1,12 @@
-const CACHE_NAME = "midnight-pizzeria-merge-v7";
+const CACHE_NAME = "midnight-pizzeria-merge-v8";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./chesslab.html",
+  "./games/water-sort/",
+  "./games/water-sort/index.html",
+  "./games/water-sort/water-sort.css",
+  "./games/water-sort/water-sort.js",
   "./leaderboard-config.js",
   "./styles.css",
   "./style.css",

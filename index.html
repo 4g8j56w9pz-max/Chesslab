@@ -17,7 +17,6 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <a class="legacy-link" href="chesslab.html">ChessLab</a>
       <div class="brand">
         <span class="brand-badge" aria-hidden="true">
           <svg viewBox="0 0 64 64" role="img">
@@ -35,6 +34,12 @@
       </div>
       <button id="new-game" class="primary-button" type="button">New Game</button>
     </header>
+
+    <nav class="game-switcher" aria-label="Game selection">
+      <a class="game-card is-active" href="./index.html" aria-current="page">Merge</a>
+      <a class="game-card" href="./chesslab.html">Chess</a>
+      <a class="game-card" href="./games/water-sort/">Water Sort</a>
+    </nav>
 
     <section class="score-panel" aria-label="Game scores">
       <div class="score-card">
