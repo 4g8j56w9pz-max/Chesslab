@@ -72,3 +72,33 @@ create policy "Anyone can submit a completed chess score"
   );
 
 grant select, insert on public.chesslab_leaderboard to anon;
+
+create table if not exists public.water_sort_leaderboard (
+  id uuid primary key default gen_random_uuid(),
+  name text not null check (char_length(name) between 1 and 18),
+  level integer not null check (level >= 1),
+  moves integer not null check (moves > 0),
+  created_at timestamptz not null default now()
+);
+
+alter table public.water_sort_leaderboard enable row level security;
+
+drop policy if exists "Water Sort scores are readable by everyone" on public.water_sort_leaderboard;
+create policy "Water Sort scores are readable by everyone"
+  on public.water_sort_leaderboard
+  for select
+  to anon, authenticated
+  using (true);
+
+drop policy if exists "Anyone can submit a completed Water Sort score" on public.water_sort_leaderboard;
+create policy "Anyone can submit a completed Water Sort score"
+  on public.water_sort_leaderboard
+  for insert
+  to anon
+  with check (
+    char_length(name) between 1 and 18
+    and level >= 1
+    and moves > 0
+  );
+
+grant select, insert on public.water_sort_leaderboard to anon;

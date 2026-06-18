@@ -19,6 +19,10 @@ const moveLogElement = document.getElementById("moveLog");
 const chessLeaderboardScopeElement = document.getElementById("chessLeaderboardScope");
 const chessLeaderboardStatusElement = document.getElementById("chessLeaderboardStatus");
 const chessLeaderboardListElement = document.getElementById("chessLeaderboardList");
+const chessLeaderboardPendingElement = document.getElementById("chessLeaderboardPending");
+const chessLeaderboardPendingTextElement = document.getElementById("chessLeaderboardPendingText");
+const submitChessLeaderboardBtn = document.getElementById("submitChessLeaderboardBtn");
+const skipChessLeaderboardBtn = document.getElementById("skipChessLeaderboardBtn");
 const refreshChessLeaderboardBtn = document.getElementById("refreshChessLeaderboardBtn");
 const clearChessLeaderboardBtn = document.getElementById("clearChessLeaderboardBtn");
 
@@ -36,6 +40,7 @@ let moveHistory = [];
 let gameStartedAt = null;
 let activeGameRecordSaved = false;
 let activeLeaderboardEntryLogged = false;
+let pendingChessLeaderboardEntries = [];
 let lastKingDangerKey = "none";
 
 const localGameRecordsKey = "chesslab.localGameRecords";
@@ -104,11 +109,13 @@ function createStartingBoard() {
   gameStartedAt = new Date().toISOString();
   activeGameRecordSaved = false;
   activeLeaderboardEntryLogged = false;
+  pendingChessLeaderboardEntries = [];
   lastKingDangerKey = "none";
   updateStatus();
   updateCapturedPieces();
   updateScoreboard();
   updateMoveLog();
+  renderChessLeaderboard();
   renderBoard();
   scheduleBotMove();
 }
@@ -1182,8 +1189,8 @@ function getChessGlobalLeaderboardConfig() {
 
 function getInitialChessLeaderboardMessage() {
   return chessLeaderboardConfig.enabled
-    ? "Global chess scores load here. Completed games auto-log online."
-    : "Completed chess games auto-log on this device.";
+    ? "Global chess scores load here. Completed games wait for confirmation."
+    : "Completed chess games wait for confirmation on this device.";
 }
 
 function getInitialChessLeaderboardScope() {
@@ -1268,6 +1275,7 @@ function renderChessLeaderboard() {
   chessLeaderboardScopeElement.textContent = chessLeaderboardScope;
   chessLeaderboardStatusElement.textContent = chessLeaderboardMessage;
   chessLeaderboardListElement.innerHTML = "";
+  renderChessLeaderboardPending();
 
   if (!chessLeaderboard.length) {
     const empty = document.createElement("li");
@@ -1317,6 +1325,29 @@ function renderChessLeaderboard() {
   });
 }
 
+function renderChessLeaderboardPending() {
+  if (!chessLeaderboardPendingElement || !chessLeaderboardPendingTextElement) {
+    return;
+  }
+
+  chessLeaderboardPendingElement.hidden = pendingChessLeaderboardEntries.length === 0;
+
+  if (pendingChessLeaderboardEntries.length === 0) {
+    chessLeaderboardPendingTextElement.textContent = "";
+    return;
+  }
+
+  const entryCount = pendingChessLeaderboardEntries.length;
+  const scoreText = pendingChessLeaderboardEntries
+    .map(entry => entry.name + " " + formatChessLeaderboardScore(entry.score))
+    .join(" | ");
+
+  chessLeaderboardPendingTextElement.textContent =
+    entryCount === 1
+      ? scoreText + " ready."
+      : entryCount + " results ready: " + scoreText + ".";
+}
+
 function formatChessLeaderboardScore(score) {
   return score === 1 ? "1 pt" : String(score) + " pts";
 }
@@ -1324,6 +1355,7 @@ function formatChessLeaderboardScore(score) {
 function logCompletedChessLeaderboard(outcome, shouldRender = true) {
   if (
     activeLeaderboardEntryLogged ||
+    pendingChessLeaderboardEntries.length > 0 ||
     !moveHistory.length ||
     !["checkmate", "stalemate"].includes(outcome.type)
   ) {
@@ -1341,22 +1373,37 @@ function logCompletedChessLeaderboard(outcome, shouldRender = true) {
     return;
   }
 
+  pendingChessLeaderboardEntries = entries;
+  activeLeaderboardEntryLogged = true;
+  chessLeaderboardMessage = "Result ready. Edit display names, then submit or skip.";
+
+  if (shouldRender) {
+    renderChessLeaderboard();
+  }
+}
+
+function submitPendingChessLeaderboardEntries(shouldRender = true) {
+  if (!pendingChessLeaderboardEntries.length) {
+    return;
+  }
+
+  const entries = pendingChessLeaderboardEntries.map(refreshChessLeaderboardEntryNames);
   let localLeaderboard = loadChessLeaderboard();
   entries.forEach(entry => {
     localLeaderboard = upsertChessLeaderboardEntry(localLeaderboard, entry);
   });
 
   if (saveChessLeaderboard(localLeaderboard)) {
-    activeLeaderboardEntryLogged = true;
+    pendingChessLeaderboardEntries = [];
     chessLeaderboard = localLeaderboard;
     chessLeaderboardScope = chessLeaderboardConfig.enabled
       ? "Local pending sync"
       : "Local device only";
     chessLeaderboardMessage = chessLeaderboardConfig.enabled
       ? "Completed game saved locally. Sending chess result online..."
-      : "Completed game logged locally.";
+      : "Completed game submitted locally.";
   } else {
-    activeLeaderboardEntryLogged = true;
+    pendingChessLeaderboardEntries = [];
   }
 
   if (shouldRender) {
@@ -1366,6 +1413,26 @@ function logCompletedChessLeaderboard(outcome, shouldRender = true) {
   if (chessLeaderboardConfig.enabled) {
     submitGlobalChessLeaderboardEntries(entries);
   }
+}
+
+function skipPendingChessLeaderboardEntries() {
+  if (!pendingChessLeaderboardEntries.length) {
+    return;
+  }
+
+  pendingChessLeaderboardEntries = [];
+  chessLeaderboardMessage = "Completed game skipped.";
+  renderChessLeaderboard();
+}
+
+function refreshChessLeaderboardEntryNames(entry) {
+  const opponentColor = entry.color === "w" ? "b" : "w";
+
+  return {
+    ...entry,
+    name: getPlayerNameForColor(entry.color),
+    opponent: getPlayerNameForColor(opponentColor)
+  };
 }
 
 function createCompletedChessLeaderboardEntries(outcome) {
@@ -1695,6 +1762,10 @@ function formatRecordDate(value) {
 document.getElementById("resetBtn").addEventListener("click", createStartingBoard);
 saveRecordBtn.addEventListener("click", saveCurrentGameRecord);
 clearRecordsBtn.addEventListener("click", clearLocalGameRecords);
+submitChessLeaderboardBtn.addEventListener("click", () => {
+  submitPendingChessLeaderboardEntries();
+});
+skipChessLeaderboardBtn.addEventListener("click", skipPendingChessLeaderboardEntries);
 refreshChessLeaderboardBtn.addEventListener("click", () => {
   refreshGlobalChessLeaderboard();
 });
@@ -1731,11 +1802,19 @@ botDifficultySelect.addEventListener("change", updateBotControls);
 whiteNameInput.addEventListener("input", () => {
   updateScoreboard();
   updateStatus();
+  if (pendingChessLeaderboardEntries.length) {
+    pendingChessLeaderboardEntries = pendingChessLeaderboardEntries.map(refreshChessLeaderboardEntryNames);
+    renderChessLeaderboard();
+  }
 });
 blackNameInput.addEventListener("input", () => {
   if (gameMode !== "bot") {
     updateScoreboard();
     updateStatus();
+    if (pendingChessLeaderboardEntries.length) {
+      pendingChessLeaderboardEntries = pendingChessLeaderboardEntries.map(refreshChessLeaderboardEntryNames);
+      renderChessLeaderboard();
+    }
   }
 });
 

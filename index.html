@@ -93,7 +93,7 @@
         <p class="win-rule">Reach <strong>2048 Midnight Show</strong>. The game ends when the board is full and no neighboring tiles match.</p>
       </section>
 
-      <section class="leaderboard-panel" aria-label="Local leaderboard">
+      <section class="leaderboard-panel" aria-label="Merge leaderboard">
         <div class="panel-heading">
           <div>
             <h2>Leaderboard</h2>
@@ -103,11 +103,20 @@
         </div>
 
         <label class="player-field" for="player-name">
-          <span>Player Name</span>
+          <span>Display Name</span>
           <input id="player-name" type="text" maxlength="18" autocomplete="nickname" value="Night Guard" />
         </label>
 
-        <p id="leaderboard-status" class="leaderboard-status" aria-live="polite">Finished games auto-log here.</p>
+        <div id="score-confirmation" class="score-confirmation" hidden>
+          <div>
+            <strong>Submit Score</strong>
+            <span id="score-confirmation-detail">Score ready.</span>
+          </div>
+          <button id="submit-score" class="primary-button" type="button">Submit</button>
+          <button id="skip-score" class="ghost-button" type="button">Skip</button>
+        </div>
+
+        <p id="leaderboard-status" class="leaderboard-status" aria-live="polite">Finished games wait for confirmation.</p>
 
         <ol id="leaderboard" class="leaderboard-list"></ol>
       </section>

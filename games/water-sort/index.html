@@ -11,6 +11,7 @@
   <link rel="icon" href="../../icons/midnight-icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="../../icons/midnight-icon.svg" />
   <link rel="stylesheet" href="./water-sort.css" />
+  <script src="../../leaderboard-config.js"></script>
 </head>
 <body>
   <div class="water-shell">
@@ -59,6 +60,36 @@
           <button id="restart-button" class="ghost-button" type="button">Restart</button>
           <button id="next-button" class="primary-button" type="button" hidden>Next Level</button>
         </div>
+      </section>
+
+      <section class="leaderboard-panel" aria-label="Water Sort leaderboard">
+        <div class="panel-heading">
+          <div>
+            <h2>Leaderboard</h2>
+            <p id="water-leaderboard-scope" class="panel-note">Checking score service...</p>
+          </div>
+          <div class="leaderboard-actions">
+            <button id="water-refresh-leaderboard" class="ghost-button" type="button">Refresh</button>
+            <button id="water-clear-leaderboard" class="ghost-button" type="button">Clear</button>
+          </div>
+        </div>
+
+        <label class="player-field" for="water-player-name">
+          <span>Display Name</span>
+          <input id="water-player-name" type="text" maxlength="18" autocomplete="nickname" value="Sorter" />
+        </label>
+
+        <div id="water-score-confirmation" class="score-confirmation" hidden>
+          <div>
+            <strong>Submit Clear</strong>
+            <span id="water-score-confirmation-detail">Clear ready.</span>
+          </div>
+          <button id="water-submit-score" class="primary-button" type="button">Submit</button>
+          <button id="water-skip-score" class="ghost-button" type="button">Skip</button>
+        </div>
+
+        <p id="water-leaderboard-status" class="leaderboard-status" aria-live="polite">Finished levels wait for confirmation.</p>
+        <ol id="water-leaderboard" class="leaderboard-list"></ol>
       </section>
     </main>
   </div>

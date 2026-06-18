@@ -194,8 +194,194 @@ h1 {
   gap: 14px;
 }
 
-.puzzle-panel {
+.puzzle-panel,
+.leaderboard-panel {
   width: 100%;
+}
+
+.leaderboard-panel {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.panel-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.panel-heading h2 {
+  margin: 0 0 3px;
+  font-size: 1.1rem;
+}
+
+.panel-note {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.leaderboard-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.leaderboard-actions .ghost-button {
+  min-height: 36px;
+  padding: 8px 10px;
+}
+
+.player-field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.player-field span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.player-field input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 11px;
+  color: var(--ink);
+  font: inherit;
+  border: 1px solid rgba(255, 209, 102, 0.28);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.player-field input:focus-visible {
+  outline: 3px solid rgba(255, 209, 102, 0.55);
+  outline-offset: 2px;
+}
+
+.score-confirmation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 9px;
+  border: 1px solid rgba(255, 209, 102, 0.3);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.score-confirmation[hidden] {
+  display: none;
+}
+
+.score-confirmation div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.score-confirmation strong,
+.score-confirmation span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score-confirmation strong {
+  color: #ffd166;
+  font-size: 0.82rem;
+}
+
+.score-confirmation span {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.score-confirmation .primary-button,
+.score-confirmation .ghost-button {
+  min-height: 36px;
+  padding: 8px 10px;
+}
+
+.leaderboard-status {
+  min-height: 18px;
+  margin: 0 0 10px;
+  color: #ffd166;
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.leaderboard-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.leaderboard-entry,
+.leaderboard-empty {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.leaderboard-entry {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 62px;
+  padding: 8px;
+}
+
+.leaderboard-empty {
+  padding: 11px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.leaderboard-rank {
+  color: #ffd166;
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.leaderboard-main {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.leaderboard-main strong,
+.leaderboard-main small {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboard-main strong {
+  font-size: 0.92rem;
+}
+
+.leaderboard-main small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.leaderboard-score {
+  color: #fff7ed;
+  font-size: 0.94rem;
+  font-weight: 950;
 }
 
 .game-message {
@@ -442,6 +628,7 @@ h1 {
 
   .score-panel,
   .puzzle-panel,
+  .leaderboard-panel,
   .game-switcher {
     max-width: 760px;
     margin-left: auto;
@@ -486,6 +673,26 @@ h1 {
 
   .score-card strong {
     font-size: 1rem;
+  }
+
+  .panel-heading,
+  .score-confirmation {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-heading {
+    display: grid;
+  }
+
+  .leaderboard-actions,
+  .score-confirmation .primary-button,
+  .score-confirmation .ghost-button {
+    width: 100%;
+  }
+
+  .leaderboard-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .tubes {

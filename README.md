@@ -28,7 +28,7 @@ The app uses relative paths, so it works from a repository Pages URL such as `ht
 
 ## Optional global leaderboards
 
-By default, merge and chess scores are saved locally in each browser. To share scores across all players, create a Supabase project and run the SQL in `supabase-leaderboard.sql` from the Supabase SQL Editor.
+By default, Merge, Chess, and Water Sort scores are saved locally in each browser. To share scores across all players, create a Supabase project and run the SQL in `supabase-leaderboard.sql` from the Supabase SQL Editor.
 
 Then edit `leaderboard-config.js`:
 
@@ -37,13 +37,14 @@ window.MPM_LEADERBOARD_CONFIG = {
   supabaseUrl: "https://YOUR_PROJECT_REF.supabase.co",
   supabaseAnonKey: "YOUR_SUPABASE_ANON_OR_PUBLISHABLE_KEY",
   tableName: "pizzeria_leaderboard",
-  chessTableName: "chesslab_leaderboard"
+  chessTableName: "chesslab_leaderboard",
+  waterSortTableName: "water_sort_leaderboard"
 };
 ```
 
 Use only the anon/publishable key in frontend code. Do not put a Supabase service-role key or database password in this repository.
 
-Both games still work without this configuration; they will show local-only leaderboards or local fallbacks if the global score service is unavailable. ChessLab scores completed games as 3 points for a win, 1 point for a draw, and 0 points for a loss.
+All games still work without this configuration; they will show local-only leaderboards or local fallbacks if the global score service is unavailable. Scores are submitted only after the player confirms the finished game or level with an editable display name. ChessLab scores completed games as 3 points for a win, 1 point for a draw, and 0 points for a loss. Water Sort ranks clears by highest level, then fewest moves.
 
 ## Add to iPhone Home Screen
 

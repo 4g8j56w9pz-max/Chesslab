@@ -2,8 +2,13 @@ const CAPACITY = 4;
 const MIN_LEVEL = 1;
 const GENERATED_LEVEL_COUNT = 100;
 const STORAGE_KEY = "midnightWaterSort.progress.v1";
+const PLAYER_NAME_KEY = "midnightWaterSort.displayName";
+const LEADERBOARD_KEY = "midnightWaterSort.leaderboard.v1";
 const MAX_UNDO_STATES = 40;
+const MAX_LEADERBOARD_ENTRIES = 20;
+const GLOBAL_LEADERBOARD_FETCH_LIMIT = 50;
 const ANIMATION_MS = 320;
+const DEFAULT_PLAYER_NAME = "Sorter";
 
 const palette = [
   { name: "Cherry", color: "#DE3341", shine: "#ff8a94", glow: "rgba(222, 51, 65, 0.46)" },
@@ -28,8 +33,20 @@ const elements = {
   tubes: document.getElementById("tubes"),
   undoButton: document.getElementById("undo-button"),
   restartButton: document.getElementById("restart-button"),
-  nextButton: document.getElementById("next-button")
+  nextButton: document.getElementById("next-button"),
+  playerName: document.getElementById("water-player-name"),
+  leaderboardScope: document.getElementById("water-leaderboard-scope"),
+  leaderboardStatus: document.getElementById("water-leaderboard-status"),
+  leaderboardList: document.getElementById("water-leaderboard"),
+  leaderboardPending: document.getElementById("water-score-confirmation"),
+  leaderboardPendingText: document.getElementById("water-score-confirmation-detail"),
+  submitLeaderboardButton: document.getElementById("water-submit-score"),
+  skipLeaderboardButton: document.getElementById("water-skip-score"),
+  refreshLeaderboardButton: document.getElementById("water-refresh-leaderboard"),
+  clearLeaderboardButton: document.getElementById("water-clear-leaderboard")
 };
+
+const leaderboardConfig = getWaterGlobalLeaderboardConfig();
 
 const state = {
   level: MIN_LEVEL,
@@ -40,7 +57,13 @@ const state = {
   won: false,
   message: "Select a tube.",
   animation: null,
-  isAnimating: false
+  isAnimating: false,
+  leaderboardMessage: getInitialLeaderboardMessage(),
+  leaderboardScope: getInitialLeaderboardScope(),
+  leaderboard: loadLeaderboard(),
+  pendingLeaderboardEntry: null,
+  levelRunId: createLeaderboardEntryId(),
+  levelLogged: false
 };
 
 function cloneTubes(tubes) {
@@ -145,10 +168,298 @@ function loadProgress() {
     state.undoStack = [];
     state.won = Boolean(saved.won) || checkWin(state.tubes);
     state.message = state.won ? "Level clear." : "Progress restored.";
+    state.pendingLeaderboardEntry = null;
+    state.levelRunId = createLeaderboardEntryId();
+    state.levelLogged = state.won;
     return true;
   } catch (error) {
     return false;
   }
+}
+
+function getWaterGlobalLeaderboardConfig() {
+  const rawConfig = window.MPM_LEADERBOARD_CONFIG || {};
+  const supabaseUrl = String(rawConfig.supabaseUrl || "").replace(/\/+$/, "");
+  const supabaseAnonKey = String(rawConfig.supabaseAnonKey || "");
+  const requestedTable = String(
+    rawConfig.waterSortTableName ||
+    rawConfig.waterLeaderboardTableName ||
+    "water_sort_leaderboard"
+  );
+  const tableName = /^[a-zA-Z0-9_]+$/.test(requestedTable)
+    ? requestedTable
+    : "water_sort_leaderboard";
+
+  return {
+    enabled: Boolean(supabaseUrl && supabaseAnonKey),
+    supabaseUrl,
+    supabaseAnonKey,
+    tableName
+  };
+}
+
+function getInitialLeaderboardMessage() {
+  return leaderboardConfig.enabled
+    ? "Global Water Sort clears load here. Finished levels wait for confirmation."
+    : "Finished levels wait for confirmation on this device.";
+}
+
+function getInitialLeaderboardScope() {
+  return leaderboardConfig.enabled
+    ? "Global leaderboard"
+    : "Local device only";
+}
+
+function loadPlayerName() {
+  try {
+    return localStorage.getItem(PLAYER_NAME_KEY) || DEFAULT_PLAYER_NAME;
+  } catch (error) {
+    return DEFAULT_PLAYER_NAME;
+  }
+}
+
+function savePlayerName(name) {
+  try {
+    localStorage.setItem(PLAYER_NAME_KEY, name);
+  } catch (error) {
+    // Display names are optional and should not block play.
+  }
+}
+
+function getPlayerName() {
+  const value = elements.playerName.value.trim().slice(0, 18);
+  return value || DEFAULT_PLAYER_NAME;
+}
+
+function loadLeaderboard() {
+  try {
+    const rawEntries = localStorage.getItem(LEADERBOARD_KEY);
+    const entries = rawEntries ? JSON.parse(rawEntries) : [];
+
+    if (!Array.isArray(entries)) {
+      return [];
+    }
+
+    return entries
+      .map(normalizeLeaderboardEntry)
+      .filter(Boolean)
+      .sort(compareLeaderboardEntries)
+      .slice(0, MAX_LEADERBOARD_ENTRIES);
+  } catch (error) {
+    return [];
+  }
+}
+
+function normalizeLeaderboardEntry(entry) {
+  if (!entry || typeof entry !== "object") {
+    return null;
+  }
+
+  const name = String(entry.name || DEFAULT_PLAYER_NAME).trim().slice(0, 18);
+  const level = Math.floor(Number(entry.level) || 0);
+  const moves = Math.floor(Number(entry.moves) || 0);
+
+  if (!name || level < MIN_LEVEL || moves <= 0) {
+    return null;
+  }
+
+  return {
+    id: String(entry.id || createLeaderboardEntryId()),
+    name,
+    level,
+    moves,
+    loggedAt: entry.loggedAt || entry.created_at || new Date().toISOString()
+  };
+}
+
+function saveLeaderboard(entries) {
+  try {
+    localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(entries));
+    return true;
+  } catch (error) {
+    state.leaderboardMessage = "Leaderboard could not be saved in this browser.";
+    return false;
+  }
+}
+
+function stageCompletedLevel(shouldRender = true) {
+  if (state.levelLogged || state.pendingLeaderboardEntry || !state.won || state.moves <= 0) {
+    return;
+  }
+
+  state.pendingLeaderboardEntry = createLeaderboardEntry();
+  state.leaderboardMessage = "Level clear. Edit the display name, then submit or skip.";
+
+  if (shouldRender) {
+    renderLeaderboard();
+  }
+}
+
+function submitPendingScore(shouldRender = true) {
+  if (!state.pendingLeaderboardEntry || state.levelLogged) {
+    return;
+  }
+
+  const entry = {
+    ...state.pendingLeaderboardEntry,
+    name: getPlayerName()
+  };
+  const localLeaderboard = upsertLeaderboardEntry(loadLeaderboard(), entry);
+
+  if (saveLeaderboard(localLeaderboard)) {
+    state.levelLogged = true;
+    state.pendingLeaderboardEntry = null;
+    savePlayerName(entry.name);
+
+    if (leaderboardConfig.enabled) {
+      state.leaderboard = localLeaderboard;
+      state.leaderboardScope = "Local pending sync";
+      state.leaderboardMessage = `Clear saved locally. Sending ${entry.name}'s score online...`;
+    } else {
+      state.leaderboard = localLeaderboard;
+      state.leaderboardMessage = `Clear submitted for ${entry.name}.`;
+    }
+  } else {
+    state.levelLogged = true;
+    state.pendingLeaderboardEntry = null;
+  }
+
+  if (shouldRender) {
+    renderLeaderboard();
+  }
+
+  if (leaderboardConfig.enabled) {
+    submitGlobalLeaderboardEntry(entry);
+  }
+}
+
+function skipPendingScore() {
+  if (!state.pendingLeaderboardEntry) {
+    return;
+  }
+
+  state.pendingLeaderboardEntry = null;
+  state.levelLogged = true;
+  state.leaderboardMessage = "Clear skipped.";
+  renderLeaderboard();
+}
+
+function createLeaderboardEntry() {
+  return {
+    id: state.levelRunId,
+    name: getPlayerName(),
+    level: state.level,
+    moves: state.moves,
+    loggedAt: new Date().toISOString()
+  };
+}
+
+function upsertLeaderboardEntry(entries, entry) {
+  const nextEntries = entries.slice();
+  const existingIndex = nextEntries.findIndex(item => item.id === entry.id);
+
+  if (existingIndex >= 0) {
+    nextEntries[existingIndex] = entry;
+  } else {
+    nextEntries.push(entry);
+  }
+
+  return nextEntries
+    .sort(compareLeaderboardEntries)
+    .slice(0, MAX_LEADERBOARD_ENTRIES);
+}
+
+function getGlobalLeaderboardUrl(queryString = "") {
+  return `${leaderboardConfig.supabaseUrl}/rest/v1/${leaderboardConfig.tableName}${queryString}`;
+}
+
+function getGlobalLeaderboardHeaders() {
+  return {
+    apikey: leaderboardConfig.supabaseAnonKey,
+    Authorization: `Bearer ${leaderboardConfig.supabaseAnonKey}`
+  };
+}
+
+async function refreshGlobalLeaderboard(successMessage = "Global Water Sort leaderboard loaded.") {
+  if (!leaderboardConfig.enabled) {
+    state.leaderboard = loadLeaderboard();
+    state.leaderboardScope = "Local device only";
+    state.leaderboardMessage = "Local Water Sort leaderboard loaded.";
+    renderLeaderboard();
+    return;
+  }
+
+  state.leaderboardScope = "Global leaderboard";
+  state.leaderboardMessage = "Loading global Water Sort leaderboard...";
+  renderLeaderboard();
+
+  const query = `?select=name,level,moves,created_at&order=level.desc,moves.asc,created_at.desc&limit=${GLOBAL_LEADERBOARD_FETCH_LIMIT}`;
+
+  try {
+    const response = await fetch(getGlobalLeaderboardUrl(query), {
+      headers: getGlobalLeaderboardHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error("Water Sort leaderboard fetch failed: " + response.status);
+    }
+
+    const rows = await response.json();
+    state.leaderboard = rows
+      .map(normalizeLeaderboardEntry)
+      .filter(Boolean)
+      .sort(compareLeaderboardEntries)
+      .slice(0, MAX_LEADERBOARD_ENTRIES);
+    state.leaderboardScope = "Global leaderboard";
+    state.leaderboardMessage = successMessage;
+    renderLeaderboard();
+  } catch (error) {
+    state.leaderboard = loadLeaderboard();
+    state.leaderboardScope = "Local fallback";
+    state.leaderboardMessage = "Global Water Sort leaderboard unavailable; showing local clears.";
+    renderLeaderboard();
+  }
+}
+
+async function submitGlobalLeaderboardEntry(entry) {
+  try {
+    const response = await fetch(getGlobalLeaderboardUrl(), {
+      method: "POST",
+      headers: {
+        ...getGlobalLeaderboardHeaders(),
+        "Content-Type": "application/json",
+        Prefer: "return=minimal"
+      },
+      body: JSON.stringify({
+        name: entry.name,
+        level: entry.level,
+        moves: entry.moves
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("Water Sort leaderboard submit failed: " + response.status);
+    }
+
+    await refreshGlobalLeaderboard(`Clear logged globally for ${entry.name}.`);
+  } catch (error) {
+    state.leaderboard = loadLeaderboard();
+    state.leaderboardScope = "Local fallback";
+    state.leaderboardMessage = "Global Water Sort log failed; saved locally on this device.";
+    renderLeaderboard();
+  }
+}
+
+function compareLeaderboardEntries(first, second) {
+  if (second.level !== first.level) {
+    return second.level - first.level;
+  }
+
+  if (first.moves !== second.moves) {
+    return first.moves - second.moves;
+  }
+
+  return new Date(second.loggedAt).getTime() - new Date(first.loggedAt).getTime();
 }
 
 function isValidSave(save) {
@@ -195,6 +506,10 @@ function startLevel(level) {
   state.message = `Level ${state.level} ready.`;
   state.animation = null;
   state.isAnimating = false;
+  state.pendingLeaderboardEntry = null;
+  state.levelRunId = createLeaderboardEntryId();
+  state.levelLogged = false;
+  state.leaderboardMessage = getInitialLeaderboardMessage();
   saveProgress();
   render();
 }
@@ -219,6 +534,10 @@ function undoMove() {
   state.selectedTube = null;
   state.animation = null;
   state.message = "Move undone.";
+  if (!state.won && state.pendingLeaderboardEntry) {
+    state.pendingLeaderboardEntry = null;
+    state.leaderboardMessage = "Clear undone. Finish the level again to submit it.";
+  }
   saveProgress();
   render();
 }
@@ -288,6 +607,9 @@ function pour(fromIndex, toIndex) {
   state.selectedTube = null;
   state.won = checkWin();
   state.message = state.won ? "Level clear." : `${palette[color].name} poured.`;
+  if (state.won) {
+    stageCompletedLevel(false);
+  }
   state.animation = {
     fromIndex,
     toIndex,
@@ -442,6 +764,7 @@ function render() {
   elements.restartButton.disabled = state.isAnimating;
   elements.nextButton.hidden = !state.won;
   renderTubes();
+  renderLeaderboard();
 }
 
 function renderTubes() {
@@ -502,6 +825,111 @@ function renderTubes() {
   });
 }
 
+function renderLeaderboard() {
+  elements.leaderboardScope.textContent = state.leaderboardScope;
+  elements.leaderboardStatus.textContent = state.leaderboardMessage;
+  elements.leaderboardList.innerHTML = "";
+  renderScoreConfirmation();
+
+  if (!state.leaderboard.length) {
+    const empty = document.createElement("li");
+    empty.className = "leaderboard-empty";
+    empty.textContent = leaderboardConfig.enabled
+      ? "No global Water Sort clears loaded yet."
+      : "No local Water Sort clears yet.";
+    elements.leaderboardList.appendChild(empty);
+    return;
+  }
+
+  state.leaderboard.slice(0, 10).forEach((entry, index) => {
+    const item = document.createElement("li");
+    item.className = "leaderboard-entry";
+
+    const rank = document.createElement("span");
+    rank.className = "leaderboard-rank";
+    rank.textContent = `#${index + 1}`;
+
+    const main = document.createElement("span");
+    main.className = "leaderboard-main";
+
+    const name = document.createElement("strong");
+    name.textContent = entry.name;
+
+    const details = document.createElement("small");
+    details.textContent = `${entry.moves} moves | ${formatDate(entry.loggedAt)}`;
+
+    main.appendChild(name);
+    main.appendChild(details);
+
+    const score = document.createElement("span");
+    score.className = "leaderboard-score";
+    score.textContent = `Lv ${entry.level}`;
+
+    item.appendChild(rank);
+    item.appendChild(main);
+    item.appendChild(score);
+    elements.leaderboardList.appendChild(item);
+  });
+}
+
+function renderScoreConfirmation() {
+  const entry = state.pendingLeaderboardEntry;
+  elements.leaderboardPending.hidden = !entry;
+
+  if (!entry) {
+    elements.leaderboardPendingText.textContent = "";
+    return;
+  }
+
+  elements.leaderboardPendingText.textContent =
+    `Level ${entry.level} | ${entry.moves} moves`;
+}
+
+function clearLeaderboard() {
+  const message = leaderboardConfig.enabled
+    ? "Clear local fallback Water Sort scores on this device? Global scores stay online."
+    : "Clear the local Water Sort leaderboard on this device?";
+
+  if (!window.confirm(message)) {
+    return;
+  }
+
+  try {
+    localStorage.removeItem(LEADERBOARD_KEY);
+  } catch (error) {
+    state.leaderboardMessage = "Could not clear Water Sort leaderboard in this browser.";
+    renderLeaderboard();
+    return;
+  }
+
+  state.leaderboard = [];
+  state.leaderboardMessage = "Local Water Sort leaderboard cleared.";
+
+  if (leaderboardConfig.enabled) {
+    refreshGlobalLeaderboard("Global Water Sort leaderboard loaded.");
+  } else {
+    state.leaderboardScope = "Local device only";
+    renderLeaderboard();
+  }
+}
+
+function createLeaderboardEntryId() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function formatDate(value) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Unknown";
+  }
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric"
+  });
+}
+
 function isNewAnimatedUnit(tubeIndex, slot) {
   if (!state.animation || tubeIndex !== state.animation.toIndex) {
     return false;
@@ -538,9 +966,23 @@ elements.tubes.addEventListener("click", event => {
 elements.undoButton.addEventListener("click", undoMove);
 elements.restartButton.addEventListener("click", restartLevel);
 elements.nextButton.addEventListener("click", nextLevel);
+elements.submitLeaderboardButton.addEventListener("click", () => {
+  submitPendingScore();
+});
+elements.skipLeaderboardButton.addEventListener("click", skipPendingScore);
+elements.refreshLeaderboardButton.addEventListener("click", () => {
+  refreshGlobalLeaderboard();
+});
+elements.clearLeaderboardButton.addEventListener("click", clearLeaderboard);
+elements.playerName.value = loadPlayerName();
+elements.playerName.addEventListener("input", () => {
+  savePlayerName(getPlayerName());
+});
 
 if (!loadProgress()) {
   startLevel(MIN_LEVEL);
 } else {
   render();
 }
+
+refreshGlobalLeaderboard();

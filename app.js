@@ -18,6 +18,10 @@ const tryAgainButton = document.getElementById("try-again");
 const lineupElement = document.getElementById("lineup");
 const moveHintElement = document.getElementById("move-hint");
 const playerNameInput = document.getElementById("player-name");
+const scoreConfirmationElement = document.getElementById("score-confirmation");
+const scoreConfirmationDetailElement = document.getElementById("score-confirmation-detail");
+const submitScoreButton = document.getElementById("submit-score");
+const skipScoreButton = document.getElementById("skip-score");
 const clearLeaderboardButton = document.getElementById("clear-leaderboard");
 const leaderboardStatusElement = document.getElementById("leaderboard-status");
 const leaderboardScopeElement = document.getElementById("leaderboard-scope");
@@ -130,7 +134,8 @@ const state = {
   leaderboard: loadLeaderboard(),
   moves: 0,
   runId: createRunId(),
-  scoreLogged: false
+  scoreLogged: false,
+  pendingLeaderboardEntry: null
 };
 
 function createEmptyGrid() {
@@ -172,8 +177,8 @@ function getGlobalLeaderboardConfig() {
 
 function getInitialLeaderboardMessage() {
   return leaderboardConfig.enabled
-    ? "Global scores load here. Finished games auto-log online."
-    : "Finished games auto-log on this device.";
+    ? "Global scores load here. Finished games wait for your confirmation."
+    : "Finished games wait for your confirmation on this device.";
 }
 
 function getInitialLeaderboardScope() {
@@ -262,6 +267,7 @@ function startNewGame() {
   state.moves = 0;
   state.runId = createRunId();
   state.scoreLogged = false;
+  state.pendingLeaderboardEntry = null;
   state.lastMoveMessage = "New shift started. Swipe any direction to slide every tile on the board.";
   state.leaderboardMessage = getInitialLeaderboardMessage();
   spawnTile(true);
@@ -333,7 +339,7 @@ function handleMove(direction) {
   state.lastMoveMessage = createMoveMessage(direction, move.gained, spawnedTile);
 
   if (state.gameOver) {
-    logCompletedGame(false);
+    stageCompletedGame(false);
   }
 
   render();
@@ -525,6 +531,7 @@ function renderLeaderboard() {
   leaderboardElement.innerHTML = "";
   leaderboardStatusElement.textContent = state.leaderboardMessage;
   leaderboardScopeElement.textContent = state.leaderboardScope;
+  renderScoreConfirmation();
 
   if (state.leaderboard.length === 0) {
     const empty = document.createElement("li");
@@ -565,6 +572,23 @@ function renderLeaderboard() {
     item.appendChild(score);
     leaderboardElement.appendChild(item);
   });
+}
+
+function renderScoreConfirmation() {
+  if (!scoreConfirmationElement || !scoreConfirmationDetailElement) {
+    return;
+  }
+
+  const entry = state.pendingLeaderboardEntry;
+  scoreConfirmationElement.hidden = !entry;
+
+  if (!entry) {
+    scoreConfirmationDetailElement.textContent = "";
+    return;
+  }
+
+  scoreConfirmationDetailElement.textContent =
+    `Score ${formatScore(entry.score)} | ${getTileName(entry.highestTile)} | ${entry.moves} moves`;
 }
 
 function createTile(value, mini = false, isNew = false) {
@@ -613,24 +637,45 @@ function createMoveMessage(direction, gained, spawnedTile) {
   return `${directionLabel}: tiles slid to open spaces, then a new ${spawnLabel} appeared.`;
 }
 
-function logCompletedGame(shouldRender = true) {
-  if (state.scoreLogged || !state.gameOver || state.moves === 0) {
+function stageCompletedGame(shouldRender = true) {
+  if (state.scoreLogged || state.pendingLeaderboardEntry || !state.gameOver || state.moves === 0) {
     return;
   }
 
-  const entry = createLeaderboardEntry();
+  state.pendingLeaderboardEntry = createLeaderboardEntry();
+  state.leaderboardMessage = "Score ready. Edit the display name, then submit or skip.";
+
+  if (shouldRender) {
+    renderLeaderboard();
+  }
+}
+
+function submitPendingScore(shouldRender = true) {
+  if (!state.pendingLeaderboardEntry || state.scoreLogged) {
+    return;
+  }
+
+  const entry = {
+    ...state.pendingLeaderboardEntry,
+    name: getPlayerName()
+  };
   const localLeaderboard = upsertLeaderboardEntry(loadLeaderboard(), entry);
 
   if (saveLeaderboard(localLeaderboard)) {
     state.scoreLogged = true;
+    state.pendingLeaderboardEntry = null;
+    saveUsername(entry.name);
     if (leaderboardConfig.enabled) {
-      state.leaderboardMessage = `Finished game saved locally. Sending ${entry.name}'s score online...`;
+      state.leaderboard = localLeaderboard;
+      state.leaderboardScope = "Local pending sync";
+      state.leaderboardMessage = `Score saved locally. Sending ${entry.name}'s score online...`;
     } else {
       state.leaderboard = localLeaderboard;
-      state.leaderboardMessage = `Finished game logged for ${entry.name}.`;
+      state.leaderboardMessage = `Score submitted for ${entry.name}.`;
     }
   } else {
     state.scoreLogged = true;
+    state.pendingLeaderboardEntry = null;
   }
 
   if (shouldRender) {
@@ -640,6 +685,17 @@ function logCompletedGame(shouldRender = true) {
   if (leaderboardConfig.enabled) {
     submitGlobalLeaderboardEntry(entry);
   }
+}
+
+function skipPendingScore() {
+  if (!state.pendingLeaderboardEntry) {
+    return;
+  }
+
+  state.pendingLeaderboardEntry = null;
+  state.scoreLogged = true;
+  state.leaderboardMessage = "Score skipped.";
+  renderLeaderboard();
 }
 
 function upsertLeaderboardEntry(entries, entry) {
@@ -903,6 +959,10 @@ function getSwipeDirection(deltaX, deltaY) {
 
 newGameButton.addEventListener("click", startNewGame);
 tryAgainButton.addEventListener("click", startNewGame);
+submitScoreButton.addEventListener("click", () => {
+  submitPendingScore();
+});
+skipScoreButton.addEventListener("click", skipPendingScore);
 clearLeaderboardButton.addEventListener("click", () => {
   const message = leaderboardConfig.enabled
     ? "Clear local fallback scores on this device? Global scores stay online."

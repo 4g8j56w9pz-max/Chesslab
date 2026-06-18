@@ -20,12 +20,12 @@
 
       <div class="player-bar">
         <div class="player-card">
-          <label for="whiteName">White Player</label>
+          <label for="whiteName">White Display Name</label>
           <input id="whiteName" type="text" maxlength="18" autocomplete="nickname" value="Player 1" />
         </div>
 
         <div class="player-card">
-          <label for="blackName">Black Player</label>
+          <label for="blackName">Black Display Name</label>
           <input id="blackName" type="text" maxlength="18" autocomplete="nickname" value="Player 2" />
         </div>
       </div>
@@ -90,7 +90,15 @@
         <button id="refreshChessLeaderboardBtn" class="compact-button" type="button">Refresh</button>
       </div>
 
-      <div id="chessLeaderboardStatus" class="leaderboard-status" aria-live="polite">Completed games auto-log here.</div>
+      <div id="chessLeaderboardStatus" class="leaderboard-status" aria-live="polite">Completed games wait for confirmation.</div>
+      <div id="chessLeaderboardPending" class="score-confirmation" hidden>
+        <div>
+          <strong>Submit Result</strong>
+          <span id="chessLeaderboardPendingText">Result ready.</span>
+        </div>
+        <button id="submitChessLeaderboardBtn" class="compact-button" type="button">Submit</button>
+        <button id="skipChessLeaderboardBtn" class="compact-button" type="button">Skip</button>
+      </div>
       <ol id="chessLeaderboardList" class="leaderboard-list"></ol>
       <button id="clearChessLeaderboardBtn" class="danger-button" type="button">Clear Local Scores</button>
 

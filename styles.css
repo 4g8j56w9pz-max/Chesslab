@@ -465,6 +465,52 @@ h2 {
   outline-offset: 2px;
 }
 
+.score-confirmation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 9px;
+  border: 1px solid rgba(255, 209, 102, 0.3);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.score-confirmation[hidden] {
+  display: none;
+}
+
+.score-confirmation div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.score-confirmation strong,
+.score-confirmation span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score-confirmation strong {
+  color: #ffd166;
+  font-size: 0.82rem;
+}
+
+.score-confirmation span {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.score-confirmation .primary-button,
+.score-confirmation .ghost-button {
+  min-height: 36px;
+  padding: 8px 10px;
+}
+
 .leaderboard-status {
   min-height: 18px;
   margin: 0 0 10px;
@@ -772,6 +818,15 @@ h2 {
 
   .score-card strong {
     font-size: 1rem;
+  }
+
+  .score-confirmation {
+    grid-template-columns: 1fr;
+  }
+
+  .score-confirmation .primary-button,
+  .score-confirmation .ghost-button {
+    width: 100%;
   }
 
   .tile-icon {
