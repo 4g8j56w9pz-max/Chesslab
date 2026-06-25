@@ -1,4 +1,4 @@
-const CACHE_NAME = "midnight-pizzeria-merge-v9";
+const CACHE_NAME = "midnight-games-v10";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -7,6 +7,15 @@ const APP_SHELL = [
   "./games/water-sort/index.html",
   "./games/water-sort/water-sort.css",
   "./games/water-sort/water-sort.js",
+  "./games/lock-pop/",
+  "./games/lock-pop/index.html",
+  "./games/lock-pop/styles.css",
+  "./games/lock-pop/assets/favicon.svg",
+  "./games/lock-pop/src/main.js",
+  "./games/lock-pop/src/game-engine.js",
+  "./games/lock-pop/src/renderer.js",
+  "./games/lock-pop/src/audio.js",
+  "./games/lock-pop/src/storage.js",
   "./leaderboard-config.js",
   "./styles.css",
   "./style.css",

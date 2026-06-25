@@ -1,0 +1,434 @@
+:root {
+  --accent: #DE3341;
+  --accent-dark: #781821;
+  --bg: #0d0d0f;
+  --panel: rgba(23, 23, 25, 0.9);
+  --ink: #fff8ed;
+  --muted: #beb0a8;
+  --line: rgba(255, 248, 237, 0.14);
+  --amber: #ffd166;
+  --steel: #8fb0bd;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    linear-gradient(180deg, rgba(13, 13, 15, 0.9), rgba(13, 13, 15, 0.98)),
+    repeating-linear-gradient(90deg, rgba(255, 248, 237, 0.035) 0 1px, transparent 1px 22px),
+    #0d0d0f;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button,
+a,
+canvas {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+button {
+  font: inherit;
+  font-size: 1rem;
+}
+
+.lock-shell {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(22px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-badge {
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  border: 1px solid rgba(222, 51, 65, 0.7);
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, rgba(222, 51, 65, 0.2), rgba(0, 0, 0, 0.7)),
+    #161617;
+  box-shadow: 0 0 20px rgba(222, 51, 65, 0.24);
+}
+
+.brand-badge svg {
+  width: 34px;
+  height: 34px;
+  fill: rgba(222, 51, 65, 0.16);
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+}
+
+.eyebrow {
+  margin: 0 0 3px;
+  color: var(--amber);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+h1,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: 1.55rem;
+  line-height: 1.05;
+  text-shadow: 0 0 18px rgba(222, 51, 65, 0.52);
+}
+
+.game-switcher {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px auto;
+}
+
+.game-card {
+  min-width: 0;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 10px 8px;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 850;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: inset 0 1px 0 rgba(255, 248, 237, 0.08);
+}
+
+.game-card.is-active {
+  color: #fff;
+  border-color: rgba(255, 209, 102, 0.5);
+  background: linear-gradient(180deg, rgba(222, 51, 65, 0.42), rgba(120, 24, 33, 0.78));
+  box-shadow:
+    0 0 22px rgba(222, 51, 65, 0.2),
+    inset 0 1px 0 rgba(255, 248, 237, 0.12);
+}
+
+.game-card:focus-visible,
+.primary-button:focus-visible,
+.ghost-button:focus-visible,
+#game-canvas:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 3px;
+}
+
+.arcade-layout {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.score-panel {
+  width: min(100%, 650px);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.score-card {
+  min-height: 64px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: inset 0 1px 0 rgba(255, 248, 237, 0.08);
+}
+
+.score-card span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.score-card strong {
+  min-width: 0;
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.status-card strong {
+  color: var(--amber);
+}
+
+.playfield {
+  width: min(100%, 650px);
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.canvas-frame {
+  position: relative;
+  width: min(100%, 620px);
+  aspect-ratio: 1;
+  padding: 10px;
+  border: 1px solid rgba(255, 248, 237, 0.16);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 237, 0.08), rgba(0, 0, 0, 0.34)),
+    #151517;
+  box-shadow:
+    0 0 0 1px rgba(222, 51, 65, 0.34) inset,
+    0 18px 50px rgba(0, 0, 0, 0.42),
+    0 0 42px rgba(222, 51, 65, 0.16);
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 8px;
+  background: #0d0d0f;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.perfect-indicator {
+  position: absolute;
+  left: 50%;
+  top: 17%;
+  z-index: 2;
+  padding: 8px 14px;
+  color: #15100a;
+  font-size: 1rem;
+  font-weight: 950;
+  pointer-events: none;
+  opacity: 0;
+  border: 1px solid rgba(255, 248, 237, 0.6);
+  border-radius: 8px;
+  background: var(--amber);
+  box-shadow: 0 0 24px rgba(255, 209, 102, 0.34);
+  transform: translate(-50%, 8px) scale(0.94);
+}
+
+.perfect-indicator.is-visible {
+  animation: perfect-pop 620ms ease both;
+}
+
+.controls {
+  width: min(100%, 620px);
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 8px;
+}
+
+.primary-button,
+.ghost-button {
+  min-width: 0;
+  min-height: 46px;
+  padding: 10px 12px;
+  color: var(--ink);
+  font-weight: 850;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.primary-button {
+  border: 1px solid rgba(255, 248, 237, 0.18);
+  background: linear-gradient(180deg, #f05260, var(--accent));
+  box-shadow: 0 10px 24px rgba(222, 51, 65, 0.22);
+}
+
+.ghost-button {
+  border: 1px solid rgba(255, 248, 237, 0.14);
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.primary-button:disabled,
+.ghost-button:disabled {
+  color: rgba(255, 248, 237, 0.48);
+  cursor: default;
+  background: rgba(0, 0, 0, 0.25);
+  box-shadow: none;
+}
+
+.primary-button:not(:disabled):active,
+.ghost-button:not(:disabled):active,
+.game-card:active {
+  transform: translateY(1px);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.is-miss-shake .canvas-frame {
+  animation: miss-shake 320ms ease both;
+}
+
+@keyframes miss-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  18% {
+    transform: translate(-6px, 3px);
+  }
+
+  36% {
+    transform: translate(5px, -3px);
+  }
+
+  58% {
+    transform: translate(-4px, -2px);
+  }
+
+  78% {
+    transform: translate(3px, 2px);
+  }
+}
+
+@keyframes perfect-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 10px) scale(0.92);
+  }
+
+  18%,
+  68% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -6px) scale(0.98);
+  }
+}
+
+@media (min-width: 760px) {
+  .lock-shell {
+    padding-top: 24px;
+  }
+
+  h1 {
+    font-size: 1.85rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .game-switcher {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .score-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .canvas-frame {
+    padding: 7px;
+  }
+
+  .controls {
+    grid-template-columns: 1fr;
+  }
+
+  .primary-button,
+  .ghost-button {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 360px) {
+  .brand-badge {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+  }
+
+  h1 {
+    font-size: 1.32rem;
+  }
+
+  .game-card {
+    font-size: 0.84rem;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .score-card {
+    min-height: 58px;
+    padding: 8px;
+  }
+
+  .score-card strong {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .is-miss-shake .canvas-frame {
+    animation: none;
+  }
+}

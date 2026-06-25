@@ -1,0 +1,10 @@
+{
+  "name": "midnight-games",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "check:syntax": "node --check games/lock-pop/src/game-engine.js && node --check games/lock-pop/src/renderer.js && node --check games/lock-pop/src/audio.js && node --check games/lock-pop/src/storage.js && node --check games/lock-pop/src/main.js && node --check tests/game-engine.test.js"
+  }
+}

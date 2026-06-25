@@ -1,80 +1,110 @@
-# Midnight Pizzeria Merge
+# Midnight Games
 
-A mobile-first, open-source-style merge game based on classic 2048 mechanics. The theme is an original haunted animatronic pizza-arcade tribute with custom CSS/SVG art, no external dependencies, and no official franchise names, logos, ripped assets, or exact character designs.
+A static browser arcade collection for GitHub Pages. The existing site includes Midnight Pizzeria Merge, FNAF ChessLab, Water Sort, and the fourth game: **Lock Pop Arcade**.
 
-The root app is `index.html`. The previous ChessLab page is preserved at `chesslab.html`, and Water Sort is available at `games/water-sort/`.
+Lock Pop Arcade is an original one-button circular timing game built with semantic HTML, modern CSS, vanilla JavaScript modules, Canvas, Web Audio, and localStorage. It has no runtime dependencies, backend, analytics, ads, CDNs, external images, external fonts, or bundled audio files.
 
-## Run locally
+## Lock Pop Gameplay
 
-Open `index.html` directly in a browser to play.
+The marker travels around the circular dial. Trigger the lock when the marker overlaps the target notch. A normal hit scores 1 point, a perfect center hit scores 2 points, and a miss ends the run immediately. Each hit moves the target to a fair new location, changes direction, raises speed smoothly, and tightens the target within tested limits.
 
-For PWA service worker testing, serve the folder from a local HTTP server:
+## Controls
+
+- **Space** or **Enter**: start, hit, resume, or restart
+- **Click** or **tap** the dial: start, hit, resume, or restart
+- **Escape** or **P**: pause or resume
+- **R**: restart after game over
+- **M**: mute or unmute
+
+Sound and best score are saved locally in the browser.
+
+## Features
+
+- Circular timing gameplay with normal and perfect hits
+- Tested angle wrapping across the 0/360 degree boundary
+- Fair target spawning with minimum angular separation and reaction time
+- Smooth capped speed curve and target-width floor
+- Explicit `READY`, `COUNTDOWN`, `PLAYING`, `PAUSED`, and `GAME_OVER` states
+- Canvas scaled for devicePixelRatio
+- Automatic pause when the page is hidden, with explicit input required to resume
+- Procedural Canvas visuals, procedural SVG favicon, and procedural Web Audio effects
+- Reduced-motion handling for shake, flashes, and decorative motion
+- Keyboard, mouse, touch, and pointer support
+
+## Local Development
+
+Serve the repository root from a local HTTP server:
 
 ```bash
 python -m http.server 8000
 ```
 
-Then open `http://localhost:8000/`.
+Open:
 
-## Deploy with GitHub Pages
+- Main site: `http://localhost:8000/`
+- Lock Pop Arcade: `http://localhost:8000/games/lock-pop/`
 
-1. Commit and push the repository to GitHub.
-2. In the repository, open **Settings**.
-3. Go to **Pages**.
-4. Set **Source** to deploy from the `main` branch and the root folder.
-5. Save, then open the Pages URL after GitHub finishes publishing.
+The files also use relative paths so the site works from a repository subpath such as `https://username.github.io/repository-name/`.
 
-The app uses relative paths, so it works from a repository Pages URL such as `https://USERNAME.github.io/REPOSITORY/`.
+## Tests
 
-## Optional global leaderboards
+Run the pure game-logic tests with Node's built-in test runner:
 
-By default, Merge, Chess, and Water Sort scores are saved locally in each browser. To share scores across all players, create a Supabase project and run the SQL in `supabase-leaderboard.sql` from the Supabase SQL Editor.
-
-Then edit `leaderboard-config.js`:
-
-```js
-window.MPM_LEADERBOARD_CONFIG = {
-  supabaseUrl: "https://YOUR_PROJECT_REF.supabase.co",
-  supabaseAnonKey: "YOUR_SUPABASE_ANON_OR_PUBLISHABLE_KEY",
-  tableName: "pizzeria_leaderboard",
-  chessTableName: "chesslab_leaderboard",
-  waterSortTableName: "water_sort_leaderboard"
-};
+```bash
+npm test
 ```
 
-Use only the anon/publishable key in frontend code. Do not put a Supabase service-role key or database password in this repository.
+Run syntax checks:
 
-All games still work without this configuration; they will show local-only leaderboards or local fallbacks if the global score service is unavailable. Scores are submitted only after the player confirms the finished game or level with an editable display name. ChessLab scores completed games as 3 points for a win, 1 point for a draw, and 0 points for a loss. Water Sort ranks clears by highest level, then fewest moves.
+```bash
+npm run check:syntax
+```
 
-## Add to iPhone Home Screen
+## GitHub Pages Deployment
 
-1. Open the GitHub Pages URL in Safari on iPhone.
-2. Tap the Share button.
-3. Choose **Add to Home Screen**.
-4. Confirm the name and tap **Add**.
+This repository includes `.github/workflows/pages.yml`. On pushes to `main`, the workflow checks out the repository, sets up Node, runs tests, builds a minimal static Pages artifact, uploads it, and deploys with the official GitHub Pages artifact/deployment actions.
+
+One-time repository setting:
+
+**Settings -> Pages -> Source -> GitHub Actions**
+
+After that, push to `main` or run the workflow manually from the Actions tab.
+
+## File Structure
+
+```text
+/
+  index.html                  Existing Merge game and site entry
+  chesslab.html               Existing ChessLab game
+  games/
+    water-sort/               Existing Water Sort game
+    lock-pop/                 Lock Pop Arcade
+      index.html
+      styles.css
+      assets/favicon.svg
+      src/
+        main.js
+        game-engine.js
+        renderer.js
+        audio.js
+        storage.js
+  tests/game-engine.test.js   Node tests for Lock Pop rules
+  .github/workflows/pages.yml GitHub Pages deployment
+  LICENSE                     MIT license
+```
+
+## Accessibility
+
+Lock Pop uses real buttons for game controls, visible focus states, sufficient contrast, keyboard-complete controls, an accessible Canvas label, and a visually hidden live region for score, pause, and game-over announcements. Targets are shown with shape, outline, and hatch marks instead of color alone. Audio starts only after a user gesture.
+
+## Browser Support
+
+Lock Pop targets current versions of Chrome, Edge, Firefox, and Safari on desktop and mobile. It uses ES modules, Canvas 2D, requestAnimationFrame, localStorage, Pointer Events with a click fallback, and Web Audio with graceful silent behavior if audio is unavailable.
+
+## Original Work
+
+Lock Pop Arcade's code, visuals, procedural sounds, favicon, timing rules, and interface are original to this repository. It does not copy any existing game's code, artwork, audio, text, branding, level designs, or distinctive interface.
 
 ## License
 
-This implementation was written from scratch and does not copy 2048 source code.
-
-MIT License
-
-Copyright (c) 2026
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+MIT. See [LICENSE](./LICENSE).
