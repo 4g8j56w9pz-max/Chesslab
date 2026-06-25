@@ -11,6 +11,7 @@ const APP_SHELL = [
   "./games/lock-pop/index.html",
   "./games/lock-pop/styles.css",
   "./games/lock-pop/assets/favicon.svg",
+  "./games/lock-pop/assets/miss-fahhh.mp3",
   "./games/lock-pop/src/main.js",
   "./games/lock-pop/src/game-engine.js",
   "./games/lock-pop/src/renderer.js",

@@ -2,7 +2,7 @@
 
 A static browser arcade collection for GitHub Pages. The existing site includes Midnight Pizzeria Merge, FNAF ChessLab, Water Sort, and the fourth game: **Lock Pop Arcade**.
 
-Lock Pop Arcade is an original one-button circular timing game built with semantic HTML, modern CSS, vanilla JavaScript modules, Canvas, Web Audio, and localStorage. It has no runtime dependencies, backend, analytics, ads, CDNs, external images, external fonts, or bundled audio files.
+Lock Pop Arcade is an original one-button circular timing game built with semantic HTML, modern CSS, vanilla JavaScript modules, Canvas, Web Audio, localStorage, and a local user-provided MP3 miss effect. It has no runtime dependencies, backend, analytics, ads, CDNs, external images, or external fonts.
 
 ## Lock Pop Gameplay
 
@@ -27,7 +27,7 @@ Sound and best score are saved locally in the browser.
 - Explicit `READY`, `COUNTDOWN`, `PLAYING`, `PAUSED`, and `GAME_OVER` states
 - Canvas scaled for devicePixelRatio
 - Automatic pause when the page is hidden, with explicit input required to resume
-- Procedural Canvas visuals, procedural SVG favicon, and procedural Web Audio effects
+- Procedural Canvas visuals, procedural SVG favicon, procedural Web Audio effects, and a local MP3 miss cue
 - Reduced-motion handling for shake, flashes, and decorative motion
 - Keyboard, mouse, touch, and pointer support
 
@@ -103,7 +103,7 @@ Lock Pop targets current versions of Chrome, Edge, Firefox, and Safari on deskto
 
 ## Original Work
 
-Lock Pop Arcade's code, visuals, procedural sounds, favicon, timing rules, and interface are original to this repository. It does not copy any existing game's code, artwork, audio, text, branding, level designs, or distinctive interface.
+Lock Pop Arcade's code, visuals, favicon, timing rules, and interface are original to this repository. The miss cue uses the local user-provided `games/lock-pop/assets/miss-fahhh.mp3` asset; verify its license before public distribution if needed.
 
 ## License
 

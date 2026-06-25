@@ -1,14 +1,19 @@
 export class ArcadeAudio {
-  constructor({ muted = false } = {}) {
+  constructor({ muted = false, missSoundUrl = null } = {}) {
     this.context = null;
     this.muted = Boolean(muted);
     this.masterGain = null;
+    this.missSoundUrl = missSoundUrl;
+    this.missElement = null;
   }
 
   setMuted(value) {
     this.muted = Boolean(value);
     if (this.masterGain) {
       this.masterGain.gain.setTargetAtTime(this.muted ? 0 : 0.22, this.context.currentTime, 0.012);
+    }
+    if (this.missElement) {
+      this.missElement.muted = this.muted;
     }
   }
 
@@ -33,6 +38,7 @@ export class ArcadeAudio {
       await this.context.resume();
     }
 
+    this.prepareMissSample();
     return this.context.state === "running";
   }
 
@@ -72,9 +78,40 @@ export class ArcadeAudio {
       return;
     }
 
+    if (await this.playMissSample()) {
+      return;
+    }
+
     const start = this.context.currentTime;
     this.tone({ frequency: 140, type: "sawtooth", start, duration: 0.16, gain: 0.18, slideTo: 72 });
     this.noise({ start, duration: 0.11, gain: 0.08 });
+  }
+
+  prepareMissSample() {
+    if (!this.missSoundUrl || this.missElement) {
+      return;
+    }
+
+    this.missElement = new Audio(this.missSoundUrl);
+    this.missElement.preload = "auto";
+    this.missElement.volume = 0.55;
+    this.missElement.muted = this.muted;
+    this.missElement.load();
+  }
+
+  async playMissSample() {
+    if (!this.missElement || this.muted) {
+      return false;
+    }
+
+    try {
+      this.missElement.pause();
+      this.missElement.currentTime = 0;
+      await this.missElement.play();
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   tone({ frequency, type, start, duration, gain, slideTo = null }) {

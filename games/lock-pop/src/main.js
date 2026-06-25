@@ -23,7 +23,10 @@ const liveRegion = document.getElementById("live-region");
 const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 const engine = new LockPopEngine();
 const renderer = new LockPopRenderer(canvas, { reducedMotion: reducedMotionQuery.matches });
-const audio = new ArcadeAudio({ muted: loadMutedPreference() });
+const audio = new ArcadeAudio({
+  muted: loadMutedPreference(),
+  missSoundUrl: new URL("../assets/miss-fahhh.mp3", import.meta.url).href
+});
 
 let bestScore = loadBestScore();
 let displayScore = 0;
