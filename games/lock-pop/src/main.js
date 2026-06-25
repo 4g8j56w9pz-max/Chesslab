@@ -88,7 +88,7 @@ function updateControls(snapshot) {
   primaryButton.textContent = getPrimaryLabel(snapshot.state);
   pauseButton.disabled = ![GameState.COUNTDOWN, GameState.PLAYING, GameState.PAUSED].includes(snapshot.state);
   pauseButton.textContent = snapshot.state === GameState.PAUSED ? "Resume" : "Pause";
-  muteButton.textContent = muted ? "Sound Off" : "Sound On";
+  muteButton.textContent = muted ? "Sound is off" : "Sound is on";
   muteButton.setAttribute("aria-pressed", muted ? "true" : "false");
 }
 
