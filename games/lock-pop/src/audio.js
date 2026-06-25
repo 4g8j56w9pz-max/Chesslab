@@ -4,16 +4,14 @@ export class ArcadeAudio {
     this.muted = Boolean(muted);
     this.masterGain = null;
     this.missSoundUrl = missSoundUrl;
-    this.missElement = null;
+    this.missBuffer = null;
+    this.missBufferPromise = null;
   }
 
   setMuted(value) {
     this.muted = Boolean(value);
     if (this.masterGain) {
       this.masterGain.gain.setTargetAtTime(this.muted ? 0 : 0.22, this.context.currentTime, 0.012);
-    }
-    if (this.missElement) {
-      this.missElement.muted = this.muted;
     }
   }
 
@@ -88,30 +86,45 @@ export class ArcadeAudio {
   }
 
   prepareMissSample() {
-    if (!this.missSoundUrl || this.missElement) {
+    if (!this.missSoundUrl || this.missBuffer || this.missBufferPromise || typeof fetch !== "function") {
       return;
     }
 
-    this.missElement = new Audio(this.missSoundUrl);
-    this.missElement.preload = "auto";
-    this.missElement.volume = 0.55;
-    this.missElement.muted = this.muted;
-    this.missElement.load();
+    this.missBufferPromise = fetch(this.missSoundUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Miss sound failed to load.");
+        }
+        return response.arrayBuffer();
+      })
+      .then(arrayBuffer => this.context.decodeAudioData(arrayBuffer))
+      .then(audioBuffer => {
+        this.missBuffer = audioBuffer;
+        return audioBuffer;
+      })
+      .catch(() => null);
   }
 
   async playMissSample() {
-    if (!this.missElement || this.muted) {
+    if (!this.missBuffer && this.missBufferPromise) {
+      await Promise.race([
+        this.missBufferPromise,
+        new Promise(resolve => window.setTimeout(resolve, 80))
+      ]);
+    }
+
+    if (!this.missBuffer || this.muted) {
       return false;
     }
 
-    try {
-      this.missElement.pause();
-      this.missElement.currentTime = 0;
-      await this.missElement.play();
-      return true;
-    } catch {
-      return false;
-    }
+    const source = this.context.createBufferSource();
+    const gain = this.context.createGain();
+    source.buffer = this.missBuffer;
+    gain.gain.value = 0.95;
+    source.connect(gain);
+    gain.connect(this.masterGain);
+    source.start(this.context.currentTime);
+    return true;
   }
 
   tone({ frequency, type, start, duration, gain, slideTo = null }) {
