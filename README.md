@@ -6,6 +6,8 @@ Lock Pop Arcade is an original one-button circular timing game built with semant
 
 NIGHTFALL is a static browser-based classic first-person shooter route. It uses a pinned Dwasm WebAssembly engine build with Freedoom Phase 1 v0.13.0 game content. The engine, WASM module, and packaged data are lazy-loaded only after the player presses Start Game. It has no backend, account, API key, analytics, ads, CDN, remote WAD loading, multiplayer, or runtime network dependency beyond the local static assets.
 
+NIGHTFALL also includes a small project-local PWAD, `games/nightfall/assets/nightfall-face.wad`, that replaces the status-bar portrait with a pixelated local artwork patch. The editable 24x32 source and preview live beside the WAD, and `scripts/nightfall/make-face-pwad.ps1` can rebuild the patch from a reference image using the Freedoom palette.
+
 ## Lock Pop Gameplay
 
 The marker travels around the circular dial. Trigger the lock when the marker overlaps the target notch. A normal hit scores 1 point, a perfect center hit scores 2 points, and a miss ends the run immediately. Each hit moves the target to a fair new location, changes direction, raises speed smoothly, and tightens the target within tested limits.
@@ -120,6 +122,10 @@ After that, push to `main` or run the workflow manually from the Actions tab.
     nightfall/                 NIGHTFALL static FPS route
       index.html
       styles.css
+      assets/
+        nightfall-face.wad
+        nightfall-face-source.png
+        nightfall-face-preview.png
       src/
         config.js
         input-state.js
@@ -131,6 +137,7 @@ After that, push to `main` or run the workflow manually from the Actions tab.
         index.data
         build-manifest.json
   scripts/nightfall/
+    make-face-pwad.ps1         Local status-face PWAD builder
     rebuild-engine.ps1        Pinned local Dwasm rebuild script
   third_party/
     dwasm/                     Pinned Dwasm source and build input WADs
@@ -166,7 +173,7 @@ Lock Pop Arcade's code, visuals, favicon, timing rules, and interface are origin
 
 MIT. See [LICENSE](./LICENSE).
 
-NIGHTFALL includes separately licensed components. Dwasm/PrBoomX source and generated runtime outputs are under `GPL-2.0-or-later`; Freedoom content is `BSD-3-Clause`. See `THIRD_PARTY_NOTICES.md`, `UPSTREAMS.lock.json`, `licenses/DWASM-LICENSE.txt`, and `licenses/FREEDOOM-LICENSE.txt`.
+NIGHTFALL includes separately licensed components. Dwasm/PrBoomX source and generated runtime outputs are under `GPL-2.0-or-later`; Freedoom content is `BSD-3-Clause`. The NIGHTFALL status-bar portrait patch is project-local artwork and is distributed separately from Freedoom and Dwasm. See `THIRD_PARTY_NOTICES.md`, `UPSTREAMS.lock.json`, `licenses/DWASM-LICENSE.txt`, and `licenses/FREEDOOM-LICENSE.txt`.
 
 To update Dwasm, choose an exact upstream commit, vendor the corresponding source under `third_party/dwasm/`, preserve license notices, reapply only documented patch points, rebuild with the pinned toolchain, and update the lock file, manifest, tests, and docs.
 

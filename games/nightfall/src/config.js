@@ -9,9 +9,15 @@ export const NIGHTFALL_ENGINE_FILES = Object.freeze({
   data: "index.data"
 });
 
+export const NIGHTFALL_PATCH_FILES = Object.freeze({
+  facePatch: "nightfall-face.wad"
+});
+
 export const SAFE_STARTUP_ARGUMENTS = Object.freeze([
   "-iwad",
   "/freedoom1.wad",
+  "-file",
+  "/nightfall-face.wad",
   "-skill",
   "3",
   "-warp",
@@ -33,6 +39,14 @@ export function resolveEngineFile(fileName, baseUrl = import.meta.url) {
 
 export function resolveRuntimeFile(fileName, baseUrl = import.meta.url) {
   return new URL(`../engine/${fileName}`, baseUrl).href;
+}
+
+export function resolvePatchFile(fileName, baseUrl = import.meta.url) {
+  if (!Object.values(NIGHTFALL_PATCH_FILES).includes(fileName)) {
+    throw new Error(`Unexpected NIGHTFALL patch file: ${fileName}`);
+  }
+
+  return new URL(`../assets/${fileName}`, baseUrl).href;
 }
 
 export function getIgnoredQueryArguments() {

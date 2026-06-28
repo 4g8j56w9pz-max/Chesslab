@@ -12,6 +12,9 @@ Runtime files:
 - `games/nightfall/src/input-state.js` - pure input state machine used by automated tests.
 - `games/nightfall/src/input-dispatch.js` - browser keyboard-event dispatch adapter.
 - `games/nightfall/src/main.js` - Emscripten loader, progress handling, audio/fullscreen controls, and touch controls.
+- `games/nightfall/assets/nightfall-face.wad` - NIGHTFALL-local PWAD that replaces the status-bar face art.
+- `games/nightfall/assets/nightfall-face-source.png` - 24x32 source sprite for the status-bar face patch.
+- `games/nightfall/assets/nightfall-face-preview.png` - nearest-neighbor preview of the source sprite.
 - `games/nightfall/engine/` - committed generated Emscripten runtime files.
 
 The Dwasm/PrBoomX source and the Freedoom WAD used by the package are isolated under `third_party/dwasm/`. Shared arcade code does not contain copied GPL engine source.
@@ -56,11 +59,13 @@ The Dwasm package embeds:
 - `/freedoom1.wad`
 - `/prboomx.wad`
 
-The Pages artifact ships only `index.js`, `index.wasm`, and `index.data`; it does not ship a duplicate standalone WAD under `games/nightfall/`.
+The Pages artifact ships `index.js`, `index.wasm`, `index.data`, and the small `assets/nightfall-face.wad` override. It does not ship a duplicate standalone Freedoom IWAD under `games/nightfall/`.
 
-`npm run build:nightfall` verifies the pinned WAD hashes and writes `games/nightfall/engine/build-manifest.json` with byte sizes and SHA-256 hashes for the generated runtime files.
+`npm run build:nightfall` verifies the pinned WAD hashes and writes `games/nightfall/engine/build-manifest.json` with byte sizes and SHA-256 hashes for the generated runtime files and the NIGHTFALL-local status-face patch assets.
 
 `scripts/nightfall/rebuild-engine.ps1` rebuilds the committed runtime from `third_party/dwasm/` using the pinned local Emscripten, CMake, and Ninja toolchain cache, then copies the generated files and rewrites the manifest.
+
+`scripts/nightfall/make-face-pwad.ps1` builds the local status-bar portrait patch. It reads the Freedoom `PLAYPAL` palette, crops and pixelates a provided reference image to a 24x32 source PNG, emits a nearest-neighbor preview PNG, and writes a PWAD containing the 62 `STF*` status-face lumps.
 
 ## Dwasm Patch Points
 
@@ -74,12 +79,12 @@ URL query strings are ignored and are never passed into native/WASM startup pars
 
 ## Runtime
 
-The Start Game button is the only path that injects `games/nightfall/engine/index.js`. Emscripten then loads `index.wasm` and `index.data` through `Module.locateFile`, using relative URLs so the route works beneath a GitHub Pages repository subpath.
+The Start Game button is the only path that injects `games/nightfall/engine/index.js`. Emscripten then loads `index.wasm` and `index.data` through `Module.locateFile`, using relative URLs so the route works beneath a GitHub Pages repository subpath. During Emscripten `preRun`, the shell fetches `games/nightfall/assets/nightfall-face.wad` and writes it to MEMFS as `/nightfall-face.wad` before calling the engine.
 
 The fixed startup arguments are:
 
 ```text
--iwad /freedoom1.wad -skill 3 -warp 1 1
+-iwad /freedoom1.wad -file /nightfall-face.wad -skill 3 -warp 1 1
 ```
 
 The page sets `document.documentElement.dataset.engineReady = "true"` only from Dwasm's `hideConsole` callback after the runtime has initialized and the engine has switched to the canvas.
@@ -106,6 +111,7 @@ The current bridge dispatches same-document keyboard events to the SDL/Emscripte
 - Arcade shell files are original project code.
 - Dwasm and generated runtime outputs are covered by the Dwasm/PrBoomX GPL lineage.
 - Freedoom content is BSD-3-Clause and is included only through the packaged runtime data file and vendored build input.
+- The NIGHTFALL status-bar portrait patch is project-local artwork generated from a user-provided reference image. It is isolated in a separate PWAD and does not modify Freedoom or Dwasm source.
 - Full notices are in `THIRD_PARTY_NOTICES.md`.
 - Full upstream license text is in `licenses/DWASM-LICENSE.txt` and `licenses/FREEDOOM-LICENSE.txt`.
 

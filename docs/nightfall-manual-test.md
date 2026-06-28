@@ -19,6 +19,8 @@ Do not mark a device/browser as passed unless it was actually tested.
 - [ ] Route loads directly at `/games/nightfall/`
 - [ ] Home page does not request engine JS, WASM, or data before Start Game
 - [ ] Start Game loads `index.js`, `index.wasm`, and `index.data`
+- [ ] Start Game loads `nightfall-face.wad` only after the player starts the game
+- [ ] HUD status face shows the NIGHTFALL-local pixel portrait
 - [ ] Canvas appears and renders nonuniform/changing pixels
 - [ ] Keyboard movement works
 - [ ] Keyboard turning works

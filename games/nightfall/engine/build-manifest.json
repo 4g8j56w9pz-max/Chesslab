@@ -1,6 +1,6 @@
 {
-  "build_timestamp": "2026-06-28T02:24:30.015Z",
-  "repository_commit": "8be19cf51bb354251b3657da18940f361eb14c8c",
+  "build_timestamp": "2026-06-28T12:32:31.873Z",
+  "repository_commit": "150facd8f43b032f200cf5689787e987d9b03f13",
   "dwasm_commit": "ddf0347a4fc115b11ffb1c5710768b7c47c46698",
   "freedoom_release": "v0.13.0",
   "toolchain": {
@@ -24,6 +24,21 @@
       "path": "games/nightfall/engine/index.data",
       "bytes": 29266731,
       "sha256": "f7398d7d3962ae9b8ebb70d4de7519bd6db6cea71b44980ce7eadf5815dc8ff9"
+    },
+    {
+      "path": "games/nightfall/assets/nightfall-face.wad",
+      "bytes": 62508,
+      "sha256": "b4a4b52673d6c205c9c36f1a3243aeee68672b13cfb6bb97be1c71d6e206a7b6"
+    },
+    {
+      "path": "games/nightfall/assets/nightfall-face-source.png",
+      "bytes": 1282,
+      "sha256": "dfa934986e79a6136a1136fe2ec1848fb73648c6009bf42aef2489a417ea7f28"
+    },
+    {
+      "path": "games/nightfall/assets/nightfall-face-preview.png",
+      "bytes": 6029,
+      "sha256": "188cd394e9017ca33feb42a8ad25a648e74c7d0005067f4c8598d9f767596f8a"
     }
   ]
 }

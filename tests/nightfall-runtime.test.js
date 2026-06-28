@@ -16,6 +16,7 @@ test("NIGHTFALL arcade integration links to the route without preloading engine 
     const text = readFileSync(resolve(repoRoot, file), "utf8");
     assert.match(text, /nightfall/i, `${file} links NIGHTFALL`);
     assert.doesNotMatch(text, /index\.(?:wasm|data)/, `${file} does not preload large runtime files`);
+    assert.doesNotMatch(text, /nightfall-face\.wad/, `${file} does not preload the HUD patch`);
   }
 });
 
@@ -46,6 +47,9 @@ test("NIGHTFALL Pages artifact contains runtime files when built", context => {
   for (const file of [
     "_site/games/nightfall/index.html",
     "_site/games/nightfall/src/main.js",
+    "_site/games/nightfall/assets/nightfall-face.wad",
+    "_site/games/nightfall/assets/nightfall-face-source.png",
+    "_site/games/nightfall/assets/nightfall-face-preview.png",
     "_site/games/nightfall/engine/index.js",
     "_site/games/nightfall/engine/index.wasm",
     "_site/games/nightfall/engine/index.data",

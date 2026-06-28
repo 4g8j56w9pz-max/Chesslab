@@ -1,8 +1,10 @@
 import {
   NIGHTFALL_ENGINE_FILES,
+  NIGHTFALL_PATCH_FILES,
   NIGHTFALL_STORAGE_KEYS,
   makeStartupArguments,
   resolveEngineFile,
+  resolvePatchFile,
   resolveRuntimeFile
 } from "./config.js";
 import {
@@ -115,6 +117,7 @@ function createEngineModule() {
   return {
     noInitialRun: true,
     canvas: dom.canvas,
+    preRun: [preloadNightfallFacePatch],
     locateFile(path) {
       return resolveRuntimeFile(path);
     },
@@ -134,6 +137,7 @@ function createEngineModule() {
       updateLoadingStatus("Runtime initialized. Launching content.", null);
       queueMicrotask(() => {
         if (mainCalled) return;
+        if (engineFailed) return;
         if (typeof engineModule.callMain !== "function") {
           failStartup("The engine runtime did not export the expected startup function.");
           return;
@@ -173,6 +177,30 @@ function createEngineModule() {
       setRuntimeState(`Exited ${status}`);
     }
   };
+}
+
+function preloadNightfallFacePatch(module) {
+  const dependency = "nightfall-face-pwad";
+  module.addRunDependency(dependency);
+  updateLoadingStatus("Loading custom status face.", null);
+
+  fetch(resolvePatchFile(NIGHTFALL_PATCH_FILES.facePatch), { credentials: "same-origin" })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`${response.status}: ${response.url}`);
+      }
+      return response.arrayBuffer();
+    })
+    .then(buffer => {
+      // The engine reads WAD paths from argv, so the patch has to exist in MEMFS before callMain.
+      module.FS_createDataFile("/", NIGHTFALL_PATCH_FILES.facePatch, new Uint8Array(buffer), true, true, true);
+    })
+    .catch(error => {
+      failStartup(`The custom status face could not be loaded: ${formatError(error)}`);
+    })
+    .finally(() => {
+      module.removeRunDependency(dependency);
+    });
 }
 
 function parseEmscriptenProgress(text) {

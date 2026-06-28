@@ -1,4 +1,4 @@
-const CACHE_NAME = "midnight-games-v14";
+const CACHE_NAME = "midnight-games-v15";
 const APP_SHELL = [
   "./",
   "./index.html",

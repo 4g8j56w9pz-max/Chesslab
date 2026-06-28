@@ -40,6 +40,30 @@ test("NIGHTFALL runtime does not include prohibited WAD files", () => {
   }
 });
 
+test("NIGHTFALL custom status face patch is a local PWAD override", () => {
+  const patchPath = "games/nightfall/assets/nightfall-face.wad";
+  const sourcePath = "games/nightfall/assets/nightfall-face-source.png";
+  const previewPath = "games/nightfall/assets/nightfall-face-preview.png";
+  const bytes = readFileSync(resolve(repoRoot, patchPath));
+
+  assert.equal(bytes.subarray(0, 4).toString("ascii"), "PWAD");
+  assert.equal(bytes.readInt32LE(4), 62);
+  assert.equal(hash(patchPath), "b4a4b52673d6c205c9c36f1a3243aeee68672b13cfb6bb97be1c71d6e206a7b6");
+  assert.equal(hash(sourcePath), "dfa934986e79a6136a1136fe2ec1848fb73648c6009bf42aef2489a417ea7f28");
+  assert.equal(hash(previewPath), "188cd394e9017ca33feb42a8ad25a648e74c7d0005067f4c8598d9f767596f8a");
+
+  const directoryOffset = bytes.readInt32LE(8);
+  const names = new Set();
+  for (let index = 0; index < 62; index += 1) {
+    const entryOffset = directoryOffset + index * 16;
+    names.add(bytes.subarray(entryOffset + 8, entryOffset + 16).toString("ascii").replace(/\0+$/, ""));
+  }
+
+  for (const requiredName of ["STFST00", "STFTR02", "STFTL42", "STFOUCH4", "STFEVL4", "STFKILL4", "STFGOD0", "STFDEAD0"]) {
+    assert.equal(names.has(requiredName), true, `${requiredName} exists`);
+  }
+});
+
 function hash(relativePath) {
   return createHash("sha256").update(readFileSync(resolve(repoRoot, relativePath))).digest("hex");
 }
