@@ -48,6 +48,7 @@ let engineReady = false;
 let engineModule = null;
 let engineScript = null;
 let firstRunTimer = 0;
+let fallbackFullscreen = false;
 
 document.documentElement.dataset.engineReady = "false";
 
@@ -62,13 +63,25 @@ for (const button of document.querySelectorAll(".controls-open-secondary")) {
 for (const button of document.querySelectorAll(".credits-open-secondary")) {
   button.addEventListener("click", () => openDialog(dom.creditsDialog));
 }
-dom.fullscreenButton.addEventListener("click", requestFullscreen);
+dom.fullscreenButton.addEventListener("click", toggleFullscreen);
 dom.audioButton.addEventListener("click", enableAudio);
 dom.touchToggle.addEventListener("click", () => setTouchControlsVisible(!isTouchControlsVisible(), true));
 dom.dismissFirstRun.addEventListener("click", dismissFirstRunHint);
+document.addEventListener("fullscreenchange", syncFullscreenButton);
+document.addEventListener("webkitfullscreenchange", syncFullscreenButton);
+window.visualViewport?.addEventListener("resize", syncVisualViewportSize);
+window.visualViewport?.addEventListener("scroll", syncVisualViewportSize);
+window.addEventListener("resize", syncVisualViewportSize);
+window.addEventListener("pagehide", () => {
+  if (fallbackFullscreen) {
+    exitFallbackFullscreen();
+  }
+});
 
 setupTouchControls();
 setTouchControlsVisible(getInitialTouchVisibility(), false);
+syncVisualViewportSize();
+syncFullscreenButton();
 
 function startGame() {
   if (engineStarted || engineFailed) {
@@ -238,16 +251,82 @@ function openDialog(dialog) {
   }
 }
 
-async function requestFullscreen() {
+async function toggleFullscreen() {
   try {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
+    if (fallbackFullscreen) {
+      exitFallbackFullscreen();
       return;
     }
-    await dom.viewport.requestFullscreen?.();
+
+    if (getFullscreenElement()) {
+      await exitNativeFullscreen();
+      return;
+    }
+
+    const fullscreenRequest = requestNativeFullscreen(dom.viewport);
+    if (fullscreenRequest) {
+      await fullscreenRequest;
+      syncFullscreenButton();
+      return;
+    }
   } catch (error) {
-    setRuntimeState(`Fullscreen unavailable: ${formatError(error)}`);
+    setRuntimeState(`Using browser fullscreen fallback: ${formatError(error)}`);
   }
+
+  enterFallbackFullscreen();
+}
+
+function requestNativeFullscreen(element) {
+  const request =
+    element.requestFullscreen ||
+    element.webkitRequestFullscreen ||
+    element.msRequestFullscreen;
+  return typeof request === "function" ? request.call(element) : null;
+}
+
+function exitNativeFullscreen() {
+  const exit =
+    document.exitFullscreen ||
+    document.webkitExitFullscreen ||
+    document.msExitFullscreen;
+  return typeof exit === "function" ? exit.call(document) : Promise.resolve();
+}
+
+function getFullscreenElement() {
+  return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null;
+}
+
+function enterFallbackFullscreen() {
+  fallbackFullscreen = true;
+  syncVisualViewportSize();
+  document.body.classList.add("is-nightfall-fullscreen");
+  releaseAllInputs("fullscreen fallback entered");
+  syncFullscreenButton();
+  window.scrollTo(0, 0);
+  window.setTimeout(() => dom.canvas.focus({ preventScroll: true }), 0);
+}
+
+function exitFallbackFullscreen() {
+  fallbackFullscreen = false;
+  document.body.classList.remove("is-nightfall-fullscreen");
+  releaseAllInputs("fullscreen fallback exited");
+  syncFullscreenButton();
+  window.setTimeout(() => dom.canvas.focus({ preventScroll: true }), 0);
+}
+
+function syncFullscreenButton() {
+  const active = fallbackFullscreen || Boolean(getFullscreenElement());
+  dom.fullscreenButton.textContent = active ? "Exit Fullscreen" : "Fullscreen";
+  dom.fullscreenButton.setAttribute("aria-pressed", String(active));
+  dom.fullscreenButton.setAttribute("aria-label", active ? "Exit fullscreen" : "Enter fullscreen");
+}
+
+function syncVisualViewportSize() {
+  const viewport = window.visualViewport;
+  const width = viewport?.width || window.innerWidth;
+  const height = viewport?.height || window.innerHeight;
+  document.documentElement.style.setProperty("--nightfall-vvw", `${Math.round(width)}px`);
+  document.documentElement.style.setProperty("--nightfall-vvh", `${Math.round(height)}px`);
 }
 
 async function enableAudio() {

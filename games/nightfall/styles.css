@@ -42,12 +42,35 @@ body.is-engine-active {
   overscroll-behavior: none;
 }
 
+body.is-nightfall-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: var(--nightfall-vvh, 100dvh);
+  overflow: hidden;
+  background: #050506;
+}
+
 body.is-engine-active .nightfall-shell {
   height: 100vh;
   height: 100svh;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
   overflow: hidden;
+}
+
+body.is-nightfall-fullscreen .nightfall-shell {
+  width: var(--nightfall-vvw, 100vw);
+  max-width: none;
+  height: var(--nightfall-vvh, 100dvh);
+  padding: 0;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+body.is-nightfall-fullscreen .nightfall-topbar,
+body.is-nightfall-fullscreen .game-switcher,
+body.is-nightfall-fullscreen .launch-panel {
+  display: none;
 }
 
 button,
@@ -373,6 +396,74 @@ body.is-engine-active .game-viewport {
   aspect-ratio: 16 / 9;
 }
 
+body.is-nightfall-fullscreen .nightfall-layout {
+  height: var(--nightfall-vvh, 100dvh);
+  min-height: 0;
+}
+
+body.is-nightfall-fullscreen .runtime-panel {
+  --nightfall-fullscreen-width: calc(var(--nightfall-vvw, 100vw) - env(safe-area-inset-left) - env(safe-area-inset-right) - 16px);
+  --nightfall-fullscreen-height: calc(var(--nightfall-vvh, 100dvh) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 58px);
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  width: var(--nightfall-vvw, 100vw);
+  height: var(--nightfall-vvh, 100dvh);
+  padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  gap: 6px;
+  grid-template-rows: auto minmax(0, 1fr);
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  background: #050506;
+  box-shadow: none;
+}
+
+body.is-nightfall-fullscreen .runtime-toolbar {
+  position: static;
+  z-index: 8;
+  width: min(var(--nightfall-fullscreen-width), 100%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  justify-self: center;
+}
+
+body.is-nightfall-fullscreen .runtime-toolbar > * {
+  min-height: 38px;
+  padding: 7px 10px;
+  font-size: 0.78rem;
+  background: rgba(5, 5, 6, 0.68);
+  backdrop-filter: blur(4px);
+}
+
+body.is-nightfall-fullscreen .runtime-toolbar .controls-open-secondary,
+body.is-nightfall-fullscreen .runtime-toolbar .credits-open-secondary {
+  display: none;
+}
+
+body.is-nightfall-fullscreen .game-viewport {
+  width: min(var(--nightfall-fullscreen-width), calc(var(--nightfall-fullscreen-height) * 1.7778));
+  height: min(var(--nightfall-fullscreen-height), calc(var(--nightfall-fullscreen-width) * 0.5625));
+  min-height: 0;
+  max-width: none;
+  border-radius: 4px;
+}
+
+body.is-nightfall-fullscreen .runtime-status {
+  display: none;
+}
+
+.game-viewport:fullscreen,
+.game-viewport:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  border: 0;
+  border-radius: 0;
+  aspect-ratio: auto;
+}
+
 .runtime-toolbar {
   justify-content: space-between;
 }
@@ -588,6 +679,27 @@ body.is-engine-active .game-viewport {
   min-height: 72px;
   color: #fff;
   background: rgba(222, 51, 65, 0.68);
+}
+
+body.is-nightfall-fullscreen .touch-pad {
+  bottom: max(12px, env(safe-area-inset-bottom));
+  width: min(23vw, 156px);
+  height: min(23vw, 156px);
+  min-width: 108px;
+  min-height: 108px;
+}
+
+body.is-nightfall-fullscreen .touch-buttons {
+  top: max(54px, env(safe-area-inset-top));
+  width: min(25vw, 176px);
+}
+
+body.is-nightfall-fullscreen .touch-button {
+  min-height: 46px;
+}
+
+body.is-nightfall-fullscreen .fire-button {
+  min-height: 64px;
 }
 
 .runtime-status {

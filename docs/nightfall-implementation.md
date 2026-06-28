@@ -84,6 +84,8 @@ The fixed startup arguments are:
 
 The page sets `document.documentElement.dataset.engineReady = "true"` only from Dwasm's `hideConsole` callback after the runtime has initialized and the engine has switched to the canvas.
 
+The Fullscreen button uses the native Fullscreen API where the browser supports it. iPhone/iPad Safari does not expose element fullscreen for this canvas route, so the shell falls back to an in-page fullscreen mode that fixes the runtime panel to the visual viewport, hides nonessential chrome, and keeps an Exit Fullscreen button visible.
+
 ## Touch Input
 
 The touch controls use Pointer Events and a small state machine in `input-state.js`.

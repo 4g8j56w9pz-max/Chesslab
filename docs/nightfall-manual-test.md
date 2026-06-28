@@ -57,6 +57,7 @@ Do not mark a device/browser as passed unless it was actually tested.
 - [ ] MENU button works
 - [ ] Touch visibility toggle persists
 - [ ] Safe-area insets are respected
+- [ ] Fullscreen button enters the in-page Safari fallback and Exit Fullscreen restores the shell
 - [ ] Page does not scroll during active gameplay controls
 - [ ] No stuck input after pointer cancellation, app switch, orientation change, or page hide
 - [ ] Audio startup works from user gesture

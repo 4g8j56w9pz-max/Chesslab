@@ -156,7 +156,7 @@ NIGHTFALL provides semantic shell controls, visible focus states, controls and c
 
 Lock Pop targets current versions of Chrome, Edge, Firefox, and Safari on desktop and mobile. It uses ES modules, Canvas 2D, requestAnimationFrame, localStorage, Pointer Events with a click fallback, and Web Audio with graceful silent behavior if audio is unavailable.
 
-NIGHTFALL targets current desktop browsers with WebAssembly, Canvas, Web Audio, and keyboard input. Mobile support targets iPhone/iPad Safari in landscape with Pointer Events-based touch controls where supported. Physical-device results belong in `docs/nightfall-manual-test.md`.
+NIGHTFALL targets current desktop browsers with WebAssembly, Canvas, Web Audio, and keyboard input. Mobile support targets iPhone/iPad Safari in landscape with Pointer Events-based touch controls where supported; iOS uses an in-page fullscreen fallback because Safari does not provide element fullscreen for this canvas route. Physical-device results belong in `docs/nightfall-manual-test.md`.
 
 ## Original Work
 
