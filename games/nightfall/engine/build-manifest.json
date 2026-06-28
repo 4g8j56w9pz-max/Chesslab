@@ -1,0 +1,29 @@
+{
+  "build_timestamp": "2026-06-28T02:24:30.015Z",
+  "repository_commit": "8be19cf51bb354251b3657da18940f361eb14c8c",
+  "dwasm_commit": "ddf0347a4fc115b11ffb1c5710768b7c47c46698",
+  "freedoom_release": "v0.13.0",
+  "toolchain": {
+    "emscripten_version": "4.0.8 (70404efec4458b60b953bc8f1529f2fa112cdfd1)",
+    "cmake_version": "3.31.6",
+    "ninja_version": "1.12.1",
+    "build_environment": "Windows PowerShell with pinned local emsdk, CMake, and Ninja caches"
+  },
+  "files": [
+    {
+      "path": "games/nightfall/engine/index.js",
+      "bytes": 214480,
+      "sha256": "087a78d214ffbe580e9cff59c90da2f8f7612028e26bbb21b525e1f11321db73"
+    },
+    {
+      "path": "games/nightfall/engine/index.wasm",
+      "bytes": 2000082,
+      "sha256": "e34b564d951b6dd2606c67e5b3702468863bbe20a64a58b1ee72f068a6219990"
+    },
+    {
+      "path": "games/nightfall/engine/index.data",
+      "bytes": 29266731,
+      "sha256": "f7398d7d3962ae9b8ebb70d4de7519bd6db6cea71b44980ce7eadf5815dc8ff9"
+    }
+  ]
+}

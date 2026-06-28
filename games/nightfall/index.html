@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#080609" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="NIGHTFALL" />
+  <title>NIGHTFALL | Midnight Games</title>
+  <link rel="icon" href="../../icons/midnight-icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="../../icons/midnight-icon.svg" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="nightfall-shell">
+    <header class="nightfall-topbar">
+      <div class="brand">
+        <span class="brand-badge" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <path d="M8 48h48L44 16H20L8 48Z" />
+            <path d="M20 48 28 16M44 48 36 16M15 37h34M20 27h24" />
+            <path d="M27 48h10l-2-13h-6l-2 13Z" />
+          </svg>
+        </span>
+        <div>
+          <p class="eyebrow">Midnight Games</p>
+          <h1>NIGHTFALL</h1>
+          <p class="subtitle">OPEN-SOURCE CLASSIC FPS</p>
+        </div>
+      </div>
+      <a class="ghost-button back-link" href="../../index.html">Back to Arcade</a>
+    </header>
+
+    <nav class="game-switcher" aria-label="Game selection">
+      <a class="game-card" href="../../index.html">Merge</a>
+      <a class="game-card" href="../../chesslab.html">Chess</a>
+      <a class="game-card" href="../water-sort/">Water Sort</a>
+      <a class="game-card" href="../lock-pop/">Lock Pop</a>
+      <a class="game-card is-active nightfall-card" href="./index.html" aria-current="page">
+        <span>NIGHTFALL</span>
+        <small>OPEN-SOURCE CLASSIC FPS</small>
+      </a>
+    </nav>
+
+    <main class="nightfall-layout">
+      <section class="launch-panel" aria-labelledby="nightfall-title">
+        <div class="portal-art" aria-hidden="true">
+          <span class="portal-grid"></span>
+          <span class="portal-core"></span>
+        </div>
+        <div class="launch-copy">
+          <p class="eyebrow">WASM &bull; STATIC &bull; NO SERVER</p>
+          <h2 id="nightfall-title">NIGHTFALL</h2>
+          <p class="launch-subtitle">OPEN-SOURCE CLASSIC FPS</p>
+          <p class="content-note">Content note: fantasy/sci-fi combat.</p>
+          <p class="launch-text">Runs locally in your browser after you press Start Game. The arcade page does not load the engine, WebAssembly module, or packaged game data before that.</p>
+          <div class="launch-actions">
+            <button id="start-game" class="primary-button" type="button">Start Game</button>
+            <button id="controls-open" class="ghost-button" type="button">Controls</button>
+            <button id="credits-open" class="ghost-button" type="button">Open-source Credits</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="runtime-panel" aria-label="NIGHTFALL runtime">
+        <div class="runtime-toolbar" aria-label="Runtime controls">
+          <button id="fullscreen-button" class="ghost-button" type="button">Fullscreen</button>
+          <button id="touch-toggle" class="ghost-button" type="button" aria-pressed="false">Touch Controls</button>
+          <button class="ghost-button controls-open-secondary" type="button">Controls</button>
+          <button class="ghost-button credits-open-secondary" type="button">Credits</button>
+          <button id="audio-button" class="ghost-button" type="button" hidden>Enable Audio</button>
+        </div>
+
+        <div id="game-viewport" class="game-viewport">
+          <canvas
+            id="game-canvas"
+            class="game-canvas"
+            width="960"
+            height="540"
+            tabindex="0"
+            role="img"
+            aria-label="NIGHTFALL game canvas. Press Escape for the game menu. Use the Controls dialog for keyboard and touch mappings."
+          ></canvas>
+
+          <div id="loading-panel" class="overlay-panel loading-panel" hidden>
+            <p class="eyebrow">Loading Engine</p>
+            <strong id="loading-title">Waiting for Start Game</strong>
+            <p id="loading-status" aria-live="polite">No engine payload has been requested.</p>
+            <progress id="loading-progress" max="100" value="0"></progress>
+          </div>
+
+          <div id="error-panel" class="overlay-panel error-panel" hidden>
+            <p class="eyebrow">Startup Error</p>
+            <strong>Unable to initialize NIGHTFALL.</strong>
+            <p id="error-message">Check the browser console for details.</p>
+            <button id="retry-button" class="primary-button" type="button">Retry</button>
+          </div>
+
+          <div id="first-run-hint" class="first-run-hint" hidden>
+            <strong>Controls</strong>
+            <span>WASD moves, arrows turn, Control fires, Space uses, Tab maps, Escape opens the menu.</span>
+            <button id="dismiss-first-run" type="button">Dismiss</button>
+          </div>
+
+          <div id="rotate-hint" class="rotate-hint" aria-live="polite">
+            Landscape gives the best touch layout.
+          </div>
+
+          <div id="touch-controls" class="touch-controls" hidden aria-label="Touch controls">
+            <div id="move-pad" class="touch-pad move-pad" aria-label="Move pad">
+              <span class="pad-label">MOVE</span>
+              <span class="pad-knob"></span>
+            </div>
+            <div id="turn-pad" class="touch-pad turn-pad" aria-label="Turn pad">
+              <span class="pad-label">TURN</span>
+              <span class="pad-knob"></span>
+            </div>
+            <div class="touch-buttons" aria-label="Action buttons">
+              <button class="touch-button fire-button" type="button" data-action="fire">FIRE</button>
+              <button class="touch-button" type="button" data-action="use">USE</button>
+              <button id="run-toggle" class="touch-button" type="button" aria-pressed="false">RUN</button>
+              <button class="touch-button" type="button" data-action="map">MAP</button>
+              <button class="touch-button" type="button" data-action="menu">MENU</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="runtime-status">
+          <span id="runtime-state">Idle</span>
+          <span>Software renderer</span>
+          <span>Freedoom Phase 1</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="controls-dialog" class="nightfall-dialog" aria-labelledby="controls-title">
+    <form method="dialog">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">NIGHTFALL</p>
+          <h2 id="controls-title">Controls</h2>
+        </div>
+        <button class="dialog-close" type="submit" aria-label="Close controls">Close</button>
+      </div>
+      <div class="controls-grid">
+        <section>
+          <h3>Desktop</h3>
+          <table>
+            <tbody>
+              <tr><th scope="row">Move</th><td>W, A, S, D</td></tr>
+              <tr><th scope="row">Turn</th><td>Left and Right arrows, mouse where pointer lock is granted</td></tr>
+              <tr><th scope="row">Fire</th><td>Control or primary mouse button</td></tr>
+              <tr><th scope="row">Use/Open</th><td>Space</td></tr>
+              <tr><th scope="row">Run</th><td>Shift</td></tr>
+              <tr><th scope="row">Weapons</th><td>Number keys 1-9</td></tr>
+              <tr><th scope="row">Map</th><td>Tab</td></tr>
+              <tr><th scope="row">Menu</th><td>Escape</td></tr>
+              <tr><th scope="row">Pause</th><td>Pause key, when available</td></tr>
+              <tr><th scope="row">Gamepad</th><td>Browser gamepad input is retained from the engine where supported.</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <section>
+          <h3>Touch</h3>
+          <table>
+            <tbody>
+              <tr><th scope="row">Move</th><td>Left pad: forward, backward, strafe left, strafe right</td></tr>
+              <tr><th scope="row">Turn</th><td>Right pad: horizontal turn</td></tr>
+              <tr><th scope="row">Fire</th><td>Large FIRE button</td></tr>
+              <tr><th scope="row">Use/Open</th><td>USE button</td></tr>
+              <tr><th scope="row">Run</th><td>RUN toggles run lock</td></tr>
+              <tr><th scope="row">Map/Menu</th><td>MAP and MENU buttons</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="credits-dialog" class="nightfall-dialog" aria-labelledby="credits-title">
+    <form method="dialog">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">Open Source</p>
+          <h2 id="credits-title">Credits</h2>
+        </div>
+        <button class="dialog-close" type="submit" aria-label="Close credits">Close</button>
+      </div>
+      <div class="credits-copy">
+        <p><strong>Engine:</strong> Dwasm, based on PrBoom+/PrBoomX, built from pinned source included in this repository.</p>
+        <p><strong>Game content:</strong> Freedoom Phase 1 v0.13.0, included as freely redistributable content.</p>
+        <p><strong>Runtime:</strong> Emscripten WebAssembly output, software renderer, single-player only, no backend and no analytics.</p>
+        <p>NIGHTFALL is an independent open-source browser project. Game content is provided by the Freedoom project. Engine technology is provided by the credited open-source projects. This project is not affiliated with or endorsed by id Software, Bethesda Softworks, or ZeniMax Media.</p>
+        <p>Complete license texts, contributor credits, source paths, and checksums are in the repository notices and lock files.</p>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

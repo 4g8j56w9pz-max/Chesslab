@@ -1,0 +1,27 @@
+{
+  "dwasm": {
+    "repository": "https://github.com/GMH-Code/Dwasm",
+    "commit": "ddf0347a4fc115b11ffb1c5710768b7c47c46698",
+    "source_archive_sha256": "7955e5645218dc9e6081b4efbd08d951723c6e4348fcd399313470a04e56eb43",
+    "license_spdx": "GPL-2.0-or-later",
+    "local_source_path": "third_party/dwasm/"
+  },
+  "freedoom": {
+    "repository": "https://github.com/freedoom/freedoom",
+    "release": "v0.13.0",
+    "asset_name": "freedoom-0.13.0.zip",
+    "asset_sha256": "3f9b264f3e3ce503b4fb7f6bdcb1f419d93c7b546f4df3e874dd878db9688f59",
+    "included_file": "third_party/dwasm/wasm/fs/freedoom1.wad",
+    "included_file_sha256": "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d",
+    "license_spdx": "BSD-3-Clause"
+  },
+  "toolchain": {
+    "emscripten_version": "4.0.8 (70404efec4458b60b953bc8f1529f2fa112cdfd1)",
+    "emsdk_release": "4.0.8",
+    "emsdk_repository": "https://github.com/emscripten-core/emsdk",
+    "emsdk_commit": "419021fa040428bc69ef1559b325addb8e10211f",
+    "cmake_version_or_environment": "CMake 3.31.6 portable zip, SHA-256 d163cd3ab4959b0a53fa8988f2ddbd2e6c501658201e6a154386bad9dbe4f836",
+    "ninja_version_or_environment": "Ninja 1.12.1 portable zip, SHA-256 f550fec705b6d6ff58f2db3c374c2277a37691678d6aba463adcbb129108467a",
+    "build_environment": "Windows PowerShell with pinned local emsdk, CMake, and Ninja caches"
+  }
+}

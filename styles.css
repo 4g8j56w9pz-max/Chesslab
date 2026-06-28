@@ -160,6 +160,7 @@ h2 {
   min-height: 44px;
   display: grid;
   place-items: center;
+  gap: 2px;
   padding: 10px 8px;
   color: var(--ink);
   font-size: 0.9rem;
@@ -170,6 +171,14 @@ h2 {
   border-radius: 8px;
   background: var(--panel);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.game-card small {
+  color: var(--muted);
+  font-size: 0.58rem;
+  font-weight: 800;
+  line-height: 1.05;
+  text-transform: uppercase;
 }
 
 .game-card.is-active {

@@ -14,6 +14,7 @@ Thumbs.db
 # Build, coverage, and cache output
 dist/
 build/
+_site/
 coverage/
 .cache/
 .parcel-cache/

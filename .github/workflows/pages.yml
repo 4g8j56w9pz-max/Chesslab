@@ -28,7 +28,13 @@ jobs:
           node-version: 22
 
       - name: Run tests
-        run: npm test
+        run: |
+          npm run build:nightfall
+          npm run build:pages
+          npm test
+
+      - name: Run NIGHTFALL audit
+        run: npm run audit:nightfall
 
       - name: Run syntax checks
         run: npm run check:syntax
@@ -43,16 +49,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      - name: Build NIGHTFALL manifest
+        run: npm run build:nightfall
+
       - name: Prepare static site
-        run: |
-          mkdir -p _site/games
-          cp -a index.html chesslab.html chessgame.html app.js chesslab-app.js leaderboard-config.js manifest.json service-worker.js style.css styles.css .nojekyll _site/
-          cp -a icons pieces _site/
-          cp -a games/water-sort _site/games/
-          cp -a games/lock-pop _site/games/
+        run: npm run build:pages
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

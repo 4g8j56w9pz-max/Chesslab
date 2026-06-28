@@ -1,4 +1,4 @@
-const CACHE_NAME = "midnight-games-v11";
+const CACHE_NAME = "midnight-games-v12";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -17,6 +17,13 @@ const APP_SHELL = [
   "./games/lock-pop/src/renderer.js",
   "./games/lock-pop/src/audio.js",
   "./games/lock-pop/src/storage.js",
+  "./games/nightfall/",
+  "./games/nightfall/index.html",
+  "./games/nightfall/styles.css",
+  "./games/nightfall/src/config.js",
+  "./games/nightfall/src/input-state.js",
+  "./games/nightfall/src/input-dispatch.js",
+  "./games/nightfall/src/main.js",
   "./leaderboard-config.js",
   "./styles.css",
   "./style.css",
@@ -58,6 +65,14 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") {
+    return;
+  }
+
+  const requestUrl = new URL(event.request.url);
+  const isNightfallEngineRequest = requestUrl.pathname.includes("/games/nightfall/engine/");
+
+  if (isNightfallEngineRequest) {
+    event.respondWith(fetch(event.request));
     return;
   }
 
