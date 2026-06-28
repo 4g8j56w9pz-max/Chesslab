@@ -420,8 +420,8 @@ body.is-nightfall-fullscreen .runtime-panel {
 }
 
 body.is-nightfall-fullscreen .runtime-toolbar {
-  position: static;
-  z-index: 8;
+  position: relative;
+  z-index: 60;
   width: min(var(--nightfall-fullscreen-width), 100%);
   display: flex;
   flex-wrap: wrap;
@@ -599,6 +599,7 @@ body.is-nightfall-fullscreen .runtime-status {
 
 .touch-pad {
   position: absolute;
+  z-index: 1;
   bottom: max(18px, env(safe-area-inset-bottom));
   width: min(34vw, 168px);
   height: min(34vw, 168px);
@@ -647,6 +648,7 @@ body.is-nightfall-fullscreen .runtime-status {
 
 .touch-buttons {
   position: absolute;
+  z-index: 2;
   right: max(12px, env(safe-area-inset-right));
   top: max(12px, env(safe-area-inset-top));
   display: grid;
@@ -682,24 +684,103 @@ body.is-nightfall-fullscreen .runtime-status {
 }
 
 body.is-nightfall-fullscreen .touch-pad {
-  bottom: max(12px, env(safe-area-inset-bottom));
-  width: min(23vw, 156px);
-  height: min(23vw, 156px);
-  min-width: 108px;
-  min-height: 108px;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  width: clamp(96px, 13vw, 118px);
+  height: clamp(96px, 13vw, 118px);
+  min-width: 0;
+  min-height: 0;
+  opacity: 0.44;
 }
 
 body.is-nightfall-fullscreen .touch-buttons {
-  top: max(54px, env(safe-area-inset-top));
-  width: min(25vw, 176px);
+  top: auto;
+  right: max(10px, env(safe-area-inset-right));
+  bottom: max(10px, env(safe-area-inset-bottom));
+  width: auto;
+  grid-template-columns: repeat(2, clamp(38px, 5.6vw, 50px));
+  grid-template-areas:
+    "map menu"
+    "use run"
+    "fire fire";
+  gap: 6px;
+  align-items: end;
+  justify-items: end;
 }
 
 body.is-nightfall-fullscreen .touch-button {
-  min-height: 46px;
+  min-height: clamp(38px, 5.6vw, 50px);
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: clamp(0.58rem, 1.4vw, 0.72rem);
+  opacity: 0.5;
 }
 
 body.is-nightfall-fullscreen .fire-button {
-  min-height: 64px;
+  grid-area: fire;
+  width: clamp(62px, 9vw, 76px);
+  height: clamp(62px, 9vw, 76px);
+  min-height: 0;
+  padding: 0;
+  border-radius: 50%;
+  font-size: clamp(0.66rem, 1.65vw, 0.84rem);
+}
+
+body.is-nightfall-fullscreen .touch-button[data-action="use"] {
+  grid-area: use;
+}
+
+body.is-nightfall-fullscreen #run-toggle {
+  grid-area: run;
+}
+
+body.is-nightfall-fullscreen .touch-button[data-action="map"] {
+  grid-area: map;
+}
+
+body.is-nightfall-fullscreen .touch-button[data-action="menu"] {
+  grid-area: menu;
+}
+
+body.is-nightfall-fullscreen .touch-controls {
+  position: fixed;
+  inset: 0;
+  z-index: 52;
+}
+
+body.is-nightfall-fullscreen .move-pad {
+  left: max(12px, env(safe-area-inset-left));
+}
+
+body.is-nightfall-fullscreen .turn-pad {
+  top: max(52px, calc(env(safe-area-inset-top) + 46px));
+  right: 0;
+  bottom: 0;
+  left: auto;
+  width: min(42vw, 340px);
+  height: auto;
+  min-width: 150px;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(90deg, transparent 12%, rgba(222, 51, 65, 0.12));
+  opacity: 0.18;
+  box-shadow: none;
+}
+
+body.is-nightfall-fullscreen .turn-pad.is-active {
+  opacity: 0.34;
+  background: linear-gradient(90deg, transparent 12%, rgba(222, 51, 65, 0.22));
+}
+
+body.is-nightfall-fullscreen .turn-pad .pad-knob {
+  display: none;
+}
+
+body.is-nightfall-fullscreen .turn-pad .pad-label {
+  top: auto;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(96px, calc(env(safe-area-inset-bottom) + 82px));
+  color: rgba(255, 247, 237, 0.72);
 }
 
 .runtime-status {

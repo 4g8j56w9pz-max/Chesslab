@@ -88,13 +88,13 @@ The Fullscreen button uses the native Fullscreen API where the browser supports 
 
 ## Touch Input
 
-The touch controls use Pointer Events and a small state machine in `input-state.js`.
+The touch controls use Pointer Events and a small state machine in `input-state.js`. In fullscreen mode, controls are anchored to the visual viewport edges so the center of the game view stays clear: movement sits in the left gutter, action buttons sit at the lower-right edge, and turning uses a low-profile right-side drag zone.
 
 Implemented controls:
 
 - Left movement pad: forward, backward, strafe left, strafe right.
-- Right turn pad: turn left and turn right.
-- FIRE, USE, RUN lock, MAP, and MENU buttons.
+- Right-side drag zone: turn left and turn right.
+- Lower-right FIRE, USE, RUN lock, MAP, and MENU buttons.
 - Simultaneous movement, turning, and firing through independent pointer IDs.
 
 Cleanup releases all active inputs on `pointerup`, `pointercancel`, `lostpointercapture`, `blur`, `pagehide`, `visibilitychange`, and `orientationchange`.

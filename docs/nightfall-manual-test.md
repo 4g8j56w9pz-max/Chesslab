@@ -45,7 +45,7 @@ Do not mark a device/browser as passed unless it was actually tested.
 ## iPhone/iPad Safari
 
 - [ ] Direct route loads
-- [ ] Landscape touch layout is usable
+- [ ] Landscape edge touch layout is usable without blocking the center view
 - [ ] Portrait shows rotate recommendation without hard blocking play
 - [ ] Left pad supports forward/back/strafe
 - [ ] Right pad turns left/right
