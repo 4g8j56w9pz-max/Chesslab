@@ -41,6 +41,7 @@ const dom = {
 
 const input = new InputStateMachine(new BrowserInputDispatcher({ targetWindow: window }));
 const PAGE_TITLE = "NIGHTFALL | Midnight Games";
+const FULLSCREEN_SETTLE_TIMEOUT_MS = 900;
 
 let engineStarted = false;
 let engineFailed = false;
@@ -263,11 +264,22 @@ async function toggleFullscreen() {
       return;
     }
 
+    if (shouldUseFullscreenFallback()) {
+      enterFallbackFullscreen();
+      return;
+    }
+
     const fullscreenRequest = requestNativeFullscreen(dom.viewport);
     if (fullscreenRequest) {
-      await fullscreenRequest;
-      syncFullscreenButton();
-      return;
+      const requestResult = await waitForFullscreenRequest(fullscreenRequest);
+      if (requestResult.error) {
+        throw requestResult.error;
+      }
+      if (getFullscreenElement()) {
+        syncFullscreenButton();
+        return;
+      }
+      setRuntimeState("Using browser fullscreen fallback.");
     }
   } catch (error) {
     setRuntimeState(`Using browser fullscreen fallback: ${formatError(error)}`);
@@ -281,7 +293,32 @@ function requestNativeFullscreen(element) {
     element.requestFullscreen ||
     element.webkitRequestFullscreen ||
     element.msRequestFullscreen;
-  return typeof request === "function" ? request.call(element) : null;
+  return typeof request === "function" ? Promise.resolve(request.call(element)) : null;
+}
+
+function shouldUseFullscreenFallback() {
+  return isIOSLikeBrowser() || !(document.fullscreenEnabled || document.webkitFullscreenEnabled || document.msFullscreenEnabled);
+}
+
+function isIOSLikeBrowser() {
+  const userAgent = navigator.userAgent || "";
+  const platform = navigator.platform || "";
+  return /iPad|iPhone|iPod/i.test(userAgent) || (platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+async function waitForFullscreenRequest(fullscreenRequest) {
+  let requestError = null;
+  const observedRequest = fullscreenRequest
+    .then(() => true)
+    .catch(error => {
+      requestError = error;
+      return false;
+    });
+  const completed = await Promise.race([
+    observedRequest,
+    new Promise(resolve => window.setTimeout(() => resolve(false), FULLSCREEN_SETTLE_TIMEOUT_MS))
+  ]);
+  return { completed, error: requestError };
 }
 
 function exitNativeFullscreen() {
