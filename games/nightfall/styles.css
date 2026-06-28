@@ -387,6 +387,12 @@ body.is-engine-active .runtime-panel {
   grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
+body.is-engine-active .nightfall-topbar,
+body.is-engine-active .runtime-toolbar {
+  position: relative;
+  z-index: 60;
+}
+
 body.is-engine-active .game-viewport {
   width: min(100%, calc((100svh - 190px) * 1.7778));
   max-width: 100%;
@@ -683,7 +689,7 @@ body.is-nightfall-fullscreen .runtime-status {
   background: rgba(222, 51, 65, 0.68);
 }
 
-body.is-nightfall-fullscreen .touch-pad {
+body.is-engine-active .touch-pad {
   bottom: max(14px, env(safe-area-inset-bottom));
   width: clamp(96px, 13vw, 118px);
   height: clamp(96px, 13vw, 118px);
@@ -692,7 +698,11 @@ body.is-nightfall-fullscreen .touch-pad {
   opacity: 0.44;
 }
 
-body.is-nightfall-fullscreen .touch-buttons {
+body.is-engine-active .touch-pad.is-active {
+  opacity: 0.74;
+}
+
+body.is-engine-active .touch-buttons {
   top: auto;
   right: max(10px, env(safe-area-inset-right));
   bottom: max(10px, env(safe-area-inset-bottom));
@@ -707,7 +717,7 @@ body.is-nightfall-fullscreen .touch-buttons {
   justify-items: end;
 }
 
-body.is-nightfall-fullscreen .touch-button {
+body.is-engine-active .touch-button {
   min-height: clamp(38px, 5.6vw, 50px);
   padding: 0 6px;
   border-radius: 999px;
@@ -715,7 +725,7 @@ body.is-nightfall-fullscreen .touch-button {
   opacity: 0.5;
 }
 
-body.is-nightfall-fullscreen .fire-button {
+body.is-engine-active .fire-button {
   grid-area: fire;
   width: clamp(62px, 9vw, 76px);
   height: clamp(62px, 9vw, 76px);
@@ -725,33 +735,33 @@ body.is-nightfall-fullscreen .fire-button {
   font-size: clamp(0.66rem, 1.65vw, 0.84rem);
 }
 
-body.is-nightfall-fullscreen .touch-button[data-action="use"] {
+body.is-engine-active .touch-button[data-action="use"] {
   grid-area: use;
 }
 
-body.is-nightfall-fullscreen #run-toggle {
+body.is-engine-active #run-toggle {
   grid-area: run;
 }
 
-body.is-nightfall-fullscreen .touch-button[data-action="map"] {
+body.is-engine-active .touch-button[data-action="map"] {
   grid-area: map;
 }
 
-body.is-nightfall-fullscreen .touch-button[data-action="menu"] {
+body.is-engine-active .touch-button[data-action="menu"] {
   grid-area: menu;
 }
 
-body.is-nightfall-fullscreen .touch-controls {
+body.is-engine-active .touch-controls {
   position: fixed;
   inset: 0;
   z-index: 52;
 }
 
-body.is-nightfall-fullscreen .move-pad {
+body.is-engine-active .move-pad {
   left: max(12px, env(safe-area-inset-left));
 }
 
-body.is-nightfall-fullscreen .turn-pad {
+body.is-engine-active .turn-pad {
   top: max(52px, calc(env(safe-area-inset-top) + 46px));
   right: 0;
   bottom: 0;
@@ -767,16 +777,16 @@ body.is-nightfall-fullscreen .turn-pad {
   box-shadow: none;
 }
 
-body.is-nightfall-fullscreen .turn-pad.is-active {
+body.is-engine-active .turn-pad.is-active {
   opacity: 0.34;
   background: linear-gradient(90deg, transparent 12%, rgba(222, 51, 65, 0.22));
 }
 
-body.is-nightfall-fullscreen .turn-pad .pad-knob {
+body.is-engine-active .turn-pad .pad-knob {
   display: none;
 }
 
-body.is-nightfall-fullscreen .turn-pad .pad-label {
+body.is-engine-active .turn-pad .pad-label {
   top: auto;
   right: max(18px, env(safe-area-inset-right));
   bottom: max(96px, calc(env(safe-area-inset-bottom) + 82px));
@@ -892,6 +902,12 @@ td,
 @media (orientation: portrait) and (pointer: coarse) {
   .rotate-hint {
     display: block;
+  }
+
+  body.is-engine-active .rotate-hint {
+    top: max(8px, env(safe-area-inset-top));
+    bottom: auto;
+    width: min(84%, 320px);
   }
 
   .game-viewport {

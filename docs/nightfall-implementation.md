@@ -93,7 +93,7 @@ The Fullscreen button uses the native Fullscreen API where the browser supports 
 
 ## Touch Input
 
-The touch controls use Pointer Events and a small state machine in `input-state.js`. In fullscreen mode, controls are anchored to the visual viewport edges so the center of the game view stays clear: movement sits in the left gutter, action buttons sit at the lower-right edge, and turning uses a low-profile right-side drag zone.
+The touch controls use Pointer Events and a small state machine in `input-state.js`. During active gameplay, controls are anchored to the visual viewport edges so the center of the game view stays clear: movement sits in the left gutter, action buttons sit at the lower-right edge, and turning uses a low-profile right-side drag zone. Fullscreen mode uses the same layout.
 
 Implemented controls:
 
