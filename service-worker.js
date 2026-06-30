@@ -1,4 +1,4 @@
-const CACHE_NAME = "midnight-games-v16";
+const CACHE_NAME = "midnight-games-v17";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -17,6 +17,10 @@ const APP_SHELL = [
   "./games/lock-pop/src/renderer.js",
   "./games/lock-pop/src/audio.js",
   "./games/lock-pop/src/storage.js",
+  "./games/soundboard/",
+  "./games/soundboard/index.html",
+  "./games/soundboard/styles.css",
+  "./games/soundboard/src/main.js",
   "./games/nightfall/",
   "./games/nightfall/index.html",
   "./games/nightfall/styles.css",

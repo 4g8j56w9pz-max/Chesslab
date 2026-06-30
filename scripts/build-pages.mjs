@@ -33,6 +33,7 @@ for (const directory of [
   "pieces",
   "games/water-sort",
   "games/lock-pop",
+  "games/soundboard",
   "games/nightfall"
 ]) {
   cpSync(resolve(repoRoot, directory), resolve(siteRoot, directory), { recursive: true });

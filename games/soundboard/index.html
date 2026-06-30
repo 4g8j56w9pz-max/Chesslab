@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#101014" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Fahhh Board" />
+  <title>Fahhh Soundboard | Midnight Games</title>
+  <link rel="icon" href="../../icons/midnight-icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="../../icons/midnight-icon.svg" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="sound-shell">
+    <header class="sound-topbar">
+      <div class="brand">
+        <span class="brand-badge" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <path d="M10 38h7l5-20 8 33 7-42 8 29h9" />
+            <path d="M12 49h40" />
+            <path d="M20 13h24" />
+          </svg>
+        </span>
+        <div>
+          <p class="eyebrow">Midnight Games</p>
+          <h1>Fahhh Soundboard</h1>
+        </div>
+      </div>
+      <button id="mute-button" class="ghost-button icon-button" type="button" aria-pressed="false">
+        Sound On
+      </button>
+    </header>
+
+    <nav class="game-switcher" aria-label="Game selection">
+      <a class="game-card" href="../../index.html">Merge</a>
+      <a class="game-card" href="../../chesslab.html">Chess</a>
+      <a class="game-card" href="../water-sort/">Water Sort</a>
+      <a class="game-card" href="../lock-pop/">Lock Pop</a>
+      <a class="game-card is-active" href="./index.html" aria-current="page">Soundboard</a>
+      <a class="game-card nightfall-card" href="../nightfall/">
+        <span>NIGHTFALL</span>
+        <small>OPEN-SOURCE CLASSIC FPS</small>
+      </a>
+    </nav>
+
+    <main class="sound-layout">
+      <section class="status-panel" aria-label="Soundboard status">
+        <div class="status-card">
+          <span>Last</span>
+          <strong id="last-sound">Ready</strong>
+        </div>
+        <div class="status-card">
+          <span>Hits</span>
+          <strong id="hit-count">0</strong>
+        </div>
+        <div class="status-card">
+          <span>Tempo</span>
+          <strong id="tempo-readout">100</strong>
+        </div>
+        <div class="status-card">
+          <span>Loop</span>
+          <strong id="loop-state">Stopped</strong>
+        </div>
+      </section>
+
+      <section class="sound-stage" aria-labelledby="pads-title">
+        <div class="scope" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div class="panel-heading">
+          <h2 id="pads-title">Quick Buttons</h2>
+          <span id="sound-status" class="panel-note" aria-live="polite">Ready</span>
+        </div>
+
+        <div id="pad-grid" class="pad-grid" aria-label="Sound buttons"></div>
+      </section>
+
+      <section class="sequencer-panel" aria-labelledby="loop-title">
+        <div class="panel-heading">
+          <h2 id="loop-title">Rough Loop</h2>
+          <div class="loop-actions">
+            <button id="play-loop" class="primary-button" type="button">Play</button>
+            <button id="clear-loop" class="ghost-button" type="button">Clear</button>
+          </div>
+        </div>
+
+        <label class="tempo-control" for="tempo-slider">
+          <span>Tempo</span>
+          <input id="tempo-slider" type="range" min="70" max="150" step="1" value="100" />
+        </label>
+
+        <div class="sequence-scroll">
+          <div id="sequence-grid" class="sequence-grid" role="grid" aria-label="Loop pattern"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
