@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include <LittleFS.h>
 #include "ESP_I2S.h"
+#include "fahhh_wav.h"
 
 // Button wiring:
 // GPIO35 -> button -> GND
@@ -15,7 +15,6 @@ const int I2S_DIN_PIN = 16;
 const int I2S_BCLK_PIN = 17;
 const int I2S_LRC_PIN = 18;
 
-const char *SOUND_PATH = "/fahhh.wav";
 const unsigned long DEBOUNCE_MS = 40;
 
 I2SClass i2s;
@@ -30,54 +29,9 @@ void stopHere() {
   }
 }
 
-bool loadFileToMemory(const char *path, uint8_t **buffer, size_t *size) {
-  File file = LittleFS.open(path, "r");
-  if (!file || file.isDirectory()) {
-    Serial.print("Could not open ");
-    Serial.println(path);
-    return false;
-  }
-
-  *size = file.size();
-  if (*size == 0) {
-    Serial.println("Sound file is empty");
-    file.close();
-    return false;
-  }
-
-  // This prototype clip is small, so loading it fully keeps playback simple.
-  *buffer = (uint8_t *)malloc(*size);
-  if (*buffer == nullptr) {
-    Serial.println("Not enough memory for sound file");
-    file.close();
-    return false;
-  }
-
-  size_t bytesRead = file.read(*buffer, *size);
-  file.close();
-
-  if (bytesRead != *size) {
-    Serial.println("Could not read whole sound file");
-    free(*buffer);
-    *buffer = nullptr;
-    *size = 0;
-    return false;
-  }
-
-  return true;
-}
-
 void playFahhhOnce() {
-  uint8_t *wavData = nullptr;
-  size_t wavSize = 0;
-
-  if (!loadFileToMemory(SOUND_PATH, &wavData, &wavSize)) {
-    return;
-  }
-
   Serial.println("PLAYING FAHHH");
-  i2s.playWAV(wavData, wavSize);
-  free(wavData);
+  i2s.playWAV(FAHHH_WAV, FAHHH_WAV_SIZE);
 
   Serial.println("DONE");
 }
@@ -112,19 +66,9 @@ void setup() {
 
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
-  if (!LittleFS.begin()) {
-    Serial.println("LittleFS mount failed. Upload the data folder first.");
-    stopHere();
-  }
-
-  if (!LittleFS.exists(SOUND_PATH)) {
-    Serial.println("Missing /fahhh.wav. Upload the LittleFS data folder.");
-    stopHere();
-  }
-
   i2s.setPins(I2S_BCLK_PIN, I2S_LRC_PIN, I2S_DIN_PIN);
 
-  // The included WAV is mono, 16-bit PCM, 22050 Hz.
+  // The embedded WAV is mono, 16-bit PCM, 22050 Hz.
   // I2S_STD_SLOT_BOTH sends mono audio to both left and right I2S slots.
   if (!i2s.begin(I2S_MODE_STD, 22050, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_MONO, I2S_STD_SLOT_BOTH)) {
     Serial.println("I2S init failed");

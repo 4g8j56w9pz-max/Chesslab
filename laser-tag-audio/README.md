@@ -5,9 +5,9 @@ Arduino ESP32-S3 prototype for playing the local "fahhh" effect through a MAX983
 ## Files
 
 - `laser-tag-audio.ino` - Arduino sketch.
-- `data/fahhh.wav` - LittleFS sound file, converted from `games/lock-pop/assets/miss-fahhh.mp3`.
+- `fahhh_wav.h` - embedded WAV byte array stored in `PROGMEM`.
 
-The included WAV is mono, 16-bit PCM, 22050 Hz.
+The embedded WAV was converted from `games/lock-pop/assets/miss-fahhh.mp3`. It is mono, 16-bit PCM, 22050 Hz.
 
 ## Wiring
 
@@ -39,26 +39,14 @@ Audio path: ESP32-S3 -> I2S -> MAX98357A -> speaker. Do not connect the speaker 
    - Install `esp32` by Espressif Systems.
    - This sketch targets the ESP32 Arduino core 3.x API. It was written against the local 3.3.10 core.
 3. Required libraries and tools:
-   - `LittleFS` is included with the Espressif `esp32` board package.
    - `ESP_I2S` is included with the Espressif `esp32` board package.
    - No DFPlayer Mini library and no separate audio playback library are used.
-4. Install the LittleFS upload tool:
-   - Install `arduino-littlefs-upload` from:
-     `https://github.com/earlephilhower/arduino-littlefs-upload`
-   - Restart Arduino IDE after installing the tool.
-5. Open `laser-tag-audio/laser-tag-audio.ino`.
-6. Select the board:
+4. Open `laser-tag-audio/laser-tag-audio.ino`.
+5. Select the board:
    - Tools -> Board -> esp32 -> ESP32S3 Dev Module
-7. Set a filesystem partition:
-   - Tools -> Partition Scheme -> a scheme that includes LittleFS, such as `Default 4MB with spiffs` or another app/filesystem split available for your board package.
-   - Some ESP32 menus still call the filesystem partition `spiffs`; the sketch mounts it as LittleFS.
-8. Upload the LittleFS data folder:
-   - Keep the sketch folder named `laser-tag-audio`.
-   - Confirm `laser-tag-audio/data/fahhh.wav` exists.
-   - Use Tools -> Upload LittleFS to Pico/ESP8266/ESP32, or the equivalent LittleFS upload menu item installed by the tool.
-9. Upload the sketch:
+6. Upload the sketch:
    - Click Upload in Arduino IDE.
-10. Open Serial Monitor:
+7. Open Serial Monitor:
    - Baud rate: `115200`
    - Expected boot message after setup: `READY`
 
@@ -80,7 +68,7 @@ DONE
 
 Holding the button down should not repeatedly restart the sound. Release and press again to replay it.
 
-## Rebuilding `data/fahhh.wav`
+## Rebuilding `fahhh_wav.h`
 
 The source sound in this repository is:
 
@@ -91,7 +79,29 @@ games/lock-pop/assets/miss-fahhh.mp3
 If you need to regenerate the WAV, use FFmpeg:
 
 ```powershell
-ffmpeg -y -i games\lock-pop\assets\miss-fahhh.mp3 -ac 1 -ar 22050 -sample_fmt s16 laser-tag-audio\data\fahhh.wav
+ffmpeg -y -i games\lock-pop\assets\miss-fahhh.mp3 -ac 1 -ar 22050 -sample_fmt s16 laser-tag-audio\fahhh.wav
 ```
 
-The output should remain mono, 16-bit PCM WAV at 22050 Hz or 16000 Hz.
+Then convert the WAV into a C header:
+
+```powershell
+$bytes = [System.IO.File]::ReadAllBytes('laser-tag-audio\fahhh.wav')
+$out = [System.Text.StringBuilder]::new()
+[void]$out.AppendLine('#pragma once')
+[void]$out.AppendLine('')
+[void]$out.AppendLine('#include <Arduino.h>')
+[void]$out.AppendLine('')
+[void]$out.AppendLine('const uint8_t FAHHH_WAV[] PROGMEM = {')
+for ($i = 0; $i -lt $bytes.Length; $i += 12) {
+  $count = [Math]::Min(12, $bytes.Length - $i)
+  $parts = for ($j = 0; $j -lt $count; $j++) { '0x{0:X2}' -f $bytes[$i + $j] }
+  $suffix = if (($i + $count) -lt $bytes.Length) { ',' } else { '' }
+  [void]$out.AppendLine('  ' + ($parts -join ', ') + $suffix)
+}
+[void]$out.AppendLine('};')
+[void]$out.AppendLine('')
+[void]$out.AppendLine('const size_t FAHHH_WAV_SIZE = sizeof(FAHHH_WAV);')
+[System.IO.File]::WriteAllText('laser-tag-audio\fahhh_wav.h', $out.ToString(), [System.Text.Encoding]::ASCII)
+```
+
+The temporary `laser-tag-audio\fahhh.wav` file is only for rebuilding the header and is not needed for normal sketch upload.
