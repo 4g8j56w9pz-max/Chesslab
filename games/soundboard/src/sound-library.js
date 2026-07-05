@@ -53,6 +53,10 @@ export const SOUND_LIBRARY = Object.freeze([
   { id: "hype-hit", label: "Hype Hit", category: "Hype", tag: "sting", color: "#ffdd57" },
   { id: "drama-hit", label: "Drama Hit", category: "Hype", tag: "boom", color: "#ff6b6b" },
   { id: "vinyl-beep", label: "Vinyl Beep", category: "Hype", tag: "beep", color: "#d7ff65" },
+  { id: "bruh-sample", label: "Bruh", category: "Meme", tag: "sample", color: "#f59e0b" },
+  { id: "cartoon-run", label: "Cartoon Run", category: "Meme", tag: "sample", color: "#38bdf8" },
+  { id: "na-na-nan-no", label: "Na Na Nan No", category: "Meme", tag: "sample", color: "#f472b6" },
+  { id: "we-do-not-care", label: "We Do Not Care", category: "Meme", tag: "sample", color: "#a3e635" },
   { id: "viral-boom", label: "Viral Boom", category: "Meme", tag: "boom", color: "#ff3d7f" },
   { id: "sad-trombone", label: "Sad Trombone", category: "Meme", tag: "fail", color: "#ffb86b" },
   { id: "bruh-bass", label: "Bruh Bass", category: "Meme", tag: "drop", color: "#8f7cff" },
@@ -99,6 +103,10 @@ export const DEFAULT_ASSIGNMENTS = Object.freeze([
 ]);
 
 export const MEME_PRESET = Object.freeze([
+  "bruh-sample",
+  "cartoon-run",
+  "na-na-nan-no",
+  "we-do-not-care",
   "viral-boom",
   "sad-trombone",
   "bruh-bass",
@@ -106,11 +114,7 @@ export const MEME_PRESET = Object.freeze([
   "wow-rise",
   "suspense-sting",
   "laugh-blip",
-  "comedy-boing",
-  "fail-buzzer",
-  "chat-alert",
-  "rimshot",
-  "surprise-pop"
+  "rimshot"
 ]);
 
 export const LASER_PRESET = Object.freeze([

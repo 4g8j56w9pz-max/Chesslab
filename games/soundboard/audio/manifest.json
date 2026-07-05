@@ -355,6 +355,46 @@
       "bytes": 9720
     },
     {
+      "id": "bruh-sample",
+      "label": "Bruh",
+      "category": "Meme",
+      "tag": "sample",
+      "wav": "./audio/wav/bruh-sample.wav",
+      "header": "./audio/headers/bruh-sample_wav.h",
+      "symbol": "BRUH_SAMPLE_WAV",
+      "bytes": 36074
+    },
+    {
+      "id": "cartoon-run",
+      "label": "Cartoon Run",
+      "category": "Meme",
+      "tag": "sample",
+      "wav": "./audio/wav/cartoon-run.wav",
+      "header": "./audio/headers/cartoon-run_wav.h",
+      "symbol": "CARTOON_RUN_WAV",
+      "bytes": 75308
+    },
+    {
+      "id": "na-na-nan-no",
+      "label": "Na Na Nan No",
+      "category": "Meme",
+      "tag": "sample",
+      "wav": "./audio/wav/na-na-nan-no.wav",
+      "header": "./audio/headers/na-na-nan-no_wav.h",
+      "symbol": "NA_NA_NAN_NO_WAV",
+      "bytes": 841004
+    },
+    {
+      "id": "we-do-not-care",
+      "label": "We Do Not Care",
+      "category": "Meme",
+      "tag": "sample",
+      "wav": "./audio/wav/we-do-not-care.wav",
+      "header": "./audio/headers/we-do-not-care_wav.h",
+      "symbol": "WE_DO_NOT_CARE_WAV",
+      "bytes": 563114
+    },
+    {
       "id": "viral-boom",
       "label": "Viral Boom",
       "category": "Meme",

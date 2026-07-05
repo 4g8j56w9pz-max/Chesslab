@@ -18,6 +18,14 @@ const wavRoot = resolve(repoRoot, "games/soundboard/audio/wav");
 const headerRoot = resolve(repoRoot, "games/soundboard/audio/headers");
 const manifestPath = resolve(repoRoot, "games/soundboard/audio/manifest.json");
 const fahhhHeaderPath = resolve(repoRoot, "laser-tag-audio/fahhh_wav.h");
+const userSampleRoot = resolve(repoRoot, "games/soundboard/source-audio/user-samples");
+
+const USER_SAMPLE_WAVS = new Map([
+  ["bruh-sample", "bruh-sample.wav"],
+  ["cartoon-run", "cartoon-run.wav"],
+  ["na-na-nan-no", "na-na-nan-no.wav"],
+  ["we-do-not-care", "we-do-not-care.wav"]
+]);
 
 const TWO_PI = Math.PI * 2;
 
@@ -33,7 +41,9 @@ function main() {
     const symbol = soundSymbol(sound.id);
     const wavPath = resolve(wavRoot, `${stem}.wav`);
     const headerPath = resolve(headerRoot, `${stem}_wav.h`);
-    const wavBytes = sound.id === "fahhh" ? readWavFromHeader(fahhhHeaderPath) : renderGeneratedWav(sound.id);
+    const wavBytes = sound.id === "fahhh"
+      ? readWavFromHeader(fahhhHeaderPath)
+      : readUserSampleWav(sound.id) ?? renderGeneratedWav(sound.id);
 
     validateWav(wavBytes, `${stem}.wav`);
     writeFileSync(wavPath, wavBytes);
@@ -73,6 +83,11 @@ function readWavFromHeader(headerPath) {
   }
 
   return Buffer.from(matches.map(value => Number.parseInt(value.slice(2), 16)));
+}
+
+function readUserSampleWav(soundId) {
+  const filename = USER_SAMPLE_WAVS.get(soundId);
+  return filename ? readFileSync(resolve(userSampleRoot, filename)) : null;
 }
 
 function renderGeneratedWav(soundId) {

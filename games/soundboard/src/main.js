@@ -593,6 +593,18 @@ class SoundButtonAudio {
       case "vinyl-beep":
         this.playVinylBeep(time);
         break;
+      case "bruh-sample":
+        this.playBruhBass(time);
+        break;
+      case "cartoon-run":
+        this.playComedyBoing(time);
+        break;
+      case "na-na-nan-no":
+        this.playLaughBlip(time);
+        break;
+      case "we-do-not-care":
+        this.playFailBuzzer(time);
+        break;
       case "viral-boom":
         this.playViralBoom(time);
         break;
