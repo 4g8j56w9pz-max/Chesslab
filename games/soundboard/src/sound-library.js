@@ -22,6 +22,12 @@ export const SOUND_LIBRARY = Object.freeze([
   { id: "laser-shot", label: "Laser Shot", category: "Laser Tag", tag: "shot", color: "#32d9ff" },
   { id: "laser-burst", label: "Laser Burst", category: "Laser Tag", tag: "rapid", color: "#15b7ff" },
   { id: "charge-shot", label: "Charge Shot", category: "Laser Tag", tag: "charge", color: "#7cffe4" },
+  { id: "heavy-laser", label: "Heavy Laser", category: "Laser Tag", tag: "loud", color: "#00b4ff" },
+  { id: "long-laser", label: "Long Laser", category: "Laser Tag", tag: "long", color: "#45f0ff" },
+  { id: "pulse-stream", label: "Pulse Stream", category: "Laser Tag", tag: "stream", color: "#64ffda" },
+  { id: "overcharge-shot", label: "Overcharge Shot", category: "Laser Tag", tag: "big", color: "#f7ff5c" },
+  { id: "scatter-burst", label: "Scatter Burst", category: "Laser Tag", tag: "spread", color: "#57a7ff" },
+  { id: "beam-sweep", label: "Beam Sweep", category: "Laser Tag", tag: "sweep", color: "#b5fff6" },
   { id: "ricochet", label: "Ricochet", category: "Laser Tag", tag: "bounce", color: "#ffd166" },
   { id: "target-lock", label: "Target Lock", category: "Laser Tag", tag: "lock", color: "#ff5c8a" },
   { id: "tag-confirm", label: "Tag Confirm", category: "Laser Tag", tag: "score", color: "#56d364" },
@@ -33,6 +39,12 @@ export const SOUND_LIBRARY = Object.freeze([
   { id: "round-end", label: "Round End", category: "Laser Tag", tag: "finish", color: "#bfa6ff" },
   { id: "scanner-ping", label: "Scanner Ping", category: "Laser Tag", tag: "scan", color: "#43f5d6" },
   { id: "stealth-blip", label: "Stealth Blip", category: "Laser Tag", tag: "soft", color: "#9aa7ff" },
+  { id: "trigger-click", label: "Trigger Click", category: "Trigger", tag: "click", color: "#f6d365" },
+  { id: "trigger-snap", label: "Trigger Snap", category: "Trigger", tag: "snap", color: "#fda085" },
+  { id: "trigger-press", label: "Trigger Press", category: "Trigger", tag: "press", color: "#fbc2eb" },
+  { id: "trigger-reset", label: "Trigger Reset", category: "Trigger", tag: "reset", color: "#a6c1ee" },
+  { id: "trigger-double-tap", label: "Double Tap", category: "Trigger", tag: "double", color: "#d4fc79" },
+  { id: "trigger-ready", label: "Trigger Ready", category: "Trigger", tag: "ready", color: "#96e6a1" },
   { id: "air-horn", label: "Air Horn Style", category: "Hype", tag: "horn", color: "#ffb000" },
   { id: "dj-scratch", label: "DJ Scratch", category: "Hype", tag: "scratch", color: "#f498c2" },
   { id: "bass-drop", label: "Bass Drop", category: "Hype", tag: "drop", color: "#9b5cff" },
@@ -61,32 +73,32 @@ export const SOUND_LIBRARY = Object.freeze([
 
 export const DEFAULT_ASSIGNMENTS = Object.freeze([
   "fahhh",
+  "trigger-click",
+  "trigger-snap",
+  "trigger-press",
   "laser-shot",
+  "heavy-laser",
+  "long-laser",
+  "pulse-stream",
   "laser-burst",
-  "charge-shot",
+  "overcharge-shot",
   "target-lock",
-  "tag-confirm",
-  "shield-ping",
-  "base-alarm",
-  "air-horn",
-  "dj-scratch",
-  "bass-drop",
-  "coin-pickup"
+  "tag-confirm"
 ]);
 
 export const LASER_PRESET = Object.freeze([
+  "trigger-click",
+  "trigger-snap",
   "laser-shot",
+  "heavy-laser",
+  "long-laser",
+  "pulse-stream",
   "laser-burst",
+  "scatter-burst",
   "charge-shot",
-  "ricochet",
+  "overcharge-shot",
   "target-lock",
-  "tag-confirm",
-  "shield-ping",
-  "shield-crack",
-  "shield-recharge",
-  "base-alarm",
-  "round-start",
-  "round-end"
+  "tag-confirm"
 ]);
 
 export function soundFileStem(soundId) {

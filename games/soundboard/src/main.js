@@ -490,6 +490,24 @@ class SoundButtonAudio {
       case "charge-shot":
         this.playChargeShot(time);
         break;
+      case "heavy-laser":
+        this.playHeavyLaser(time);
+        break;
+      case "long-laser":
+        this.playLongLaser(time);
+        break;
+      case "pulse-stream":
+        this.playPulseStream(time);
+        break;
+      case "overcharge-shot":
+        this.playOverchargeShot(time);
+        break;
+      case "scatter-burst":
+        this.playScatterBurst(time);
+        break;
+      case "beam-sweep":
+        this.playBeamSweep(time);
+        break;
       case "ricochet":
         this.playRicochet(time);
         break;
@@ -522,6 +540,24 @@ class SoundButtonAudio {
         break;
       case "stealth-blip":
         this.playStealthBlip(time);
+        break;
+      case "trigger-click":
+        this.playTriggerClick(time);
+        break;
+      case "trigger-snap":
+        this.playTriggerSnap(time);
+        break;
+      case "trigger-press":
+        this.playTriggerPress(time);
+        break;
+      case "trigger-reset":
+        this.playTriggerReset(time);
+        break;
+      case "trigger-double-tap":
+        this.playTriggerDoubleTap(time);
+        break;
+      case "trigger-ready":
+        this.playTriggerReady(time);
         break;
       case "air-horn":
         this.playAirHorn(time);
@@ -705,20 +741,59 @@ class SoundButtonAudio {
   }
 
   playLaserShot(time) {
-    this.playTone({ time, frequency: 1180, endFrequency: 170, duration: 0.18, gain: 0.22, type: "square" });
-    this.playNoise({ time, duration: 0.06, gain: 0.08, filterType: "highpass", frequency: 4000, q: 0.6 });
+    this.playTone({ time, frequency: 1320, endFrequency: 150, duration: 0.29, gain: 0.34, type: "square" });
+    this.playTone({ time: time + 0.015, frequency: 760, endFrequency: 95, duration: 0.25, gain: 0.16, type: "sawtooth" });
+    this.playNoise({ time, duration: 0.1, gain: 0.13, filterType: "highpass", frequency: 4000, q: 0.6 });
   }
 
   playLaserBurst(time) {
-    for (const offset of [0, 0.085, 0.17]) {
+    for (const offset of [0, 0.12, 0.24]) {
       this.playLaserShot(time + offset);
     }
   }
 
   playChargeShot(time) {
-    this.playTone({ time, frequency: 180, endFrequency: 1220, duration: 0.34, gain: 0.11, type: "triangle" });
-    this.playTone({ time: time + 0.31, frequency: 980, endFrequency: 120, duration: 0.2, gain: 0.26, type: "square" });
-    this.playNoise({ time: time + 0.31, duration: 0.08, gain: 0.12, filterType: "bandpass", frequency: 2100, q: 1.2 });
+    this.playTone({ time, frequency: 180, endFrequency: 1320, duration: 0.46, gain: 0.16, type: "triangle" });
+    this.playTone({ time: time + 0.39, frequency: 1080, endFrequency: 110, duration: 0.31, gain: 0.34, type: "square" });
+    this.playNoise({ time: time + 0.39, duration: 0.14, gain: 0.18, filterType: "bandpass", frequency: 2100, q: 1.2 });
+  }
+
+  playHeavyLaser(time) {
+    this.playTone({ time, frequency: 980, endFrequency: 82, duration: 0.46, gain: 0.36, type: "square" });
+    this.playTone({ time: time + 0.02, frequency: 180, endFrequency: 48, duration: 0.42, gain: 0.24, type: "sine" });
+    this.playNoise({ time, duration: 0.16, gain: 0.18, filterType: "bandpass", frequency: 1900, q: 1.2 });
+  }
+
+  playLongLaser(time) {
+    this.playTone({ time, frequency: 1250, endFrequency: 260, duration: 0.82, gain: 0.28, type: "sawtooth" });
+    this.playTone({ time: time + 0.12, frequency: 880, endFrequency: 180, duration: 0.68, gain: 0.18, type: "square" });
+    this.playNoise({ time: time + 0.04, duration: 0.5, gain: 0.08, filterType: "bandpass", frequency: 2500, q: 1.4 });
+  }
+
+  playPulseStream(time) {
+    for (const offset of [0, 0.14, 0.28, 0.42, 0.56]) {
+      this.playLaserShot(time + offset);
+    }
+    this.playTone({ time, frequency: 170, endFrequency: 95, duration: 0.72, gain: 0.11, type: "sine" });
+  }
+
+  playOverchargeShot(time) {
+    this.playTone({ time, frequency: 130, endFrequency: 1550, duration: 0.52, gain: 0.18, type: "triangle" });
+    this.playNoise({ time: time + 0.1, duration: 0.36, gain: 0.08, filterType: "bandpass", frequency: 2600, q: 1.8 });
+    this.playHeavyLaser(time + 0.48);
+  }
+
+  playScatterBurst(time) {
+    [0, 0.055, 0.11, 0.19, 0.26].forEach((offset, index) => {
+      this.playTone({ time: time + offset, frequency: 900 + index * 170, endFrequency: 120 + index * 25, duration: 0.2, gain: 0.2, type: index % 2 === 0 ? "square" : "sawtooth" });
+      this.playNoise({ time: time + offset, duration: 0.06, gain: 0.09, filterType: "highpass", frequency: 3800, q: 0.8 });
+    });
+  }
+
+  playBeamSweep(time) {
+    this.playTone({ time, frequency: 320, endFrequency: 1700, duration: 0.48, gain: 0.2, type: "sawtooth" });
+    this.playTone({ time: time + 0.34, frequency: 1700, endFrequency: 240, duration: 0.34, gain: 0.22, type: "square" });
+    this.playNoise({ time: time + 0.22, duration: 0.4, gain: 0.08, filterType: "bandpass", frequency: 2900, q: 1.4 });
   }
 
   playRicochet(time) {
@@ -807,6 +882,39 @@ class SoundButtonAudio {
   playStealthBlip(time) {
     this.playTone({ time, frequency: 360, duration: 0.05, gain: 0.07, type: "sine" });
     this.playTone({ time: time + 0.065, frequency: 540, duration: 0.05, gain: 0.06, type: "sine" });
+  }
+
+  playTriggerClick(time) {
+    this.playNoise({ time, duration: 0.026, gain: 0.16, filterType: "highpass", frequency: 5200, q: 0.7 });
+    this.playTone({ time: time + 0.004, frequency: 620, endFrequency: 180, duration: 0.045, gain: 0.09, type: "triangle" });
+  }
+
+  playTriggerSnap(time) {
+    this.playTriggerClick(time);
+    this.playTriggerClick(time + 0.038);
+    this.playTone({ time: time + 0.01, frequency: 180, endFrequency: 90, duration: 0.05, gain: 0.12, type: "triangle" });
+  }
+
+  playTriggerPress(time) {
+    this.playNoise({ time, duration: 0.055, gain: 0.14, filterType: "bandpass", frequency: 1200, q: 1.1 });
+    this.playTone({ time: time + 0.006, frequency: 120, endFrequency: 70, duration: 0.08, gain: 0.16, type: "sine" });
+  }
+
+  playTriggerReset(time) {
+    this.playTriggerClick(time);
+    this.playTone({ time: time + 0.06, frequency: 420, endFrequency: 220, duration: 0.11, gain: 0.12, type: "triangle" });
+    this.playTriggerClick(time + 0.16);
+  }
+
+  playTriggerDoubleTap(time) {
+    this.playTriggerClick(time);
+    this.playTriggerClick(time + 0.12);
+  }
+
+  playTriggerReady(time) {
+    this.playTriggerClick(time);
+    this.playTone({ time: time + 0.055, frequency: 620, duration: 0.08, gain: 0.08, type: "sine" });
+    this.playTone({ time: time + 0.12, frequency: 930, duration: 0.12, gain: 0.1, type: "sine" });
   }
 
   playAirHorn(time) {

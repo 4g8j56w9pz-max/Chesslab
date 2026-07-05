@@ -22,7 +22,7 @@
       "wav": "./audio/wav/laser-shot.wav",
       "header": "./audio/headers/laser-shot_wav.h",
       "symbol": "LASER_SHOT_WAV",
-      "bytes": 10172
+      "bytes": 15026
     },
     {
       "id": "laser-burst",
@@ -32,7 +32,7 @@
       "wav": "./audio/wav/laser-burst.wav",
       "header": "./audio/headers/laser-burst_wav.h",
       "symbol": "LASER_BURST_WAV",
-      "bytes": 17668
+      "bytes": 25610
     },
     {
       "id": "charge-shot",
@@ -42,7 +42,67 @@
       "wav": "./audio/wav/charge-shot.wav",
       "header": "./audio/headers/charge-shot_wav.h",
       "symbol": "CHARGE_SHOT_WAV",
-      "bytes": 24726
+      "bytes": 33106
+    },
+    {
+      "id": "heavy-laser",
+      "label": "Heavy Laser",
+      "category": "Laser Tag",
+      "tag": "loud",
+      "wav": "./audio/wav/heavy-laser.wav",
+      "header": "./audio/headers/heavy-laser_wav.h",
+      "symbol": "HEAVY_LASER_WAV",
+      "bytes": 22526
+    },
+    {
+      "id": "long-laser",
+      "label": "Long Laser",
+      "category": "Laser Tag",
+      "tag": "long",
+      "wav": "./audio/wav/long-laser.wav",
+      "header": "./audio/headers/long-laser_wav.h",
+      "symbol": "LONG_LASER_WAV",
+      "bytes": 38398
+    },
+    {
+      "id": "pulse-stream",
+      "label": "Pulse Stream",
+      "category": "Laser Tag",
+      "tag": "stream",
+      "wav": "./audio/wav/pulse-stream.wav",
+      "header": "./audio/headers/pulse-stream_wav.h",
+      "symbol": "PULSE_STREAM_WAV",
+      "bytes": 39722
+    },
+    {
+      "id": "overcharge-shot",
+      "label": "Overcharge Shot",
+      "category": "Laser Tag",
+      "tag": "big",
+      "wav": "./audio/wav/overcharge-shot.wav",
+      "header": "./audio/headers/overcharge-shot_wav.h",
+      "symbol": "OVERCHARGE_SHOT_WAV",
+      "bytes": 43694
+    },
+    {
+      "id": "scatter-burst",
+      "label": "Scatter Burst",
+      "category": "Laser Tag",
+      "tag": "spread",
+      "wav": "./audio/wav/scatter-burst.wav",
+      "header": "./audio/headers/scatter-burst_wav.h",
+      "symbol": "SCATTER_BURST_WAV",
+      "bytes": 22518
+    },
+    {
+      "id": "beam-sweep",
+      "label": "Beam Sweep",
+      "category": "Laser Tag",
+      "tag": "sweep",
+      "wav": "./audio/wav/beam-sweep.wav",
+      "header": "./audio/headers/beam-sweep_wav.h",
+      "symbol": "BEAM_SWEEP_WAV",
+      "bytes": 32222
     },
     {
       "id": "ricochet",
@@ -153,6 +213,66 @@
       "header": "./audio/headers/stealth-blip_wav.h",
       "symbol": "STEALTH_BLIP_WAV",
       "bytes": 7302
+    },
+    {
+      "id": "trigger-click",
+      "label": "Trigger Click",
+      "category": "Trigger",
+      "tag": "click",
+      "wav": "./audio/wav/trigger-click.wav",
+      "header": "./audio/headers/trigger-click_wav.h",
+      "symbol": "TRIGGER_CLICK_WAV",
+      "bytes": 5336
+    },
+    {
+      "id": "trigger-snap",
+      "label": "Trigger Snap",
+      "category": "Trigger",
+      "tag": "snap",
+      "wav": "./audio/wav/trigger-snap.wav",
+      "header": "./audio/headers/trigger-snap_wav.h",
+      "symbol": "TRIGGER_SNAP_WAV",
+      "bytes": 6058
+    },
+    {
+      "id": "trigger-press",
+      "label": "Trigger Press",
+      "category": "Trigger",
+      "tag": "press",
+      "wav": "./audio/wav/trigger-press.wav",
+      "header": "./audio/headers/trigger-press_wav.h",
+      "symbol": "TRIGGER_PRESS_WAV",
+      "bytes": 6026
+    },
+    {
+      "id": "trigger-reset",
+      "label": "Trigger Reset",
+      "category": "Trigger",
+      "tag": "reset",
+      "wav": "./audio/wav/trigger-reset.wav",
+      "header": "./audio/headers/trigger-reset_wav.h",
+      "symbol": "TRIGGER_RESET_WAV",
+      "bytes": 11438
+    },
+    {
+      "id": "trigger-double-tap",
+      "label": "Double Tap",
+      "category": "Trigger",
+      "tag": "double",
+      "wav": "./audio/wav/trigger-double-tap.wav",
+      "header": "./audio/headers/trigger-double-tap_wav.h",
+      "symbol": "TRIGGER_DOUBLE_TAP_WAV",
+      "bytes": 9674
+    },
+    {
+      "id": "trigger-ready",
+      "label": "Trigger Ready",
+      "category": "Trigger",
+      "tag": "ready",
+      "wav": "./audio/wav/trigger-ready.wav",
+      "header": "./audio/headers/trigger-ready_wav.h",
+      "symbol": "TRIGGER_READY_WAV",
+      "bytes": 12812
     },
     {
       "id": "air-horn",

@@ -76,7 +76,7 @@ function readWavFromHeader(headerPath) {
 }
 
 function renderGeneratedWav(soundId) {
-  const samples = createTrack(1.15);
+  const samples = createTrack(1.8);
   const rng = createRng(hashString(soundId));
 
   switch (soundId) {
@@ -84,12 +84,38 @@ function renderGeneratedWav(soundId) {
       laserShot(samples, 0, rng);
       break;
     case "laser-burst":
-      [0, 0.085, 0.17].forEach(offset => laserShot(samples, offset, rng));
+      [0, 0.12, 0.24].forEach(offset => laserShot(samples, offset, rng));
       break;
     case "charge-shot":
-      tone(samples, { start: 0, duration: 0.34, frequency: 180, endFrequency: 1220, gain: 0.11, type: "triangle" });
-      tone(samples, { start: 0.31, duration: 0.2, frequency: 980, endFrequency: 120, gain: 0.26, type: "square" });
-      noise(samples, { start: 0.31, duration: 0.08, gain: 0.12, filterType: "bandpass", frequency: 2100, rng });
+      tone(samples, { start: 0, duration: 0.46, frequency: 180, endFrequency: 1320, gain: 0.16, type: "triangle" });
+      tone(samples, { start: 0.39, duration: 0.31, frequency: 1080, endFrequency: 110, gain: 0.34, type: "square" });
+      noise(samples, { start: 0.39, duration: 0.14, gain: 0.18, filterType: "bandpass", frequency: 2100, rng });
+      break;
+    case "heavy-laser":
+      heavyLaser(samples, 0, rng);
+      break;
+    case "long-laser":
+      longLaser(samples, 0, rng);
+      break;
+    case "pulse-stream":
+      [0, 0.14, 0.28, 0.42, 0.56].forEach(offset => laserShot(samples, offset, rng));
+      tone(samples, { start: 0, duration: 0.72, frequency: 170, endFrequency: 95, gain: 0.11, type: "sine" });
+      break;
+    case "overcharge-shot":
+      tone(samples, { start: 0, duration: 0.52, frequency: 130, endFrequency: 1550, gain: 0.18, type: "triangle" });
+      noise(samples, { start: 0.1, duration: 0.36, gain: 0.08, filterType: "bandpass", frequency: 2600, rng });
+      heavyLaser(samples, 0.48, rng);
+      break;
+    case "scatter-burst":
+      [0, 0.055, 0.11, 0.19, 0.26].forEach((offset, index) => {
+        tone(samples, { start: offset, duration: 0.2, frequency: 900 + index * 170, endFrequency: 120 + index * 25, gain: 0.2, type: index % 2 === 0 ? "square" : "sawtooth" });
+        noise(samples, { start: offset, duration: 0.06, gain: 0.09, filterType: "highpass", frequency: 3800, rng });
+      });
+      break;
+    case "beam-sweep":
+      tone(samples, { start: 0, duration: 0.48, frequency: 320, endFrequency: 1700, gain: 0.2, type: "sawtooth" });
+      tone(samples, { start: 0.34, duration: 0.34, frequency: 1700, endFrequency: 240, gain: 0.22, type: "square" });
+      noise(samples, { start: 0.22, duration: 0.4, gain: 0.08, filterType: "bandpass", frequency: 2900, rng });
       break;
     case "ricochet":
       [1600, 1180, 860].forEach((frequency, index) => {
@@ -142,6 +168,32 @@ function renderGeneratedWav(soundId) {
     case "stealth-blip":
       tone(samples, { start: 0, duration: 0.05, frequency: 360, gain: 0.07, type: "sine" });
       tone(samples, { start: 0.065, duration: 0.05, frequency: 540, gain: 0.06, type: "sine" });
+      break;
+    case "trigger-click":
+      triggerClick(samples, 0, rng);
+      break;
+    case "trigger-snap":
+      triggerClick(samples, 0, rng);
+      triggerClick(samples, 0.038, rng);
+      tone(samples, { start: 0.01, duration: 0.05, frequency: 180, endFrequency: 90, gain: 0.12, type: "triangle" });
+      break;
+    case "trigger-press":
+      noise(samples, { start: 0, duration: 0.055, gain: 0.14, filterType: "bandpass", frequency: 1200, rng });
+      tone(samples, { start: 0.006, duration: 0.08, frequency: 120, endFrequency: 70, gain: 0.16, type: "sine" });
+      break;
+    case "trigger-reset":
+      triggerClick(samples, 0, rng);
+      tone(samples, { start: 0.06, duration: 0.11, frequency: 420, endFrequency: 220, gain: 0.12, type: "triangle" });
+      triggerClick(samples, 0.16, rng);
+      break;
+    case "trigger-double-tap":
+      triggerClick(samples, 0, rng);
+      triggerClick(samples, 0.12, rng);
+      break;
+    case "trigger-ready":
+      triggerClick(samples, 0, rng);
+      tone(samples, { start: 0.055, duration: 0.08, frequency: 620, gain: 0.08, type: "sine" });
+      tone(samples, { start: 0.12, duration: 0.12, frequency: 930, gain: 0.1, type: "sine" });
       break;
     case "air-horn":
       [233, 277].forEach(frequency => {
@@ -258,8 +310,26 @@ function renderGeneratedWav(soundId) {
 }
 
 function laserShot(samples, start, rng) {
-  tone(samples, { start, duration: 0.18, frequency: 1180, endFrequency: 170, gain: 0.22, type: "square" });
-  noise(samples, { start, duration: 0.06, gain: 0.08, filterType: "highpass", frequency: 4000, rng });
+  tone(samples, { start, duration: 0.29, frequency: 1320, endFrequency: 150, gain: 0.34, type: "square" });
+  tone(samples, { start: start + 0.015, duration: 0.25, frequency: 760, endFrequency: 95, gain: 0.16, type: "sawtooth" });
+  noise(samples, { start, duration: 0.1, gain: 0.13, filterType: "highpass", frequency: 4000, rng });
+}
+
+function heavyLaser(samples, start, rng) {
+  tone(samples, { start, duration: 0.46, frequency: 980, endFrequency: 82, gain: 0.36, type: "square" });
+  tone(samples, { start: start + 0.02, duration: 0.42, frequency: 180, endFrequency: 48, gain: 0.24, type: "sine" });
+  noise(samples, { start, duration: 0.16, gain: 0.18, filterType: "bandpass", frequency: 1900, rng });
+}
+
+function longLaser(samples, start, rng) {
+  tone(samples, { start, duration: 0.82, frequency: 1250, endFrequency: 260, gain: 0.28, type: "sawtooth" });
+  tone(samples, { start: start + 0.12, duration: 0.68, frequency: 880, endFrequency: 180, gain: 0.18, type: "square" });
+  noise(samples, { start: start + 0.04, duration: 0.5, gain: 0.08, filterType: "bandpass", frequency: 2500, rng });
+}
+
+function triggerClick(samples, start, rng) {
+  noise(samples, { start, duration: 0.026, gain: 0.16, filterType: "highpass", frequency: 5200, rng });
+  tone(samples, { start: start + 0.004, duration: 0.045, frequency: 620, endFrequency: 180, gain: 0.09, type: "triangle" });
 }
 
 function createTrack(durationSeconds) {
