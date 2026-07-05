@@ -1,10 +1,10 @@
 # Midnight Games
 
-A static browser arcade collection for GitHub Pages. The existing site includes Midnight Pizzeria Merge, FNAF ChessLab, Water Sort, **Lock Pop Arcade**, **Fahhh Soundboard**, and **NIGHTFALL**.
+A static browser arcade collection for GitHub Pages. The existing site includes Midnight Pizzeria Merge, FNAF ChessLab, Water Sort, **Lock Pop Arcade**, **Sound FX Board**, and **NIGHTFALL**.
 
 Lock Pop Arcade is an original one-button circular timing game built with semantic HTML, modern CSS, vanilla JavaScript modules, Canvas, Web Audio, localStorage, and a local user-provided MP3 miss effect. It has no runtime dependencies, backend, analytics, ads, CDNs, external images, or external fonts.
 
-Fahhh Soundboard is a static quick-button audio toy and rough loop sequencer. It reuses the local `games/lock-pop/assets/miss-fahhh.mp3` sample for the Fahhh button and generates the other low-fi pad sounds with Web Audio. It has no runtime dependencies, backend, analytics, ads, CDNs, external images, or external fonts.
+Sound FX Board is a static assignable-button audio toy for laser-tag cues, arcade effects, UI alerts, and hype-style stings. It reuses the local `games/lock-pop/assets/miss-fahhh.mp3` sample for the Fahhh button and generates the other pad sounds with Web Audio instead of bundling third-party clips. It has no runtime dependencies, backend, analytics, ads, CDNs, external images, or external fonts.
 
 NIGHTFALL is a static browser-based classic first-person shooter route. It uses a pinned Dwasm WebAssembly engine build with Freedoom Phase 1 v0.13.0 game content. The engine, WASM module, and packaged data are lazy-loaded only after the player presses Start Game. It has no backend, account, API key, analytics, ads, CDN, remote WAD loading, multiplayer, or runtime network dependency beyond the local static assets.
 
@@ -49,7 +49,7 @@ Open:
 
 - Main site: `http://localhost:8000/`
 - Lock Pop Arcade: `http://localhost:8000/games/lock-pop/`
-- Fahhh Soundboard: `http://localhost:8000/games/soundboard/`
+- Sound FX Board: `http://localhost:8000/games/soundboard/`
 - NIGHTFALL: `http://localhost:8000/games/nightfall/`
 
 The files also use relative paths so the site works from a repository subpath such as `https://username.github.io/repository-name/`.
@@ -122,7 +122,7 @@ After that, push to `main` or run the workflow manually from the Actions tab.
         renderer.js
         audio.js
         storage.js
-    soundboard/               Fahhh Soundboard
+    soundboard/               Sound FX Board
       index.html
       styles.css
       src/
@@ -165,7 +165,7 @@ After that, push to `main` or run the workflow manually from the Actions tab.
 
 Lock Pop uses real buttons for game controls, visible focus states, sufficient contrast, keyboard-complete controls, an accessible Canvas label, and a visually hidden live region for score, pause, and game-over announcements. Targets are shown with shape, outline, and hatch marks instead of color alone. Audio starts only after a user gesture.
 
-Fahhh Soundboard uses real buttons for pads, loop cells, and transport controls, visible focus states, sufficient contrast, local status text, and a visually hidden live region for pad announcements. Audio starts only after a user gesture.
+Sound FX Board uses real buttons for pads and preview controls, native selects for button assignments, visible focus states, sufficient contrast, local status text, and a visually hidden live region for pad announcements. Audio starts only after a user gesture.
 
 NIGHTFALL provides semantic shell controls, visible focus states, controls and credits dialogs, a content note for fantasy/sci-fi combat, and touch controls for mobile play. The engine canvas itself is not transformed into a screen-reader-native game.
 
@@ -173,13 +173,13 @@ NIGHTFALL provides semantic shell controls, visible focus states, controls and c
 
 Lock Pop targets current versions of Chrome, Edge, Firefox, and Safari on desktop and mobile. It uses ES modules, Canvas 2D, requestAnimationFrame, localStorage, Pointer Events with a click fallback, and Web Audio with graceful silent behavior if audio is unavailable.
 
-Fahhh Soundboard targets current versions of Chrome, Edge, Firefox, and Safari on desktop and mobile. It uses ES modules, localStorage, buttons, range inputs, and Web Audio with graceful silent behavior if audio is unavailable.
+Sound FX Board targets current versions of Chrome, Edge, Firefox, and Safari on desktop and mobile. It uses ES modules, localStorage, buttons, native selects, and Web Audio with graceful silent behavior if audio is unavailable.
 
 NIGHTFALL targets current desktop browsers with WebAssembly, Canvas, Web Audio, and keyboard input. Mobile support targets iPhone/iPad Safari in landscape with Pointer Events-based touch controls where supported; iOS uses an in-page fullscreen fallback because Safari does not provide element fullscreen for this canvas route. Physical-device results belong in `docs/nightfall-manual-test.md`.
 
 ## Original Work
 
-Lock Pop Arcade's code, visuals, favicon, timing rules, and interface are original to this repository. Fahhh Soundboard's code, visuals, generated sounds, and interface are original to this repository. The miss cue and Fahhh button use the local user-provided `games/lock-pop/assets/miss-fahhh.mp3` asset; verify its license before public distribution if needed.
+Lock Pop Arcade's code, visuals, favicon, timing rules, and interface are original to this repository. Sound FX Board's code, visuals, generated sounds, and interface are original to this repository. The miss cue and Fahhh button use the local user-provided `games/lock-pop/assets/miss-fahhh.mp3` asset; verify its license before public distribution if needed.
 
 ## License
 

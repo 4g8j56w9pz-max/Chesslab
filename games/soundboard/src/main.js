@@ -1,156 +1,287 @@
-const STEP_COUNT = 8;
 const STORAGE_KEYS = Object.freeze({
-  muted: "fahhhSoundboard.muted",
-  tempo: "fahhhSoundboard.tempo",
-  pattern: "fahhhSoundboard.pattern"
+  muted: "fxSoundboard.muted.v1",
+  assignments: "fxSoundboard.assignments.v1",
+  category: "fxSoundboard.category.v1"
 });
 
-const PAD_DEFINITIONS = Object.freeze([
-  { id: "fahhh", label: "Fahhh", tag: "sample", key: "1", color: "#de3341" },
-  { id: "kick", label: "Thump", tag: "kick", key: "2", color: "#ffd166" },
-  { id: "hat", label: "Tick", tag: "hat", key: "3", color: "#26c6da" },
-  { id: "clap", label: "Clack", tag: "clap", key: "4", color: "#56d364" },
-  { id: "bass", label: "Wob", tag: "bass", key: "5", color: "#ff7a45" },
-  { id: "zap", label: "Zap", tag: "sweep", key: "6", color: "#9ad7ff" },
-  { id: "blip", label: "Bleep", tag: "tone", key: "7", color: "#d7ff65" },
-  { id: "crunch", label: "Crunch", tag: "noise", key: "8", color: "#f498c2" }
+const PAD_SLOTS = Object.freeze([
+  { id: "pad-1", key: "1" },
+  { id: "pad-2", key: "2" },
+  { id: "pad-3", key: "3" },
+  { id: "pad-4", key: "4" },
+  { id: "pad-5", key: "5" },
+  { id: "pad-6", key: "6" },
+  { id: "pad-7", key: "7" },
+  { id: "pad-8", key: "8" },
+  { id: "pad-9", key: "9" },
+  { id: "pad-10", key: "0" },
+  { id: "pad-11", key: "Q" },
+  { id: "pad-12", key: "W" }
 ]);
 
-const SEQUENCE_LANES = Object.freeze(["fahhh", "kick", "hat", "clap"]);
+const SOUND_LIBRARY = Object.freeze([
+  { id: "fahhh", label: "Fahhh", category: "Signature", tag: "sample", color: "#de3341" },
+  { id: "laser-shot", label: "Laser Shot", category: "Laser Tag", tag: "shot", color: "#32d9ff" },
+  { id: "laser-burst", label: "Laser Burst", category: "Laser Tag", tag: "rapid", color: "#15b7ff" },
+  { id: "charge-shot", label: "Charge Shot", category: "Laser Tag", tag: "charge", color: "#7cffe4" },
+  { id: "ricochet", label: "Ricochet", category: "Laser Tag", tag: "bounce", color: "#ffd166" },
+  { id: "target-lock", label: "Target Lock", category: "Laser Tag", tag: "lock", color: "#ff5c8a" },
+  { id: "tag-confirm", label: "Tag Confirm", category: "Laser Tag", tag: "score", color: "#56d364" },
+  { id: "shield-ping", label: "Shield Ping", category: "Laser Tag", tag: "shield", color: "#8ee8ff" },
+  { id: "shield-crack", label: "Shield Crack", category: "Laser Tag", tag: "break", color: "#ff7a45" },
+  { id: "shield-recharge", label: "Shield Recharge", category: "Laser Tag", tag: "ready", color: "#83f28f" },
+  { id: "base-alarm", label: "Base Alarm", category: "Laser Tag", tag: "alert", color: "#ff4158" },
+  { id: "round-start", label: "Round Start", category: "Laser Tag", tag: "start", color: "#b5ff6a" },
+  { id: "round-end", label: "Round End", category: "Laser Tag", tag: "finish", color: "#bfa6ff" },
+  { id: "scanner-ping", label: "Scanner Ping", category: "Laser Tag", tag: "scan", color: "#43f5d6" },
+  { id: "stealth-blip", label: "Stealth Blip", category: "Laser Tag", tag: "soft", color: "#9aa7ff" },
+  { id: "air-horn", label: "Air Horn Style", category: "Hype", tag: "horn", color: "#ffb000" },
+  { id: "dj-scratch", label: "DJ Scratch", category: "Hype", tag: "scratch", color: "#f498c2" },
+  { id: "bass-drop", label: "Bass Drop", category: "Hype", tag: "drop", color: "#9b5cff" },
+  { id: "record-stop", label: "Record Stop", category: "Hype", tag: "vinyl", color: "#cdd6f4" },
+  { id: "crowd-hey", label: "Crowd Hey", category: "Hype", tag: "chant", color: "#ff8f70" },
+  { id: "hype-hit", label: "Hype Hit", category: "Hype", tag: "sting", color: "#ffdd57" },
+  { id: "drama-hit", label: "Drama Hit", category: "Hype", tag: "boom", color: "#ff6b6b" },
+  { id: "vinyl-beep", label: "Vinyl Beep", category: "Hype", tag: "beep", color: "#d7ff65" },
+  { id: "coin-pickup", label: "Coin Pickup", category: "Arcade", tag: "coin", color: "#ffdc5e" },
+  { id: "power-up", label: "Power Up", category: "Arcade", tag: "up", color: "#5efc8d" },
+  { id: "one-up", label: "One Up", category: "Arcade", tag: "life", color: "#77ddff" },
+  { id: "level-clear", label: "Level Clear", category: "Arcade", tag: "win", color: "#9df56f" },
+  { id: "glitch-burst", label: "Glitch Burst", category: "Arcade", tag: "glitch", color: "#e56bff" },
+  { id: "jump", label: "8-Bit Jump", category: "Arcade", tag: "jump", color: "#7dd3fc" },
+  { id: "bonus-tally", label: "Bonus Tally", category: "Arcade", tag: "count", color: "#f7b267" },
+  { id: "game-over", label: "Game Over", category: "Arcade", tag: "down", color: "#a3a3a3" },
+  { id: "button-blip", label: "Button Blip", category: "UI", tag: "tap", color: "#88ccff" },
+  { id: "score-tick", label: "Score Tick", category: "UI", tag: "tick", color: "#facc15" },
+  { id: "success-chime", label: "Success Chime", category: "UI", tag: "ok", color: "#74f27a" },
+  { id: "error-buzzer", label: "Error Buzzer", category: "UI", tag: "error", color: "#ff5d5d" },
+  { id: "countdown-beep", label: "Countdown Beep", category: "UI", tag: "timer", color: "#f9a03f" },
+  { id: "warning-siren", label: "Warning Siren", category: "UI", tag: "warn", color: "#ff3366" },
+  { id: "menu-open", label: "Menu Open", category: "UI", tag: "menu", color: "#b4befe" },
+  { id: "power-down", label: "Power Down", category: "UI", tag: "off", color: "#94a3b8" }
+]);
 
-const DEFAULT_PATTERN = Object.freeze({
-  fahhh: [false, false, false, false, false, false, false, true],
-  kick: [true, false, false, false, true, false, false, false],
-  hat: [false, true, false, true, false, true, false, true],
-  clap: [false, false, false, false, true, false, false, false]
-});
+const DEFAULT_ASSIGNMENTS = Object.freeze([
+  "fahhh",
+  "laser-shot",
+  "laser-burst",
+  "charge-shot",
+  "target-lock",
+  "tag-confirm",
+  "shield-ping",
+  "base-alarm",
+  "air-horn",
+  "dj-scratch",
+  "bass-drop",
+  "coin-pickup"
+]);
+
+const LASER_PRESET = Object.freeze([
+  "laser-shot",
+  "laser-burst",
+  "charge-shot",
+  "ricochet",
+  "target-lock",
+  "tag-confirm",
+  "shield-ping",
+  "shield-crack",
+  "shield-recharge",
+  "base-alarm",
+  "round-start",
+  "round-end"
+]);
 
 const dom = {
   padGrid: document.getElementById("pad-grid"),
-  sequenceGrid: document.getElementById("sequence-grid"),
+  libraryGrid: document.getElementById("library-grid"),
+  categoryFilter: document.getElementById("category-filter"),
   muteButton: document.getElementById("mute-button"),
-  playLoopButton: document.getElementById("play-loop"),
-  clearLoopButton: document.getElementById("clear-loop"),
-  tempoSlider: document.getElementById("tempo-slider"),
-  tempoReadout: document.getElementById("tempo-readout"),
-  loopState: document.getElementById("loop-state"),
+  resetButton: document.getElementById("reset-board"),
+  laserPresetButton: document.getElementById("laser-preset"),
   lastSound: document.getElementById("last-sound"),
   hitCount: document.getElementById("hit-count"),
+  libraryCount: document.getElementById("library-count"),
+  assignedCount: document.getElementById("assigned-count"),
   soundStatus: document.getElementById("sound-status"),
   liveRegion: document.getElementById("live-region"),
   scope: document.querySelector(".scope")
 };
 
-const padsById = new Map(PAD_DEFINITIONS.map(pad => [pad.id, pad]));
+const soundsById = new Map(SOUND_LIBRARY.map(sound => [sound.id, sound]));
+const categories = Array.from(new Set(SOUND_LIBRARY.map(sound => sound.category)));
 let audio = null;
 let state = null;
+
+function renderCategoryFilter() {
+  const fragment = document.createDocumentFragment();
+  const allOption = document.createElement("option");
+  allOption.value = "All";
+  allOption.textContent = "All Sounds";
+  fragment.append(allOption);
+
+  for (const category of categories) {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    fragment.append(option);
+  }
+
+  dom.categoryFilter.replaceChildren(fragment);
+  dom.categoryFilter.value = categories.includes(state.category) ? state.category : "All";
+}
 
 function renderPads() {
   const fragment = document.createDocumentFragment();
 
-  for (const pad of PAD_DEFINITIONS) {
-    const button = document.createElement("button");
-    button.className = "pad-button";
-    button.type = "button";
-    button.dataset.sound = pad.id;
-    button.style.setProperty("--pad-color", pad.color);
-    button.innerHTML = `
-      <span class="pad-key">${pad.key}</span>
-      <strong>${pad.label}</strong>
-      <small>${pad.tag}</small>
-    `;
-    button.addEventListener("click", () => {
-      playPad(pad.id);
+  for (const [index, slot] of PAD_SLOTS.entries()) {
+    const sound = getAssignedSound(index);
+    const card = document.createElement("section");
+    card.className = "pad-card";
+    card.style.setProperty("--pad-color", sound.color);
+
+    const trigger = document.createElement("button");
+    trigger.className = "pad-trigger";
+    trigger.type = "button";
+    trigger.dataset.slot = String(index);
+    trigger.setAttribute("aria-label", `Play ${sound.label}`);
+
+    const key = document.createElement("span");
+    key.className = "pad-key";
+    key.textContent = slot.key;
+
+    const title = document.createElement("strong");
+    title.textContent = sound.label;
+
+    const meta = document.createElement("small");
+    meta.textContent = `${sound.category} / ${sound.tag}`;
+
+    trigger.append(key, title, meta);
+    trigger.addEventListener("click", () => {
+      playSlot(index);
     });
-    fragment.append(button);
+
+    const selectLabel = document.createElement("label");
+    selectLabel.className = "assignment-field";
+    selectLabel.setAttribute("for", `${slot.id}-select`);
+
+    const labelText = document.createElement("span");
+    labelText.textContent = "Sound";
+
+    const select = document.createElement("select");
+    select.id = `${slot.id}-select`;
+    select.className = "assignment-select";
+    select.dataset.slot = String(index);
+    select.setAttribute("aria-label", `Assign sound for button ${slot.key}`);
+    appendSoundOptions(select, sound.id);
+    select.addEventListener("change", event => {
+      state.assignments[index] = event.target.value;
+      saveAssignments();
+      renderPads();
+      renderState();
+      const assigned = soundsById.get(event.target.value);
+      setStatus(`${slot.key}: ${assigned.label}`);
+    });
+
+    selectLabel.append(labelText, select);
+    card.append(trigger, selectLabel);
+    fragment.append(card);
   }
 
   dom.padGrid.replaceChildren(fragment);
 }
 
-function renderSequence() {
+function renderLibrary() {
+  const activeCategory = state.category;
+  const visibleSounds = activeCategory === "All"
+    ? SOUND_LIBRARY
+    : SOUND_LIBRARY.filter(sound => sound.category === activeCategory);
   const fragment = document.createDocumentFragment();
-  const empty = document.createElement("span");
-  empty.className = "step-label";
-  fragment.append(empty);
 
-  for (let step = 0; step < STEP_COUNT; step += 1) {
-    const label = document.createElement("span");
-    label.className = "step-label";
-    label.textContent = String(step + 1);
-    fragment.append(label);
+  for (const sound of visibleSounds) {
+    const button = document.createElement("button");
+    button.className = "library-button";
+    button.type = "button";
+    button.dataset.sound = sound.id;
+    button.style.setProperty("--sound-color", sound.color);
+
+    const label = document.createElement("strong");
+    label.textContent = sound.label;
+
+    const meta = document.createElement("span");
+    meta.textContent = `${sound.category} / ${sound.tag}`;
+
+    button.append(label, meta);
+    button.addEventListener("click", () => {
+      playSound(sound.id);
+    });
+    fragment.append(button);
   }
 
-  for (const soundId of SEQUENCE_LANES) {
-    const pad = padsById.get(soundId);
-    const laneLabel = document.createElement("span");
-    laneLabel.className = "sequence-label";
-    laneLabel.textContent = pad.label;
-    fragment.append(laneLabel);
-
-    for (let step = 0; step < STEP_COUNT; step += 1) {
-      const cell = document.createElement("button");
-      cell.className = "sequence-cell";
-      cell.type = "button";
-      cell.dataset.sound = soundId;
-      cell.dataset.step = String(step);
-      cell.style.setProperty("--cell-color", pad.color);
-      cell.addEventListener("click", () => {
-        state.pattern[soundId][step] = !state.pattern[soundId][step];
-        savePattern();
-        renderPatternCells();
-      });
-      fragment.append(cell);
-    }
-  }
-
-  dom.sequenceGrid.replaceChildren(fragment);
-  renderPatternCells();
-}
-
-function renderPatternCells() {
-  for (const cell of dom.sequenceGrid.querySelectorAll(".sequence-cell")) {
-    const soundId = cell.dataset.sound;
-    const step = Number.parseInt(cell.dataset.step, 10);
-    const isOn = Boolean(state.pattern[soundId]?.[step]);
-    const isCurrent = state.isLooping && step === state.currentStep;
-    const pad = padsById.get(soundId);
-
-    cell.classList.toggle("is-on", isOn);
-    cell.classList.toggle("is-current", isCurrent);
-    cell.setAttribute("aria-pressed", isOn ? "true" : "false");
-    cell.setAttribute("aria-label", `${pad.label} step ${step + 1} ${isOn ? "on" : "off"}`);
-  }
+  dom.libraryGrid.replaceChildren(fragment);
 }
 
 function renderState() {
-  dom.muteButton.textContent = state.muted ? "Sound Off" : "Sound On";
+  dom.muteButton.textContent = state.muted ? "Sound is off" : "Sound is on";
   dom.muteButton.setAttribute("aria-pressed", state.muted ? "true" : "false");
-  dom.playLoopButton.textContent = state.isLooping ? "Stop" : "Play";
-  dom.tempoSlider.value = String(state.tempo);
-  dom.tempoReadout.textContent = String(state.tempo);
-  dom.loopState.textContent = state.isLooping ? `Step ${state.currentStep + 1}` : "Stopped";
   dom.hitCount.textContent = String(state.hitCount);
-  renderPatternCells();
+  dom.libraryCount.textContent = String(SOUND_LIBRARY.length);
+  dom.assignedCount.textContent = String(state.assignments.filter(soundId => soundsById.has(soundId)).length);
 }
 
-async function playPad(soundId, options = {}) {
-  const pad = padsById.get(soundId);
-  if (!pad) {
+function appendSoundOptions(select, selectedId) {
+  for (const category of categories) {
+    const group = document.createElement("optgroup");
+    group.label = category;
+
+    for (const sound of SOUND_LIBRARY.filter(candidate => candidate.category === category)) {
+      const option = document.createElement("option");
+      option.value = sound.id;
+      option.textContent = sound.label;
+      option.selected = sound.id === selectedId;
+      group.append(option);
+    }
+
+    select.append(group);
+  }
+}
+
+function getAssignedSound(index) {
+  const soundId = state.assignments[index] ?? DEFAULT_ASSIGNMENTS[index] ?? SOUND_LIBRARY[0].id;
+  return soundsById.get(soundId) ?? SOUND_LIBRARY[0];
+}
+
+async function playSlot(index) {
+  const sound = getAssignedSound(index);
+  playSound(sound.id, { slotIndex: index });
+}
+
+function playSound(soundId, options = {}) {
+  const sound = soundsById.get(soundId);
+  if (!sound) {
     return;
   }
 
-  const played = await audio.play(soundId);
-  flashPad(soundId);
-  pulseScope(soundId);
+  const requestId = state.audioRequestId + 1;
+  state.audioRequestId = requestId;
+  state.hitCount += 1;
+  dom.lastSound.textContent = sound.label;
+  setStatus(sound.label);
+  announce(`${sound.label}.`);
+  flashSound(sound.id, options.slotIndex);
+  pulseScope(sound);
+  renderState();
 
-  if (!options.fromLoop) {
-    state.hitCount += 1;
-    dom.lastSound.textContent = pad.label;
-    setStatus(played ? pad.label : "Silent");
-    announce(`${pad.label}.`);
-    renderState();
-  }
+  audio.play(sound.id)
+    .then(played => {
+      if (!played && state.audioRequestId === requestId) {
+        setStatus("Silent");
+      }
+    })
+    .catch(() => {
+      if (state.audioRequestId === requestId) {
+        setStatus("Silent");
+      }
+    });
 }
 
 function toggleMute() {
@@ -161,125 +292,68 @@ function toggleMute() {
   renderState();
 }
 
-function toggleLoop() {
-  if (state.isLooping) {
-    stopLoop();
-  } else {
-    startLoop();
-  }
-}
-
-function startLoop() {
-  state.isLooping = true;
-  state.currentStep = -1;
-  audio.unlock();
-  runLoopStep();
+function applyLaserPreset() {
+  state.assignments = [...LASER_PRESET];
+  saveAssignments();
+  renderPads();
   renderState();
+  setStatus("Laser Set");
 }
 
-function stopLoop() {
-  if (state.loopTimer) {
-    window.clearTimeout(state.loopTimer);
-    state.loopTimer = 0;
-  }
-
-  state.isLooping = false;
-  state.currentStep = -1;
+function resetBoard() {
+  state.assignments = [...DEFAULT_ASSIGNMENTS];
+  saveAssignments();
+  renderPads();
   renderState();
+  setStatus("Reset");
 }
 
-function runLoopStep() {
-  if (!state.isLooping) {
-    return;
-  }
-
-  state.currentStep = (state.currentStep + 1) % STEP_COUNT;
-  const activeSounds = SEQUENCE_LANES.filter(soundId => state.pattern[soundId]?.[state.currentStep]);
-
-  for (const soundId of activeSounds) {
-    playPad(soundId, { fromLoop: true });
-    flashSequenceCell(soundId, state.currentStep);
-  }
-
-  dom.loopState.textContent = `Step ${state.currentStep + 1}`;
-  renderPatternCells();
-  state.loopTimer = window.setTimeout(runLoopStep, getStepMs());
-}
-
-function getStepMs() {
-  return Math.round(60000 / state.tempo / 2);
-}
-
-function clearPattern() {
-  for (const soundId of SEQUENCE_LANES) {
-    state.pattern[soundId] = Array.from({ length: STEP_COUNT }, () => false);
-  }
-  savePattern();
-  setStatus("Cleared");
-  renderPatternCells();
-}
-
-function updateTempo() {
-  state.tempo = Number.parseInt(dom.tempoSlider.value, 10);
-  saveNumber(STORAGE_KEYS.tempo, state.tempo);
-  renderState();
+function updateCategory() {
+  state.category = dom.categoryFilter.value;
+  saveString(STORAGE_KEYS.category, state.category);
+  renderLibrary();
 }
 
 function handleKeyboard(event) {
   const target = event.target;
   const isTyping = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement;
-  if (isTyping || event.repeat) {
+  if (isTyping || event.repeat || event.altKey || event.ctrlKey || event.metaKey) {
     return;
   }
 
-  const pad = PAD_DEFINITIONS.find(candidate => event.key === candidate.key);
-  if (pad) {
+  const key = event.key.toUpperCase();
+  const slotIndex = PAD_SLOTS.findIndex(slot => slot.key === key);
+  if (slotIndex !== -1) {
     event.preventDefault();
-    playPad(pad.id);
-    return;
-  }
-
-  if (event.code === "Space") {
-    event.preventDefault();
-    toggleLoop();
+    playSlot(slotIndex);
   }
 }
 
-function flashPad(soundId) {
-  const button = dom.padGrid.querySelector(`[data-sound="${soundId}"]`);
-  if (!button) {
-    return;
-  }
+function flashSound(soundId, slotIndex) {
+  const padSelector = slotIndex === undefined ? `[data-sound="${soundId}"]` : `[data-slot="${slotIndex}"]`;
+  const elements = [
+    ...dom.padGrid.querySelectorAll(padSelector),
+    ...dom.libraryGrid.querySelectorAll(`[data-sound="${soundId}"]`)
+  ];
 
-  button.classList.remove("is-hot");
-  void button.offsetWidth;
-  button.classList.add("is-hot");
-  window.setTimeout(() => {
-    button.classList.remove("is-hot");
-  }, 210);
+  for (const element of elements) {
+    element.classList.remove("is-hot");
+    void element.offsetWidth;
+    element.classList.add("is-hot");
+    window.setTimeout(() => {
+      element.classList.remove("is-hot");
+    }, 210);
+  }
 }
 
-function flashSequenceCell(soundId, step) {
-  const cell = dom.sequenceGrid.querySelector(`[data-sound="${soundId}"][data-step="${step}"]`);
-  if (!cell) {
-    return;
-  }
-
-  cell.classList.remove("is-hit");
-  void cell.offsetWidth;
-  cell.classList.add("is-hit");
-  window.setTimeout(() => {
-    cell.classList.remove("is-hit");
-  }, 180);
-}
-
-function pulseScope(soundId) {
-  const pad = padsById.get(soundId);
+function pulseScope(sound) {
   const bars = Array.from(dom.scope.querySelectorAll("span"));
+  const seed = sound.id.split("").reduce((total, letter) => total + letter.charCodeAt(0), 0);
   for (const [index, bar] of bars.entries()) {
-    const phase = (index + pad.key.charCodeAt(0)) % 5;
-    const level = 12 + ((phase + 1) * 9) + Math.floor(Math.random() * 28);
+    const phase = (index + seed) % 7;
+    const level = 14 + (phase * 7) + Math.floor(Math.random() * 34);
     bar.style.setProperty("--level", String(level));
+    bar.style.setProperty("--bar-color", index % 2 === 0 ? sound.color : "#fff8ed");
   }
 
   dom.scope.classList.add("is-hot");
@@ -296,7 +370,8 @@ function pulseScope(soundId) {
 function setScopeIdle() {
   const bars = Array.from(dom.scope.querySelectorAll("span"));
   for (const [index, bar] of bars.entries()) {
-    bar.style.setProperty("--level", String(8 + (index % 4) * 5));
+    bar.style.setProperty("--level", String(8 + (index % 5) * 4));
+    bar.style.setProperty("--bar-color", index % 3 === 0 ? "#26c6da" : "#ffd166");
   }
 }
 
@@ -328,73 +403,53 @@ function saveBoolean(key, value) {
   }
 }
 
-function loadNumber(key, fallback, min, max) {
+function loadString(key, fallback) {
   const storage = getStorage();
   if (!storage) {
     return fallback;
   }
 
-  const value = Number.parseInt(storage.getItem(key) || "", 10);
-  if (!Number.isFinite(value)) {
-    return fallback;
-  }
-
-  return Math.min(max, Math.max(min, value));
+  return storage.getItem(key) || fallback;
 }
 
-function saveNumber(key, value) {
+function saveString(key, value) {
   const storage = getStorage();
   if (storage) {
-    storage.setItem(key, String(value));
+    storage.setItem(key, value);
   }
 }
 
-function loadPattern() {
+function loadAssignments() {
   const storage = getStorage();
   if (!storage) {
-    return cloneDefaultPattern();
+    return [...DEFAULT_ASSIGNMENTS];
   }
 
   try {
-    const rawPattern = JSON.parse(storage.getItem(STORAGE_KEYS.pattern) || "null");
-    return normalizePattern(rawPattern);
+    const rawAssignments = JSON.parse(storage.getItem(STORAGE_KEYS.assignments) || "null");
+    if (!Array.isArray(rawAssignments)) {
+      return [...DEFAULT_ASSIGNMENTS];
+    }
+
+    return PAD_SLOTS.map((_, index) => {
+      const candidate = rawAssignments[index];
+      return soundsById.has(candidate) ? candidate : DEFAULT_ASSIGNMENTS[index];
+    });
   } catch {
-    return cloneDefaultPattern();
+    return [...DEFAULT_ASSIGNMENTS];
   }
 }
 
-function savePattern() {
+function saveAssignments() {
   const storage = getStorage();
   if (storage) {
-    storage.setItem(STORAGE_KEYS.pattern, JSON.stringify(state.pattern));
+    storage.setItem(STORAGE_KEYS.assignments, JSON.stringify(state.assignments));
   }
-}
-
-function normalizePattern(rawPattern) {
-  const pattern = cloneDefaultPattern();
-  if (!rawPattern || typeof rawPattern !== "object") {
-    return pattern;
-  }
-
-  for (const soundId of SEQUENCE_LANES) {
-    const lane = Array.isArray(rawPattern[soundId]) ? rawPattern[soundId] : [];
-    pattern[soundId] = Array.from({ length: STEP_COUNT }, (_, index) => Boolean(lane[index]));
-  }
-
-  return pattern;
-}
-
-function cloneDefaultPattern() {
-  const pattern = {};
-  for (const soundId of SEQUENCE_LANES) {
-    pattern[soundId] = [...DEFAULT_PATTERN[soundId]];
-  }
-  return pattern;
 }
 
 function getStorage() {
   try {
-    const testKey = "fahhhSoundboard.storageTest";
+    const testKey = "fxSoundboard.storageTest";
     window.localStorage.setItem(testKey, "1");
     window.localStorage.removeItem(testKey);
     return window.localStorage;
@@ -417,7 +472,7 @@ class SoundButtonAudio {
   setMuted(value) {
     this.muted = Boolean(value);
     if (this.masterGain && this.context) {
-      this.masterGain.gain.setTargetAtTime(this.muted ? 0 : 0.28, this.context.currentTime, 0.012);
+      this.masterGain.gain.setTargetAtTime(this.muted ? 0 : 0.32, this.context.currentTime, 0.012);
     }
   }
 
@@ -434,7 +489,7 @@ class SoundButtonAudio {
     if (!this.context) {
       this.context = new AudioContext();
       this.masterGain = this.context.createGain();
-      this.masterGain.gain.value = this.muted ? 0 : 0.28;
+      this.masterGain.gain.value = this.muted ? 0 : 0.32;
 
       const compressor = this.context.createDynamicsCompressor();
       compressor.threshold.value = -18;
@@ -449,7 +504,10 @@ class SoundButtonAudio {
     }
 
     if (this.context.state === "suspended") {
-      await this.context.resume();
+      await Promise.race([
+        this.context.resume(),
+        new Promise(resolve => window.setTimeout(resolve, 250))
+      ]);
     }
 
     return this.context.state === "running";
@@ -465,26 +523,119 @@ class SoundButtonAudio {
       case "fahhh":
         await this.playFahhh(time);
         break;
-      case "kick":
-        this.playKick(time);
+      case "laser-shot":
+        this.playLaserShot(time);
         break;
-      case "hat":
-        this.playHat(time);
+      case "laser-burst":
+        this.playLaserBurst(time);
         break;
-      case "clap":
-        this.playClap(time);
+      case "charge-shot":
+        this.playChargeShot(time);
         break;
-      case "bass":
-        this.playBass(time);
+      case "ricochet":
+        this.playRicochet(time);
         break;
-      case "zap":
-        this.playZap(time);
+      case "target-lock":
+        this.playTargetLock(time);
         break;
-      case "blip":
-        this.playBlip(time);
+      case "tag-confirm":
+        this.playTagConfirm(time);
         break;
-      case "crunch":
-        this.playCrunch(time);
+      case "shield-ping":
+        this.playShieldPing(time);
+        break;
+      case "shield-crack":
+        this.playShieldCrack(time);
+        break;
+      case "shield-recharge":
+        this.playShieldRecharge(time);
+        break;
+      case "base-alarm":
+        this.playBaseAlarm(time);
+        break;
+      case "round-start":
+        this.playRoundStart(time);
+        break;
+      case "round-end":
+        this.playRoundEnd(time);
+        break;
+      case "scanner-ping":
+        this.playScannerPing(time);
+        break;
+      case "stealth-blip":
+        this.playStealthBlip(time);
+        break;
+      case "air-horn":
+        this.playAirHorn(time);
+        break;
+      case "dj-scratch":
+        this.playDjScratch(time);
+        break;
+      case "bass-drop":
+        this.playBassDrop(time);
+        break;
+      case "record-stop":
+        this.playRecordStop(time);
+        break;
+      case "crowd-hey":
+        this.playCrowdHey(time);
+        break;
+      case "hype-hit":
+        this.playHypeHit(time);
+        break;
+      case "drama-hit":
+        this.playDramaHit(time);
+        break;
+      case "vinyl-beep":
+        this.playVinylBeep(time);
+        break;
+      case "coin-pickup":
+        this.playCoinPickup(time);
+        break;
+      case "power-up":
+        this.playPowerUp(time);
+        break;
+      case "one-up":
+        this.playOneUp(time);
+        break;
+      case "level-clear":
+        this.playLevelClear(time);
+        break;
+      case "glitch-burst":
+        this.playGlitchBurst(time);
+        break;
+      case "jump":
+        this.playJump(time);
+        break;
+      case "bonus-tally":
+        this.playBonusTally(time);
+        break;
+      case "game-over":
+        this.playGameOver(time);
+        break;
+      case "button-blip":
+        this.playButtonBlip(time);
+        break;
+      case "score-tick":
+        this.playScoreTick(time);
+        break;
+      case "success-chime":
+        this.playSuccessChime(time);
+        break;
+      case "error-buzzer":
+        this.playErrorBuzzer(time);
+        break;
+      case "countdown-beep":
+        this.playCountdownBeep(time);
+        break;
+      case "warning-siren":
+        this.playWarningSiren(time);
+        break;
+      case "menu-open":
+        this.playMenuOpen(time);
+        break;
+      case "power-down":
+        this.playPowerDown(time);
         break;
       default:
         return false;
@@ -537,143 +688,304 @@ class SoundButtonAudio {
   }
 
   playFahhhFallback(time) {
-    const breath = this.context.createBufferSource();
-    const breathFilter = this.context.createBiquadFilter();
-    const breathGain = this.context.createGain();
-    breath.buffer = this.getNoiseBuffer();
-    breathFilter.type = "highpass";
-    breathFilter.frequency.value = 1100;
-    breathGain.gain.setValueAtTime(0.0001, time);
-    breathGain.gain.exponentialRampToValueAtTime(0.18, time + 0.018);
-    breathGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.2);
-    breath.connect(breathFilter);
-    breathFilter.connect(breathGain);
-    breathGain.connect(this.masterGain);
-    breath.start(time, 0, 0.22);
-
-    const voice = this.context.createOscillator();
-    const formant = this.context.createBiquadFilter();
-    const voiceGain = this.context.createGain();
-    voice.type = "sawtooth";
-    voice.frequency.setValueAtTime(170, time + 0.04);
-    voice.frequency.exponentialRampToValueAtTime(118, time + 0.58);
-    formant.type = "bandpass";
-    formant.frequency.value = 760;
-    formant.Q.value = 1.1;
-    voiceGain.gain.setValueAtTime(0.0001, time + 0.035);
-    voiceGain.gain.exponentialRampToValueAtTime(0.22, time + 0.09);
-    voiceGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.62);
-    voice.connect(formant);
-    formant.connect(voiceGain);
-    voiceGain.connect(this.masterGain);
-    voice.start(time + 0.04);
-    voice.stop(time + 0.66);
-  }
-
-  playKick(time) {
-    const oscillator = this.context.createOscillator();
-    const gain = this.context.createGain();
-    oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(150, time);
-    oscillator.frequency.exponentialRampToValueAtTime(42, time + 0.19);
-    gain.gain.setValueAtTime(0.0001, time);
-    gain.gain.exponentialRampToValueAtTime(0.82, time + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.24);
-    oscillator.connect(gain);
-    gain.connect(this.masterGain);
-    oscillator.start(time);
-    oscillator.stop(time + 0.26);
-  }
-
-  playHat(time) {
     this.playNoise({
       time,
-      duration: 0.055,
-      gain: 0.16,
+      duration: 0.22,
+      gain: 0.17,
       filterType: "highpass",
-      frequency: 6800,
-      q: 0.6
+      frequency: 1100,
+      q: 0.8
+    });
+    this.playTone({
+      time: time + 0.04,
+      frequency: 170,
+      endFrequency: 118,
+      duration: 0.62,
+      gain: 0.2,
+      type: "sawtooth",
+      filterFrequency: 760,
+      filterQ: 1.1
     });
   }
 
-  playClap(time) {
-    for (const offset of [0, 0.032, 0.064]) {
-      this.playNoise({
-        time: time + offset,
-        duration: 0.07,
-        gain: 0.13,
-        filterType: "bandpass",
-        frequency: 1450,
-        q: 0.78
+  playLaserShot(time) {
+    this.playTone({ time, frequency: 1180, endFrequency: 170, duration: 0.18, gain: 0.22, type: "square" });
+    this.playNoise({ time, duration: 0.06, gain: 0.08, filterType: "highpass", frequency: 4000, q: 0.6 });
+  }
+
+  playLaserBurst(time) {
+    for (const offset of [0, 0.085, 0.17]) {
+      this.playLaserShot(time + offset);
+    }
+  }
+
+  playChargeShot(time) {
+    this.playTone({ time, frequency: 180, endFrequency: 1220, duration: 0.34, gain: 0.11, type: "triangle" });
+    this.playTone({ time: time + 0.31, frequency: 980, endFrequency: 120, duration: 0.2, gain: 0.26, type: "square" });
+    this.playNoise({ time: time + 0.31, duration: 0.08, gain: 0.12, filterType: "bandpass", frequency: 2100, q: 1.2 });
+  }
+
+  playRicochet(time) {
+    for (const [index, frequency] of [1600, 1180, 860].entries()) {
+      this.playTone({
+        time: time + index * 0.075,
+        frequency,
+        endFrequency: frequency * 0.62,
+        duration: 0.09,
+        gain: 0.13 - index * 0.025,
+        type: "sine"
       });
     }
   }
 
-  playBass(time) {
-    const oscillator = this.context.createOscillator();
-    const filter = this.context.createBiquadFilter();
-    const gain = this.context.createGain();
-    oscillator.type = "sawtooth";
-    oscillator.frequency.setValueAtTime(92, time);
-    oscillator.frequency.exponentialRampToValueAtTime(58, time + 0.34);
-    filter.type = "lowpass";
-    filter.frequency.setValueAtTime(620, time);
-    filter.frequency.exponentialRampToValueAtTime(180, time + 0.34);
-    gain.gain.setValueAtTime(0.0001, time);
-    gain.gain.exponentialRampToValueAtTime(0.26, time + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.38);
-    oscillator.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.masterGain);
-    oscillator.start(time);
-    oscillator.stop(time + 0.4);
+  playTargetLock(time) {
+    for (const [index, frequency] of [480, 620, 780].entries()) {
+      this.playTone({
+        time: time + index * 0.105,
+        frequency,
+        duration: 0.055,
+        gain: 0.14,
+        type: "triangle"
+      });
+    }
   }
 
-  playZap(time) {
-    const oscillator = this.context.createOscillator();
-    const gain = this.context.createGain();
-    oscillator.type = "square";
-    oscillator.frequency.setValueAtTime(780, time);
-    oscillator.frequency.exponentialRampToValueAtTime(120, time + 0.17);
-    gain.gain.setValueAtTime(0.0001, time);
-    gain.gain.exponentialRampToValueAtTime(0.2, time + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.19);
-    oscillator.connect(gain);
-    gain.connect(this.masterGain);
-    oscillator.start(time);
-    oscillator.stop(time + 0.21);
+  playTagConfirm(time) {
+    this.playTone({ time, frequency: 523.25, duration: 0.08, gain: 0.13, type: "sine" });
+    this.playTone({ time: time + 0.075, frequency: 659.25, duration: 0.08, gain: 0.13, type: "sine" });
+    this.playTone({ time: time + 0.15, frequency: 783.99, duration: 0.12, gain: 0.15, type: "sine" });
+    this.playNoise({ time: time + 0.15, duration: 0.05, gain: 0.05, filterType: "highpass", frequency: 5000, q: 0.5 });
   }
 
-  playBlip(time) {
-    this.playTone({ time, frequency: 440, duration: 0.08, gain: 0.14, type: "triangle" });
-    this.playTone({ time: time + 0.065, frequency: 660, duration: 0.08, gain: 0.12, type: "triangle" });
-    this.playTone({ time: time + 0.13, frequency: 990, duration: 0.08, gain: 0.1, type: "sine" });
+  playShieldPing(time) {
+    this.playTone({ time, frequency: 740, duration: 0.25, gain: 0.11, type: "sine" });
+    this.playTone({ time, frequency: 1480, duration: 0.18, gain: 0.06, type: "sine" });
   }
 
-  playCrunch(time) {
-    this.playNoise({
-      time,
-      duration: 0.18,
-      gain: 0.18,
-      filterType: "lowpass",
-      frequency: 900,
-      q: 1.5
-    });
-    this.playTone({ time, frequency: 86, duration: 0.16, gain: 0.18, type: "sawtooth" });
+  playShieldCrack(time) {
+    this.playNoise({ time, duration: 0.18, gain: 0.18, filterType: "bandpass", frequency: 1700, q: 1.8 });
+    this.playTone({ time: time + 0.02, frequency: 96, endFrequency: 58, duration: 0.2, gain: 0.22, type: "sawtooth" });
   }
 
-  playTone({ time, frequency, duration, gain, type }) {
+  playShieldRecharge(time) {
+    for (const [index, frequency] of [260, 330, 440, 660, 880].entries()) {
+      this.playTone({
+        time: time + index * 0.055,
+        frequency,
+        duration: 0.1,
+        gain: 0.09 + index * 0.01,
+        type: "triangle"
+      });
+    }
+  }
+
+  playBaseAlarm(time) {
+    for (const [index, frequency] of [260, 180, 260, 180].entries()) {
+      this.playTone({
+        time: time + index * 0.16,
+        frequency,
+        duration: 0.12,
+        gain: 0.16,
+        type: "square"
+      });
+    }
+  }
+
+  playRoundStart(time) {
+    this.playTone({ time, frequency: 220, endFrequency: 330, duration: 0.18, gain: 0.13, type: "sawtooth" });
+    this.playTone({ time: time + 0.16, frequency: 330, endFrequency: 494, duration: 0.18, gain: 0.15, type: "sawtooth" });
+    this.playTone({ time: time + 0.32, frequency: 494, duration: 0.22, gain: 0.18, type: "sawtooth" });
+  }
+
+  playRoundEnd(time) {
+    this.playTone({ time, frequency: 660, endFrequency: 440, duration: 0.18, gain: 0.14, type: "triangle" });
+    this.playTone({ time: time + 0.16, frequency: 440, endFrequency: 294, duration: 0.2, gain: 0.13, type: "triangle" });
+    this.playTone({ time: time + 0.34, frequency: 247, duration: 0.28, gain: 0.14, type: "sine" });
+  }
+
+  playScannerPing(time) {
+    this.playTone({ time, frequency: 520, endFrequency: 1200, duration: 0.42, gain: 0.08, type: "sine" });
+    this.playNoise({ time, duration: 0.34, gain: 0.05, filterType: "bandpass", frequency: 2400, q: 2.2 });
+  }
+
+  playStealthBlip(time) {
+    this.playTone({ time, frequency: 360, duration: 0.05, gain: 0.07, type: "sine" });
+    this.playTone({ time: time + 0.065, frequency: 540, duration: 0.05, gain: 0.06, type: "sine" });
+  }
+
+  playAirHorn(time) {
+    for (const frequency of [233, 277]) {
+      this.playTone({ time, frequency, endFrequency: frequency * 0.9, duration: 0.48, gain: 0.15, type: "sawtooth" });
+    }
+    this.playNoise({ time, duration: 0.45, gain: 0.04, filterType: "bandpass", frequency: 950, q: 1.1 });
+  }
+
+  playDjScratch(time) {
+    for (const [index, frequency] of [700, 240, 880, 300].entries()) {
+      this.playTone({
+        time: time + index * 0.055,
+        frequency,
+        endFrequency: index % 2 === 0 ? frequency * 0.45 : frequency * 2.2,
+        duration: 0.075,
+        gain: 0.11,
+        type: "sawtooth"
+      });
+    }
+    this.playNoise({ time, duration: 0.28, gain: 0.08, filterType: "bandpass", frequency: 1700, q: 2.4 });
+  }
+
+  playBassDrop(time) {
+    this.playNoise({ time, duration: 0.22, gain: 0.08, filterType: "highpass", frequency: 2400, q: 0.7 });
+    this.playTone({ time: time + 0.08, frequency: 130, endFrequency: 36, duration: 0.68, gain: 0.26, type: "sine" });
+  }
+
+  playRecordStop(time) {
+    this.playTone({ time, frequency: 720, endFrequency: 45, duration: 0.64, gain: 0.16, type: "sawtooth" });
+    this.playNoise({ time, duration: 0.18, gain: 0.04, filterType: "highpass", frequency: 3200, q: 0.6 });
+  }
+
+  playCrowdHey(time) {
+    for (const frequency of [180, 230, 290]) {
+      this.playTone({ time, frequency, endFrequency: frequency * 0.92, duration: 0.26, gain: 0.08, type: "sawtooth", filterFrequency: 900, filterQ: 0.9 });
+    }
+    this.playNoise({ time, duration: 0.24, gain: 0.09, filterType: "bandpass", frequency: 1150, q: 1.3 });
+  }
+
+  playHypeHit(time) {
+    this.playTone({ time, frequency: 160, endFrequency: 84, duration: 0.26, gain: 0.23, type: "sine" });
+    this.playTone({ time, frequency: 440, duration: 0.12, gain: 0.11, type: "square" });
+    this.playNoise({ time, duration: 0.18, gain: 0.14, filterType: "lowpass", frequency: 1300, q: 1.1 });
+  }
+
+  playDramaHit(time) {
+    this.playTone({ time, frequency: 92, endFrequency: 45, duration: 0.48, gain: 0.3, type: "sine" });
+    this.playNoise({ time, duration: 0.34, gain: 0.18, filterType: "lowpass", frequency: 750, q: 1.8 });
+  }
+
+  playVinylBeep(time) {
+    this.playTone({ time, frequency: 880, duration: 0.07, gain: 0.1, type: "sine" });
+    this.playTone({ time: time + 0.09, frequency: 1174.66, duration: 0.08, gain: 0.1, type: "sine" });
+  }
+
+  playCoinPickup(time) {
+    this.playTone({ time, frequency: 988, duration: 0.08, gain: 0.1, type: "square" });
+    this.playTone({ time: time + 0.075, frequency: 1318.51, duration: 0.12, gain: 0.12, type: "square" });
+  }
+
+  playPowerUp(time) {
+    for (const [index, frequency] of [220, 277, 330, 440, 554, 660].entries()) {
+      this.playTone({ time: time + index * 0.052, frequency, duration: 0.09, gain: 0.09, type: "triangle" });
+    }
+  }
+
+  playOneUp(time) {
+    for (const [index, frequency] of [523.25, 659.25, 783.99, 1046.5].entries()) {
+      this.playTone({ time: time + index * 0.08, frequency, duration: 0.1, gain: 0.1, type: "square" });
+    }
+  }
+
+  playLevelClear(time) {
+    for (const [index, frequency] of [392, 523.25, 659.25, 783.99, 1046.5].entries()) {
+      this.playTone({ time: time + index * 0.08, frequency, duration: 0.13, gain: 0.11, type: "triangle" });
+    }
+  }
+
+  playGlitchBurst(time) {
+    for (let index = 0; index < 8; index += 1) {
+      const frequency = 180 + Math.random() * 1800;
+      this.playTone({
+        time: time + index * 0.025,
+        frequency,
+        endFrequency: frequency * (0.6 + Math.random() * 1.5),
+        duration: 0.045,
+        gain: 0.08,
+        type: index % 2 === 0 ? "square" : "sawtooth"
+      });
+    }
+  }
+
+  playJump(time) {
+    this.playTone({ time, frequency: 240, endFrequency: 720, duration: 0.18, gain: 0.12, type: "square" });
+  }
+
+  playBonusTally(time) {
+    for (let index = 0; index < 6; index += 1) {
+      this.playTone({ time: time + index * 0.055, frequency: 780 + index * 70, duration: 0.045, gain: 0.08, type: "triangle" });
+    }
+  }
+
+  playGameOver(time) {
+    for (const [index, frequency] of [392, 349.23, 293.66, 196].entries()) {
+      this.playTone({ time: time + index * 0.13, frequency, duration: 0.16, gain: 0.12, type: "triangle" });
+    }
+  }
+
+  playButtonBlip(time) {
+    this.playTone({ time, frequency: 660, duration: 0.055, gain: 0.08, type: "sine" });
+  }
+
+  playScoreTick(time) {
+    this.playTone({ time, frequency: 1046.5, duration: 0.04, gain: 0.07, type: "triangle" });
+  }
+
+  playSuccessChime(time) {
+    this.playTone({ time, frequency: 523.25, duration: 0.12, gain: 0.09, type: "sine" });
+    this.playTone({ time: time + 0.1, frequency: 659.25, duration: 0.12, gain: 0.09, type: "sine" });
+    this.playTone({ time: time + 0.2, frequency: 783.99, duration: 0.16, gain: 0.1, type: "sine" });
+  }
+
+  playErrorBuzzer(time) {
+    this.playTone({ time, frequency: 180, duration: 0.16, gain: 0.14, type: "square" });
+    this.playTone({ time: time + 0.17, frequency: 150, duration: 0.16, gain: 0.13, type: "square" });
+  }
+
+  playCountdownBeep(time) {
+    this.playTone({ time, frequency: 880, duration: 0.11, gain: 0.11, type: "sine" });
+  }
+
+  playWarningSiren(time) {
+    for (const [index, frequency] of [520, 320, 520, 320, 520].entries()) {
+      this.playTone({ time: time + index * 0.12, frequency, duration: 0.11, gain: 0.11, type: "sawtooth" });
+    }
+  }
+
+  playMenuOpen(time) {
+    this.playTone({ time, frequency: 360, endFrequency: 720, duration: 0.18, gain: 0.08, type: "triangle" });
+    this.playTone({ time: time + 0.12, frequency: 960, duration: 0.07, gain: 0.06, type: "sine" });
+  }
+
+  playPowerDown(time) {
+    this.playTone({ time, frequency: 420, endFrequency: 80, duration: 0.48, gain: 0.13, type: "triangle" });
+  }
+
+  playTone({ time, frequency, endFrequency, duration, gain, type, filterFrequency, filterQ }) {
     const oscillator = this.context.createOscillator();
     const envelope = this.context.createGain();
+    let output = envelope;
+
     oscillator.type = type;
     oscillator.frequency.setValueAtTime(frequency, time);
+    if (endFrequency) {
+      oscillator.frequency.exponentialRampToValueAtTime(Math.max(1, endFrequency), time + duration);
+    }
+
     envelope.gain.setValueAtTime(0.0001, time);
-    envelope.gain.exponentialRampToValueAtTime(gain, time + 0.01);
+    envelope.gain.exponentialRampToValueAtTime(Math.max(0.0002, gain), time + 0.01);
     envelope.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+
     oscillator.connect(envelope);
-    envelope.connect(this.masterGain);
+    if (filterFrequency) {
+      const filter = this.context.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.value = filterFrequency;
+      filter.Q.value = filterQ ?? 1;
+      envelope.connect(filter);
+      output = filter;
+    }
+
+    output.connect(this.masterGain);
     oscillator.start(time);
-    oscillator.stop(time + duration + 0.02);
+    oscillator.stop(time + duration + 0.03);
   }
 
   playNoise({ time, duration, gain, filterType, frequency, q }) {
@@ -685,7 +997,7 @@ class SoundButtonAudio {
     filter.frequency.value = frequency;
     filter.Q.value = q;
     envelope.gain.setValueAtTime(0.0001, time);
-    envelope.gain.exponentialRampToValueAtTime(gain, time + 0.008);
+    envelope.gain.exponentialRampToValueAtTime(Math.max(0.0002, gain), time + 0.008);
     envelope.gain.exponentialRampToValueAtTime(0.0001, time + duration);
     source.connect(filter);
     filter.connect(envelope);
@@ -717,28 +1029,21 @@ audio = new SoundButtonAudio({
 
 state = {
   muted: loadBoolean(STORAGE_KEYS.muted, false),
-  tempo: loadNumber(STORAGE_KEYS.tempo, 100, 70, 150),
-  pattern: loadPattern(),
+  assignments: loadAssignments(),
+  category: loadString(STORAGE_KEYS.category, "All"),
   hitCount: 0,
-  isLooping: false,
-  currentStep: -1,
-  loopTimer: 0,
+  audioRequestId: 0,
   visualTimer: 0
 };
 
+renderCategoryFilter();
 renderPads();
-renderSequence();
+renderLibrary();
 renderState();
 setScopeIdle();
 
 dom.muteButton.addEventListener("click", toggleMute);
-dom.playLoopButton.addEventListener("click", toggleLoop);
-dom.clearLoopButton.addEventListener("click", clearPattern);
-dom.tempoSlider.addEventListener("input", updateTempo);
+dom.resetButton.addEventListener("click", resetBoard);
+dom.laserPresetButton.addEventListener("click", applyLaserPreset);
+dom.categoryFilter.addEventListener("change", updateCategory);
 window.addEventListener("keydown", handleKeyboard);
-window.addEventListener("pagehide", stopLoop);
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    stopLoop();
-  }
-});

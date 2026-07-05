@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#101014" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Fahhh Board" />
-  <title>Fahhh Soundboard | Midnight Games</title>
+  <meta name="apple-mobile-web-app-title" content="FX Board" />
+  <title>Sound FX Board | Midnight Games</title>
   <link rel="icon" href="../../icons/midnight-icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="../../icons/midnight-icon.svg" />
   <link rel="stylesheet" href="./styles.css" />
@@ -25,12 +25,14 @@
         </span>
         <div>
           <p class="eyebrow">Midnight Games</p>
-          <h1>Fahhh Soundboard</h1>
+          <h1>Sound FX Board</h1>
         </div>
       </div>
-      <button id="mute-button" class="ghost-button icon-button" type="button" aria-pressed="false">
-        Sound On
-      </button>
+      <div class="top-actions">
+        <button id="laser-preset" class="ghost-button" type="button">Laser Set</button>
+        <button id="reset-board" class="ghost-button" type="button">Reset</button>
+        <button id="mute-button" class="ghost-button icon-button" type="button" aria-pressed="false">Sound is on</button>
+      </div>
     </header>
 
     <nav class="game-switcher" aria-label="Game selection">
@@ -38,7 +40,7 @@
       <a class="game-card" href="../../chesslab.html">Chess</a>
       <a class="game-card" href="../water-sort/">Water Sort</a>
       <a class="game-card" href="../lock-pop/">Lock Pop</a>
-      <a class="game-card is-active" href="./index.html" aria-current="page">Soundboard</a>
+      <a class="game-card is-active" href="./index.html" aria-current="page">FX Board</a>
       <a class="game-card nightfall-card" href="../nightfall/">
         <span>NIGHTFALL</span>
         <small>OPEN-SOURCE CLASSIC FPS</small>
@@ -46,7 +48,7 @@
     </nav>
 
     <main class="sound-layout">
-      <section class="status-panel" aria-label="Soundboard status">
+      <section class="status-panel" aria-label="Sound effects board status">
         <div class="status-card">
           <span>Last</span>
           <strong id="last-sound">Ready</strong>
@@ -56,12 +58,12 @@
           <strong id="hit-count">0</strong>
         </div>
         <div class="status-card">
-          <span>Tempo</span>
-          <strong id="tempo-readout">100</strong>
+          <span>Library</span>
+          <strong id="library-count">0</strong>
         </div>
         <div class="status-card">
-          <span>Loop</span>
-          <strong id="loop-state">Stopped</strong>
+          <span>Assigned</span>
+          <strong id="assigned-count">0</strong>
         </div>
       </section>
 
@@ -79,33 +81,29 @@
           <span></span>
           <span></span>
           <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
 
         <div class="panel-heading">
-          <h2 id="pads-title">Quick Buttons</h2>
+          <h2 id="pads-title">Assignable Buttons</h2>
           <span id="sound-status" class="panel-note" aria-live="polite">Ready</span>
         </div>
 
         <div id="pad-grid" class="pad-grid" aria-label="Sound buttons"></div>
       </section>
 
-      <section class="sequencer-panel" aria-labelledby="loop-title">
+      <section class="library-panel" aria-labelledby="library-title">
         <div class="panel-heading">
-          <h2 id="loop-title">Rough Loop</h2>
-          <div class="loop-actions">
-            <button id="play-loop" class="primary-button" type="button">Play</button>
-            <button id="clear-loop" class="ghost-button" type="button">Clear</button>
-          </div>
+          <h2 id="library-title">Sound Library</h2>
+          <label class="filter-field" for="category-filter">
+            <span>Category</span>
+            <select id="category-filter"></select>
+          </label>
         </div>
 
-        <label class="tempo-control" for="tempo-slider">
-          <span>Tempo</span>
-          <input id="tempo-slider" type="range" min="70" max="150" step="1" value="100" />
-        </label>
-
-        <div class="sequence-scroll">
-          <div id="sequence-grid" class="sequence-grid" role="grid" aria-label="Loop pattern"></div>
-        </div>
+        <div id="library-grid" class="library-grid" aria-label="Sound library"></div>
       </section>
     </main>
   </div>
