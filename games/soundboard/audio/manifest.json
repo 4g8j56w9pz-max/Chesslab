@@ -355,6 +355,126 @@
       "bytes": 9720
     },
     {
+      "id": "viral-boom",
+      "label": "Viral Boom",
+      "category": "Meme",
+      "tag": "boom",
+      "wav": "./audio/wav/viral-boom.wav",
+      "header": "./audio/headers/viral-boom_wav.h",
+      "symbol": "VIRAL_BOOM_WAV",
+      "bytes": 33990
+    },
+    {
+      "id": "sad-trombone",
+      "label": "Sad Trombone",
+      "category": "Meme",
+      "tag": "fail",
+      "wav": "./audio/wav/sad-trombone.wav",
+      "header": "./audio/headers/sad-trombone_wav.h",
+      "symbol": "SAD_TROMBONE_WAV",
+      "bytes": 35654
+    },
+    {
+      "id": "bruh-bass",
+      "label": "Bruh Bass",
+      "category": "Meme",
+      "tag": "drop",
+      "wav": "./audio/wav/bruh-bass.wav",
+      "header": "./audio/headers/bruh-bass_wav.h",
+      "symbol": "BRUH_BASS_WAV",
+      "bytes": 24220
+    },
+    {
+      "id": "censor-bleep",
+      "label": "Censor Bleep",
+      "category": "Meme",
+      "tag": "beep",
+      "wav": "./audio/wav/censor-bleep.wav",
+      "header": "./audio/headers/censor-bleep_wav.h",
+      "symbol": "CENSOR_BLEEP_WAV",
+      "bytes": 21620
+    },
+    {
+      "id": "wow-rise",
+      "label": "Wow Rise",
+      "category": "Meme",
+      "tag": "rise",
+      "wav": "./audio/wav/wow-rise.wav",
+      "header": "./audio/headers/wow-rise_wav.h",
+      "symbol": "WOW_RISE_WAV",
+      "bytes": 23384
+    },
+    {
+      "id": "suspense-sting",
+      "label": "Suspense Sting",
+      "category": "Meme",
+      "tag": "reveal",
+      "wav": "./audio/wav/suspense-sting.wav",
+      "header": "./audio/headers/suspense-sting_wav.h",
+      "symbol": "SUSPENSE_STING_WAV",
+      "bytes": 33932
+    },
+    {
+      "id": "laugh-blip",
+      "label": "Laugh Blip",
+      "category": "Meme",
+      "tag": "laugh",
+      "wav": "./audio/wav/laugh-blip.wav",
+      "header": "./audio/headers/laugh-blip_wav.h",
+      "symbol": "LAUGH_BLIP_WAV",
+      "bytes": 18546
+    },
+    {
+      "id": "comedy-boing",
+      "label": "Comedy Boing",
+      "category": "Meme",
+      "tag": "bounce",
+      "wav": "./audio/wav/comedy-boing.wav",
+      "header": "./audio/headers/comedy-boing_wav.h",
+      "symbol": "COMEDY_BOING_WAV",
+      "bytes": 27744
+    },
+    {
+      "id": "fail-buzzer",
+      "label": "Fail Buzzer",
+      "category": "Meme",
+      "tag": "fail",
+      "wav": "./audio/wav/fail-buzzer.wav",
+      "header": "./audio/headers/fail-buzzer_wav.h",
+      "symbol": "FAIL_BUZZER_WAV",
+      "bytes": 21634
+    },
+    {
+      "id": "chat-alert",
+      "label": "Chat Alert",
+      "category": "Meme",
+      "tag": "ping",
+      "wav": "./audio/wav/chat-alert.wav",
+      "header": "./audio/headers/chat-alert_wav.h",
+      "symbol": "CHAT_ALERT_WAV",
+      "bytes": 11494
+    },
+    {
+      "id": "rimshot",
+      "label": "Rimshot",
+      "category": "Meme",
+      "tag": "hit",
+      "wav": "./audio/wav/rimshot.wav",
+      "header": "./audio/headers/rimshot_wav.h",
+      "symbol": "RIMSHOT_WAV",
+      "bytes": 11928
+    },
+    {
+      "id": "surprise-pop",
+      "label": "Surprise Pop",
+      "category": "Meme",
+      "tag": "pop",
+      "wav": "./audio/wav/surprise-pop.wav",
+      "header": "./audio/headers/surprise-pop_wav.h",
+      "symbol": "SURPRISE_POP_WAV",
+      "bytes": 10158
+    },
+    {
       "id": "coin-pickup",
       "label": "Coin Pickup",
       "category": "Arcade",

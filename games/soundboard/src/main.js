@@ -1,6 +1,7 @@
 import {
   DEFAULT_ASSIGNMENTS,
   LASER_PRESET,
+  MEME_PRESET,
   PAD_SLOTS,
   SOUND_LIBRARY,
   soundFileStem,
@@ -21,6 +22,7 @@ const dom = {
   muteButton: document.getElementById("mute-button"),
   resetButton: document.getElementById("reset-board"),
   laserPresetButton: document.getElementById("laser-preset"),
+  memePresetButton: document.getElementById("meme-preset"),
   lastSound: document.getElementById("last-sound"),
   hitCount: document.getElementById("hit-count"),
   libraryCount: document.getElementById("library-count"),
@@ -246,6 +248,14 @@ function applyLaserPreset() {
   renderPads();
   renderState();
   setStatus("Laser Set");
+}
+
+function applyMemePreset() {
+  state.assignments = [...MEME_PRESET];
+  saveAssignments();
+  renderPads();
+  renderState();
+  setStatus("Meme Set");
 }
 
 function resetBoard() {
@@ -582,6 +592,42 @@ class SoundButtonAudio {
         break;
       case "vinyl-beep":
         this.playVinylBeep(time);
+        break;
+      case "viral-boom":
+        this.playViralBoom(time);
+        break;
+      case "sad-trombone":
+        this.playSadTrombone(time);
+        break;
+      case "bruh-bass":
+        this.playBruhBass(time);
+        break;
+      case "censor-bleep":
+        this.playCensorBleep(time);
+        break;
+      case "wow-rise":
+        this.playWowRise(time);
+        break;
+      case "suspense-sting":
+        this.playSuspenseSting(time);
+        break;
+      case "laugh-blip":
+        this.playLaughBlip(time);
+        break;
+      case "comedy-boing":
+        this.playComedyBoing(time);
+        break;
+      case "fail-buzzer":
+        this.playFailBuzzer(time);
+        break;
+      case "chat-alert":
+        this.playChatAlert(time);
+        break;
+      case "rimshot":
+        this.playRimshot(time);
+        break;
+      case "surprise-pop":
+        this.playSurprisePop(time);
         break;
       case "coin-pickup":
         this.playCoinPickup(time);
@@ -971,6 +1017,85 @@ class SoundButtonAudio {
     this.playTone({ time: time + 0.09, frequency: 1174.66, duration: 0.08, gain: 0.1, type: "sine" });
   }
 
+  playViralBoom(time) {
+    this.playTone({ time, frequency: 84, endFrequency: 32, duration: 0.72, gain: 0.34, type: "sine" });
+    this.playTone({ time: time + 0.015, frequency: 150, endFrequency: 42, duration: 0.5, gain: 0.18, type: "sawtooth" });
+    this.playNoise({ time, duration: 0.28, gain: 0.18, filterType: "lowpass", frequency: 680, q: 1.6 });
+  }
+
+  playSadTrombone(time) {
+    [330, 294, 262, 196].forEach((frequency, index) => {
+      this.playTone({
+        time: time + index * 0.18,
+        frequency,
+        endFrequency: frequency * 0.72,
+        duration: 0.22,
+        gain: 0.14,
+        type: "sawtooth",
+        filterFrequency: 760,
+        filterQ: 1.4
+      });
+    });
+  }
+
+  playBruhBass(time) {
+    this.playTone({ time, frequency: 118, endFrequency: 72, duration: 0.5, gain: 0.28, type: "sawtooth", filterFrequency: 360, filterQ: 2.2 });
+    this.playTone({ time: time + 0.04, frequency: 178, endFrequency: 92, duration: 0.44, gain: 0.16, type: "square", filterFrequency: 520, filterQ: 2 });
+    this.playNoise({ time: time + 0.02, duration: 0.14, gain: 0.05, filterType: "bandpass", frequency: 700, q: 2 });
+  }
+
+  playCensorBleep(time) {
+    this.playTone({ time, frequency: 1000, duration: 0.44, gain: 0.18, type: "sine" });
+    this.playTone({ time, frequency: 2000, duration: 0.44, gain: 0.06, type: "sine" });
+  }
+
+  playWowRise(time) {
+    this.playTone({ time, frequency: 240, endFrequency: 920, duration: 0.44, gain: 0.13, type: "triangle" });
+    this.playTone({ time: time + 0.16, frequency: 480, endFrequency: 1320, duration: 0.32, gain: 0.1, type: "sine" });
+  }
+
+  playSuspenseSting(time) {
+    this.playTone({ time, frequency: 72, endFrequency: 54, duration: 0.72, gain: 0.24, type: "sine" });
+    this.playTone({ time: time + 0.38, frequency: 920, endFrequency: 1280, duration: 0.16, gain: 0.1, type: "triangle" });
+    this.playNoise({ time: time + 0.1, duration: 0.45, gain: 0.09, filterType: "lowpass", frequency: 900, q: 1.3 });
+  }
+
+  playLaughBlip(time) {
+    [340, 430, 380, 510, 460].forEach((frequency, index) => {
+      this.playTone({ time: time + index * 0.075, frequency, endFrequency: frequency * 1.28, duration: 0.07, gain: 0.09, type: "triangle" });
+      this.playNoise({ time: time + index * 0.075, duration: 0.035, gain: 0.035, filterType: "bandpass", frequency: 1300, q: 1.4 });
+    });
+  }
+
+  playComedyBoing(time) {
+    this.playTone({ time, frequency: 170, endFrequency: 740, duration: 0.18, gain: 0.16, type: "sawtooth" });
+    this.playTone({ time: time + 0.16, frequency: 740, endFrequency: 120, duration: 0.42, gain: 0.15, type: "triangle" });
+  }
+
+  playFailBuzzer(time) {
+    this.playTone({ time, frequency: 180, duration: 0.18, gain: 0.17, type: "square" });
+    this.playTone({ time: time + 0.2, frequency: 140, duration: 0.24, gain: 0.17, type: "square" });
+    this.playNoise({ time, duration: 0.08, gain: 0.05, filterType: "bandpass", frequency: 500, q: 1.2 });
+  }
+
+  playChatAlert(time) {
+    [880, 1174.66, 1567.98].forEach((frequency, index) => {
+      this.playTone({ time: time + index * 0.07, frequency, duration: 0.07, gain: 0.1, type: "sine" });
+    });
+  }
+
+  playRimshot(time) {
+    this.playNoise({ time, duration: 0.035, gain: 0.18, filterType: "highpass", frequency: 3200, q: 0.8 });
+    this.playTone({ time, frequency: 190, endFrequency: 85, duration: 0.08, gain: 0.14, type: "sine" });
+    this.playNoise({ time: time + 0.09, duration: 0.05, gain: 0.16, filterType: "bandpass", frequency: 2100, q: 3 });
+    this.playTone({ time: time + 0.14, frequency: 840, duration: 0.08, gain: 0.08, type: "triangle" });
+  }
+
+  playSurprisePop(time) {
+    this.playNoise({ time, duration: 0.06, gain: 0.16, filterType: "bandpass", frequency: 1800, q: 2.2 });
+    this.playTone({ time: time + 0.02, frequency: 420, endFrequency: 1040, duration: 0.16, gain: 0.12, type: "triangle" });
+  }
+
   playCoinPickup(time) {
     this.playTone({ time, frequency: 988, duration: 0.08, gain: 0.1, type: "square" });
     this.playTone({ time: time + 0.075, frequency: 1318.51, duration: 0.12, gain: 0.12, type: "square" });
@@ -1150,5 +1275,6 @@ setScopeIdle();
 dom.muteButton.addEventListener("click", toggleMute);
 dom.resetButton.addEventListener("click", resetBoard);
 dom.laserPresetButton.addEventListener("click", applyLaserPreset);
+dom.memePresetButton.addEventListener("click", applyMemePreset);
 dom.categoryFilter.addEventListener("change", updateCategory);
 window.addEventListener("keydown", handleKeyboard);

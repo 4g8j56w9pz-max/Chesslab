@@ -234,6 +234,63 @@ function renderGeneratedWav(soundId) {
       tone(samples, { start: 0, duration: 0.07, frequency: 880, gain: 0.1, type: "sine" });
       tone(samples, { start: 0.09, duration: 0.08, frequency: 1174.66, gain: 0.1, type: "sine" });
       break;
+    case "viral-boom":
+      viralBoom(samples, 0, rng);
+      break;
+    case "sad-trombone":
+      [330, 294, 262, 196].forEach((frequency, index) => {
+        tone(samples, { start: index * 0.18, duration: 0.22, frequency, endFrequency: frequency * 0.72, gain: 0.14, type: "sawtooth" });
+      });
+      break;
+    case "bruh-bass":
+      tone(samples, { start: 0, duration: 0.5, frequency: 118, endFrequency: 72, gain: 0.28, type: "sawtooth" });
+      tone(samples, { start: 0.04, duration: 0.44, frequency: 178, endFrequency: 92, gain: 0.16, type: "square" });
+      noise(samples, { start: 0.02, duration: 0.14, gain: 0.05, filterType: "bandpass", frequency: 700, rng });
+      break;
+    case "censor-bleep":
+      tone(samples, { start: 0, duration: 0.44, frequency: 1000, gain: 0.18, type: "sine" });
+      tone(samples, { start: 0, duration: 0.44, frequency: 2000, gain: 0.06, type: "sine" });
+      break;
+    case "wow-rise":
+      tone(samples, { start: 0, duration: 0.44, frequency: 240, endFrequency: 920, gain: 0.13, type: "triangle" });
+      tone(samples, { start: 0.16, duration: 0.32, frequency: 480, endFrequency: 1320, gain: 0.1, type: "sine" });
+      break;
+    case "suspense-sting":
+      tone(samples, { start: 0, duration: 0.72, frequency: 72, endFrequency: 54, gain: 0.24, type: "sine" });
+      tone(samples, { start: 0.38, duration: 0.16, frequency: 920, endFrequency: 1280, gain: 0.1, type: "triangle" });
+      noise(samples, { start: 0.1, duration: 0.45, gain: 0.09, filterType: "lowpass", frequency: 900, rng });
+      break;
+    case "laugh-blip":
+      [340, 430, 380, 510, 460].forEach((frequency, index) => {
+        const start = index * 0.075;
+        tone(samples, { start, duration: 0.07, frequency, endFrequency: frequency * 1.28, gain: 0.09, type: "triangle" });
+        noise(samples, { start, duration: 0.035, gain: 0.035, filterType: "bandpass", frequency: 1300, rng });
+      });
+      break;
+    case "comedy-boing":
+      tone(samples, { start: 0, duration: 0.18, frequency: 170, endFrequency: 740, gain: 0.16, type: "sawtooth" });
+      tone(samples, { start: 0.16, duration: 0.42, frequency: 740, endFrequency: 120, gain: 0.15, type: "triangle" });
+      break;
+    case "fail-buzzer":
+      tone(samples, { start: 0, duration: 0.18, frequency: 180, gain: 0.17, type: "square" });
+      tone(samples, { start: 0.2, duration: 0.24, frequency: 140, gain: 0.17, type: "square" });
+      noise(samples, { start: 0, duration: 0.08, gain: 0.05, filterType: "bandpass", frequency: 500, rng });
+      break;
+    case "chat-alert":
+      [880, 1174.66, 1567.98].forEach((frequency, index) => {
+        tone(samples, { start: index * 0.07, duration: 0.07, frequency, gain: 0.1, type: "sine" });
+      });
+      break;
+    case "rimshot":
+      noise(samples, { start: 0, duration: 0.035, gain: 0.18, filterType: "highpass", frequency: 3200, rng });
+      tone(samples, { start: 0, duration: 0.08, frequency: 190, endFrequency: 85, gain: 0.14, type: "sine" });
+      noise(samples, { start: 0.09, duration: 0.05, gain: 0.16, filterType: "bandpass", frequency: 2100, rng });
+      tone(samples, { start: 0.14, duration: 0.08, frequency: 840, gain: 0.08, type: "triangle" });
+      break;
+    case "surprise-pop":
+      noise(samples, { start: 0, duration: 0.06, gain: 0.16, filterType: "bandpass", frequency: 1800, rng });
+      tone(samples, { start: 0.02, duration: 0.16, frequency: 420, endFrequency: 1040, gain: 0.12, type: "triangle" });
+      break;
     case "coin-pickup":
       tone(samples, { start: 0, duration: 0.08, frequency: 988, gain: 0.1, type: "square" });
       tone(samples, { start: 0.075, duration: 0.12, frequency: 1318.51, gain: 0.12, type: "square" });
@@ -325,6 +382,12 @@ function longLaser(samples, start, rng) {
   tone(samples, { start, duration: 0.82, frequency: 1250, endFrequency: 260, gain: 0.28, type: "sawtooth" });
   tone(samples, { start: start + 0.12, duration: 0.68, frequency: 880, endFrequency: 180, gain: 0.18, type: "square" });
   noise(samples, { start: start + 0.04, duration: 0.5, gain: 0.08, filterType: "bandpass", frequency: 2500, rng });
+}
+
+function viralBoom(samples, start, rng) {
+  tone(samples, { start, duration: 0.72, frequency: 84, endFrequency: 32, gain: 0.34, type: "sine" });
+  tone(samples, { start: start + 0.015, duration: 0.5, frequency: 150, endFrequency: 42, gain: 0.18, type: "sawtooth" });
+  noise(samples, { start, duration: 0.28, gain: 0.18, filterType: "lowpass", frequency: 680, rng });
 }
 
 function triggerClick(samples, start, rng) {

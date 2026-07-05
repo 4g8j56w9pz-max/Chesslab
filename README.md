@@ -4,7 +4,7 @@ A static browser arcade collection for GitHub Pages. The existing site includes 
 
 Lock Pop Arcade is an original one-button circular timing game built with semantic HTML, modern CSS, vanilla JavaScript modules, Canvas, Web Audio, localStorage, and a local user-provided MP3 miss effect. It has no runtime dependencies, backend, analytics, ads, CDNs, external images, or external fonts.
 
-Sound FX Board is a static assignable-button audio toy for laser-tag cues, arcade effects, UI alerts, and hype-style stings. It reuses the local `games/lock-pop/assets/miss-fahhh.mp3` sample for the Fahhh button and generates the other pad sounds with Web Audio instead of bundling third-party clips. It has no runtime dependencies, backend, analytics, ads, CDNs, external images, or external fonts.
+Sound FX Board is a static assignable-button audio toy for laser-tag cues, arcade effects, meme-style hits, UI alerts, and hype-style stings. It reuses the local `games/lock-pop/assets/miss-fahhh.mp3` sample for the Fahhh button and generates the other pad sounds with Web Audio instead of bundling third-party clips. It has no runtime dependencies, backend, analytics, ads, CDNs, external images, or external fonts.
 
 The Sound FX Board also includes a file library. Each sound has a browser-downloadable mono 16-bit PCM WAV in `games/soundboard/audio/wav/` and an Arduino `PROGMEM` header in `games/soundboard/audio/headers/` for the ESP32/MAX98357A laser-tag audio prototype.
 
@@ -201,7 +201,9 @@ NIGHTFALL targets current desktop browsers with WebAssembly, Canvas, Web Audio, 
 
 ## Original Work
 
-Lock Pop Arcade's code, visuals, favicon, timing rules, and interface are original to this repository. Sound FX Board's code, visuals, generated sounds, and interface are original to this repository. The miss cue and Fahhh button use the local user-provided `games/lock-pop/assets/miss-fahhh.mp3` asset; verify its license before public distribution if needed.
+Lock Pop Arcade's code, visuals, favicon, timing rules, and interface are original to this repository. Sound FX Board's code, visuals, generated sounds, meme-style effects, and interface are original to this repository. The miss cue and Fahhh button use the local user-provided `games/lock-pop/assets/miss-fahhh.mp3` asset; verify its license before public distribution if needed.
+
+GitHub audio repositories should only be vendored when the specific source files have a clear compatible license and attribution path. The current meme-style library uses generated sounds rather than recognizable third-party meme clips.
 
 ## License
 

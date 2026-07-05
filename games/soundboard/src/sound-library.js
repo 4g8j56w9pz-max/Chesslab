@@ -53,6 +53,18 @@ export const SOUND_LIBRARY = Object.freeze([
   { id: "hype-hit", label: "Hype Hit", category: "Hype", tag: "sting", color: "#ffdd57" },
   { id: "drama-hit", label: "Drama Hit", category: "Hype", tag: "boom", color: "#ff6b6b" },
   { id: "vinyl-beep", label: "Vinyl Beep", category: "Hype", tag: "beep", color: "#d7ff65" },
+  { id: "viral-boom", label: "Viral Boom", category: "Meme", tag: "boom", color: "#ff3d7f" },
+  { id: "sad-trombone", label: "Sad Trombone", category: "Meme", tag: "fail", color: "#ffb86b" },
+  { id: "bruh-bass", label: "Bruh Bass", category: "Meme", tag: "drop", color: "#8f7cff" },
+  { id: "censor-bleep", label: "Censor Bleep", category: "Meme", tag: "beep", color: "#f9f871" },
+  { id: "wow-rise", label: "Wow Rise", category: "Meme", tag: "rise", color: "#72f1b8" },
+  { id: "suspense-sting", label: "Suspense Sting", category: "Meme", tag: "reveal", color: "#ff6ad5" },
+  { id: "laugh-blip", label: "Laugh Blip", category: "Meme", tag: "laugh", color: "#fdfd96" },
+  { id: "comedy-boing", label: "Comedy Boing", category: "Meme", tag: "bounce", color: "#7ee7ff" },
+  { id: "fail-buzzer", label: "Fail Buzzer", category: "Meme", tag: "fail", color: "#ff5c5c" },
+  { id: "chat-alert", label: "Chat Alert", category: "Meme", tag: "ping", color: "#5cff9d" },
+  { id: "rimshot", label: "Rimshot", category: "Meme", tag: "hit", color: "#ffd166" },
+  { id: "surprise-pop", label: "Surprise Pop", category: "Meme", tag: "pop", color: "#ff9ff3" },
   { id: "coin-pickup", label: "Coin Pickup", category: "Arcade", tag: "coin", color: "#ffdc5e" },
   { id: "power-up", label: "Power Up", category: "Arcade", tag: "up", color: "#5efc8d" },
   { id: "one-up", label: "One Up", category: "Arcade", tag: "life", color: "#77ddff" },
@@ -84,6 +96,21 @@ export const DEFAULT_ASSIGNMENTS = Object.freeze([
   "overcharge-shot",
   "target-lock",
   "tag-confirm"
+]);
+
+export const MEME_PRESET = Object.freeze([
+  "viral-boom",
+  "sad-trombone",
+  "bruh-bass",
+  "censor-bleep",
+  "wow-rise",
+  "suspense-sting",
+  "laugh-blip",
+  "comedy-boing",
+  "fail-buzzer",
+  "chat-alert",
+  "rimshot",
+  "surprise-pop"
 ]);
 
 export const LASER_PRESET = Object.freeze([
