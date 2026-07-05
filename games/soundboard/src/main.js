@@ -407,11 +407,13 @@ function getStorage() {
 }
 
 class SoundButtonAudio {
-  constructor({ muted, sampleUrl }) {
+  constructor({ muted, sampleUrl, fileUrls }) {
     this.context = null;
     this.masterGain = null;
     this.muted = Boolean(muted);
     this.sampleUrl = sampleUrl;
+    this.fileUrls = fileUrls;
+    this.activePlayers = new Set();
     this.fahhhBuffer = null;
     this.fahhhBufferPromise = null;
     this.noiseBuffer = null;
@@ -419,6 +421,10 @@ class SoundButtonAudio {
 
   setMuted(value) {
     this.muted = Boolean(value);
+    if (this.muted) {
+      this.stopFilePlayers();
+    }
+
     if (this.masterGain && this.context) {
       this.masterGain.gain.setTargetAtTime(this.muted ? 0 : 0.32, this.context.currentTime, 0.012);
     }
@@ -462,6 +468,10 @@ class SoundButtonAudio {
   }
 
   async play(soundId) {
+    if (await this.playFile(soundId)) {
+      return true;
+    }
+
     if (!await this.unlock()) {
       return false;
     }
@@ -590,6 +600,44 @@ class SoundButtonAudio {
     }
 
     return true;
+  }
+
+  async playFile(soundId) {
+    if (this.muted || !this.fileUrls?.has(soundId) || typeof Audio === "undefined") {
+      return false;
+    }
+
+    const player = new Audio(this.fileUrls.get(soundId));
+    player.preload = "auto";
+    player.playsInline = true;
+    player.volume = 1;
+
+    const cleanup = () => {
+      this.activePlayers.delete(player);
+    };
+
+    player.addEventListener("ended", cleanup, { once: true });
+    player.addEventListener("error", cleanup, { once: true });
+    this.activePlayers.add(player);
+
+    try {
+      const playback = player.play();
+      if (playback && typeof playback.then === "function") {
+        await playback;
+      }
+      return true;
+    } catch {
+      cleanup();
+      return false;
+    }
+  }
+
+  stopFilePlayers() {
+    for (const player of this.activePlayers) {
+      player.pause();
+      player.currentTime = 0;
+    }
+    this.activePlayers.clear();
   }
 
   prepareFahhhSample() {
@@ -972,6 +1020,7 @@ class SoundButtonAudio {
 
 audio = new SoundButtonAudio({
   muted: loadBoolean(STORAGE_KEYS.muted, false),
+  fileUrls: new Map(SOUND_LIBRARY.map(sound => [sound.id, soundWavPath(sound.id)])),
   sampleUrl: new URL("../../lock-pop/assets/miss-fahhh.mp3", import.meta.url).href
 });
 
