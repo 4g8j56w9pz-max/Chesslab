@@ -1,0 +1,398 @@
+{
+  "format": "mono 16-bit PCM WAV",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitsPerSample": 16,
+  "files": [
+    {
+      "id": "fahhh",
+      "label": "Fahhh",
+      "category": "Signature",
+      "tag": "sample",
+      "wav": "./audio/wav/fahhh.wav",
+      "header": "./audio/headers/fahhh_wav.h",
+      "symbol": "FAHHH_WAV",
+      "bytes": 100396
+    },
+    {
+      "id": "laser-shot",
+      "label": "Laser Shot",
+      "category": "Laser Tag",
+      "tag": "shot",
+      "wav": "./audio/wav/laser-shot.wav",
+      "header": "./audio/headers/laser-shot_wav.h",
+      "symbol": "LASER_SHOT_WAV",
+      "bytes": 10172
+    },
+    {
+      "id": "laser-burst",
+      "label": "Laser Burst",
+      "category": "Laser Tag",
+      "tag": "rapid",
+      "wav": "./audio/wav/laser-burst.wav",
+      "header": "./audio/headers/laser-burst_wav.h",
+      "symbol": "LASER_BURST_WAV",
+      "bytes": 17668
+    },
+    {
+      "id": "charge-shot",
+      "label": "Charge Shot",
+      "category": "Laser Tag",
+      "tag": "charge",
+      "wav": "./audio/wav/charge-shot.wav",
+      "header": "./audio/headers/charge-shot_wav.h",
+      "symbol": "CHARGE_SHOT_WAV",
+      "bytes": 24726
+    },
+    {
+      "id": "ricochet",
+      "label": "Ricochet",
+      "category": "Laser Tag",
+      "tag": "bounce",
+      "wav": "./audio/wav/ricochet.wav",
+      "header": "./audio/headers/ricochet_wav.h",
+      "symbol": "RICOCHET_WAV",
+      "bytes": 12810
+    },
+    {
+      "id": "target-lock",
+      "label": "Target Lock",
+      "category": "Laser Tag",
+      "tag": "lock",
+      "wav": "./audio/wav/target-lock.wav",
+      "header": "./audio/headers/target-lock_wav.h",
+      "symbol": "TARGET_LOCK_WAV",
+      "bytes": 13924
+    },
+    {
+      "id": "tag-confirm",
+      "label": "Tag Confirm",
+      "category": "Laser Tag",
+      "tag": "score",
+      "wav": "./audio/wav/tag-confirm.wav",
+      "header": "./audio/headers/tag-confirm_wav.h",
+      "symbol": "TAG_CONFIRM_WAV",
+      "bytes": 14138
+    },
+    {
+      "id": "shield-ping",
+      "label": "Shield Ping",
+      "category": "Laser Tag",
+      "tag": "shield",
+      "wav": "./audio/wav/shield-ping.wav",
+      "header": "./audio/headers/shield-ping_wav.h",
+      "symbol": "SHIELD_PING_WAV",
+      "bytes": 13234
+    },
+    {
+      "id": "shield-crack",
+      "label": "Shield Crack",
+      "category": "Laser Tag",
+      "tag": "break",
+      "wav": "./audio/wav/shield-crack.wav",
+      "header": "./audio/headers/shield-crack_wav.h",
+      "symbol": "SHIELD_CRACK_WAV",
+      "bytes": 11934
+    },
+    {
+      "id": "shield-recharge",
+      "label": "Shield Recharge",
+      "category": "Laser Tag",
+      "tag": "ready",
+      "wav": "./audio/wav/shield-recharge.wav",
+      "header": "./audio/headers/shield-recharge_wav.h",
+      "symbol": "SHIELD_RECHARGE_WAV",
+      "bytes": 16346
+    },
+    {
+      "id": "base-alarm",
+      "label": "Base Alarm",
+      "category": "Laser Tag",
+      "tag": "alert",
+      "wav": "./audio/wav/base-alarm.wav",
+      "header": "./audio/headers/base-alarm_wav.h",
+      "symbol": "BASE_ALARM_WAV",
+      "bytes": 28696
+    },
+    {
+      "id": "round-start",
+      "label": "Round Start",
+      "category": "Laser Tag",
+      "tag": "start",
+      "wav": "./audio/wav/round-start.wav",
+      "header": "./audio/headers/round-start_wav.h",
+      "symbol": "ROUND_START_WAV",
+      "bytes": 26024
+    },
+    {
+      "id": "round-end",
+      "label": "Round End",
+      "category": "Laser Tag",
+      "tag": "finish",
+      "wav": "./audio/wav/round-end.wav",
+      "header": "./audio/headers/round-end_wav.h",
+      "symbol": "ROUND_END_WAV",
+      "bytes": 29544
+    },
+    {
+      "id": "scanner-ping",
+      "label": "Scanner Ping",
+      "category": "Laser Tag",
+      "tag": "scan",
+      "wav": "./audio/wav/scanner-ping.wav",
+      "header": "./audio/headers/scanner-ping_wav.h",
+      "symbol": "SCANNER_PING_WAV",
+      "bytes": 20724
+    },
+    {
+      "id": "stealth-blip",
+      "label": "Stealth Blip",
+      "category": "Laser Tag",
+      "tag": "soft",
+      "wav": "./audio/wav/stealth-blip.wav",
+      "header": "./audio/headers/stealth-blip_wav.h",
+      "symbol": "STEALTH_BLIP_WAV",
+      "bytes": 7302
+    },
+    {
+      "id": "air-horn",
+      "label": "Air Horn Style",
+      "category": "Hype",
+      "tag": "horn",
+      "wav": "./audio/wav/air-horn.wav",
+      "header": "./audio/headers/air-horn_wav.h",
+      "symbol": "AIR_HORN_WAV",
+      "bytes": 23402
+    },
+    {
+      "id": "dj-scratch",
+      "label": "DJ Scratch",
+      "category": "Hype",
+      "tag": "scratch",
+      "wav": "./audio/wav/dj-scratch.wav",
+      "header": "./audio/headers/dj-scratch_wav.h",
+      "symbol": "DJ_SCRATCH_WAV",
+      "bytes": 14444
+    },
+    {
+      "id": "bass-drop",
+      "label": "Bass Drop",
+      "category": "Hype",
+      "tag": "drop",
+      "wav": "./audio/wav/bass-drop.wav",
+      "header": "./audio/headers/bass-drop_wav.h",
+      "symbol": "BASS_DROP_WAV",
+      "bytes": 35752
+    },
+    {
+      "id": "record-stop",
+      "label": "Record Stop",
+      "category": "Hype",
+      "tag": "vinyl",
+      "wav": "./audio/wav/record-stop.wav",
+      "header": "./audio/headers/record-stop_wav.h",
+      "symbol": "RECORD_STOP_WAV",
+      "bytes": 30442
+    },
+    {
+      "id": "crowd-hey",
+      "label": "Crowd Hey",
+      "category": "Hype",
+      "tag": "chant",
+      "wav": "./audio/wav/crowd-hey.wav",
+      "header": "./audio/headers/crowd-hey_wav.h",
+      "symbol": "CROWD_HEY_WAV",
+      "bytes": 13672
+    },
+    {
+      "id": "hype-hit",
+      "label": "Hype Hit",
+      "category": "Hype",
+      "tag": "sting",
+      "wav": "./audio/wav/hype-hit.wav",
+      "header": "./audio/headers/hype-hit_wav.h",
+      "symbol": "HYPE_HIT_WAV",
+      "bytes": 13698
+    },
+    {
+      "id": "drama-hit",
+      "label": "Drama Hit",
+      "category": "Hype",
+      "tag": "boom",
+      "wav": "./audio/wav/drama-hit.wav",
+      "header": "./audio/headers/drama-hit_wav.h",
+      "symbol": "DRAMA_HIT_WAV",
+      "bytes": 23346
+    },
+    {
+      "id": "vinyl-beep",
+      "label": "Vinyl Beep",
+      "category": "Hype",
+      "tag": "beep",
+      "wav": "./audio/wav/vinyl-beep.wav",
+      "header": "./audio/headers/vinyl-beep_wav.h",
+      "symbol": "VINYL_BEEP_WAV",
+      "bytes": 9720
+    },
+    {
+      "id": "coin-pickup",
+      "label": "Coin Pickup",
+      "category": "Arcade",
+      "tag": "coin",
+      "wav": "./audio/wav/coin-pickup.wav",
+      "header": "./audio/headers/coin-pickup_wav.h",
+      "symbol": "COIN_PICKUP_WAV",
+      "bytes": 10830
+    },
+    {
+      "id": "power-up",
+      "label": "Power Up",
+      "category": "Arcade",
+      "tag": "up",
+      "wav": "./audio/wav/power-up.wav",
+      "header": "./audio/headers/power-up_wav.h",
+      "symbol": "POWER_UP_WAV",
+      "bytes": 17646
+    },
+    {
+      "id": "one-up",
+      "label": "One Up",
+      "category": "Arcade",
+      "tag": "life",
+      "wav": "./audio/wav/one-up.wav",
+      "header": "./audio/headers/one-up_wav.h",
+      "symbol": "ONE_UP_WAV",
+      "bytes": 17226
+    },
+    {
+      "id": "level-clear",
+      "label": "Level Clear",
+      "category": "Arcade",
+      "tag": "win",
+      "wav": "./audio/wav/level-clear.wav",
+      "header": "./audio/headers/level-clear_wav.h",
+      "symbol": "LEVEL_CLEAR_WAV",
+      "bytes": 22060
+    },
+    {
+      "id": "glitch-burst",
+      "label": "Glitch Burst",
+      "category": "Arcade",
+      "tag": "glitch",
+      "wav": "./audio/wav/glitch-burst.wav",
+      "header": "./audio/headers/glitch-burst_wav.h",
+      "symbol": "GLITCH_BURST_WAV",
+      "bytes": 11938
+    },
+    {
+      "id": "jump",
+      "label": "8-Bit Jump",
+      "category": "Arcade",
+      "tag": "jump",
+      "wav": "./audio/wav/jump.wav",
+      "header": "./audio/headers/jump_wav.h",
+      "symbol": "JUMP_WAV",
+      "bytes": 10162
+    },
+    {
+      "id": "bonus-tally",
+      "label": "Bonus Tally",
+      "category": "Arcade",
+      "tag": "count",
+      "wav": "./audio/wav/bonus-tally.wav",
+      "header": "./audio/headers/bonus-tally_wav.h",
+      "symbol": "BONUS_TALLY_WAV",
+      "bytes": 16338
+    },
+    {
+      "id": "game-over",
+      "label": "Game Over",
+      "category": "Arcade",
+      "tag": "down",
+      "wav": "./audio/wav/game-over.wav",
+      "header": "./audio/headers/game-over_wav.h",
+      "symbol": "GAME_OVER_WAV",
+      "bytes": 26478
+    },
+    {
+      "id": "button-blip",
+      "label": "Button Blip",
+      "category": "UI",
+      "tag": "tap",
+      "wav": "./audio/wav/button-blip.wav",
+      "header": "./audio/headers/button-blip_wav.h",
+      "symbol": "BUTTON_BLIP_WAV",
+      "bytes": 5336
+    },
+    {
+      "id": "score-tick",
+      "label": "Score Tick",
+      "category": "UI",
+      "tag": "tick",
+      "wav": "./audio/wav/score-tick.wav",
+      "header": "./audio/headers/score-tick_wav.h",
+      "symbol": "SCORE_TICK_WAV",
+      "bytes": 5336
+    },
+    {
+      "id": "success-chime",
+      "label": "Success Chime",
+      "category": "UI",
+      "tag": "ok",
+      "wav": "./audio/wav/success-chime.wav",
+      "header": "./audio/headers/success-chime_wav.h",
+      "symbol": "SUCCESS_CHIME_WAV",
+      "bytes": 18088
+    },
+    {
+      "id": "error-buzzer",
+      "label": "Error Buzzer",
+      "category": "UI",
+      "tag": "error",
+      "wav": "./audio/wav/error-buzzer.wav",
+      "header": "./audio/headers/error-buzzer_wav.h",
+      "symbol": "ERROR_BUZZER_WAV",
+      "bytes": 16780
+    },
+    {
+      "id": "countdown-beep",
+      "label": "Countdown Beep",
+      "category": "UI",
+      "tag": "timer",
+      "wav": "./audio/wav/countdown-beep.wav",
+      "header": "./audio/headers/countdown-beep_wav.h",
+      "symbol": "COUNTDOWN_BEEP_WAV",
+      "bytes": 7074
+    },
+    {
+      "id": "warning-siren",
+      "label": "Warning Siren",
+      "category": "UI",
+      "tag": "warn",
+      "wav": "./audio/wav/warning-siren.wav",
+      "header": "./audio/headers/warning-siren_wav.h",
+      "symbol": "WARNING_SIREN_WAV",
+      "bytes": 28248
+    },
+    {
+      "id": "menu-open",
+      "label": "Menu Open",
+      "category": "UI",
+      "tag": "menu",
+      "wav": "./audio/wav/menu-open.wav",
+      "header": "./audio/headers/menu-open_wav.h",
+      "symbol": "MENU_OPEN_WAV",
+      "bytes": 10606
+    },
+    {
+      "id": "power-down",
+      "label": "Power Down",
+      "category": "UI",
+      "tag": "off",
+      "wav": "./audio/wav/power-down.wav",
+      "header": "./audio/headers/power-down_wav.h",
+      "symbol": "POWER_DOWN_WAV",
+      "bytes": 23376
+    }
+  ]
+}

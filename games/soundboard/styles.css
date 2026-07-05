@@ -178,6 +178,7 @@ h2 {
 .pad-trigger:focus-visible,
 .assignment-select:focus-visible,
 .library-button:focus-visible,
+.download-link:focus-visible,
 .filter-field select:focus-visible {
   outline: 3px solid var(--amber);
   outline-offset: 3px;
@@ -402,20 +403,29 @@ h2 {
   gap: 8px;
 }
 
-.library-button {
+.library-card {
   min-width: 0;
-  min-height: 70px;
   display: grid;
-  align-content: center;
-  gap: 6px;
-  padding: 10px;
-  color: var(--ink);
-  text-align: left;
+  gap: 8px;
+  padding: 8px;
   border: 1px solid color-mix(in srgb, var(--sound-color) 48%, rgba(255, 248, 237, 0.14));
   border-radius: 8px;
   background:
     linear-gradient(145deg, color-mix(in srgb, var(--sound-color) 16%, transparent), rgba(0, 0, 0, 0.24)),
     #14151a;
+}
+
+.library-button {
+  min-width: 0;
+  min-height: 64px;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  padding: 2px;
+  color: var(--ink);
+  text-align: left;
+  border: 0;
+  background: transparent;
   cursor: pointer;
 }
 
@@ -429,6 +439,29 @@ h2 {
 .pad-trigger.is-hot,
 .library-button.is-hot {
   animation: pad-pop 190ms ease both;
+}
+
+.library-downloads {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.download-link {
+  min-width: 0;
+  min-height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 7px 6px;
+  color: var(--ink);
+  font-size: 0.74rem;
+  font-weight: 850;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 248, 237, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.28);
 }
 
 .ghost-button {
@@ -450,6 +483,7 @@ h2 {
 .ghost-button:active,
 .pad-trigger:active,
 .library-button:active,
+.download-link:active,
 .game-card:active {
   transform: translateY(1px);
 }

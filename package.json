@@ -7,9 +7,11 @@
     "build:nightfall": "node scripts/nightfall/build.mjs",
     "audit:nightfall": "node scripts/nightfall/audit.mjs",
     "test:nightfall": "node --test tests/nightfall-*.test.js",
+    "audio:library": "node scripts/audio/build-sound-library.mjs",
+    "audio:header": "node scripts/audio/wav-to-progmem.mjs",
     "build:pages": "node scripts/build-pages.mjs",
     "serve": "node scripts/serve.mjs",
     "test": "node --test tests/*.test.js",
-    "check:syntax": "node --check games/lock-pop/src/game-engine.js && node --check games/lock-pop/src/renderer.js && node --check games/lock-pop/src/audio.js && node --check games/lock-pop/src/storage.js && node --check games/lock-pop/src/main.js && node --check games/soundboard/src/main.js && node --check games/nightfall/src/config.js && node --check games/nightfall/src/input-state.js && node --check games/nightfall/src/input-dispatch.js && node --check games/nightfall/src/main.js && node --check scripts/nightfall/build.mjs && node --check scripts/nightfall/audit.mjs && node --check scripts/build-pages.mjs && node --check scripts/serve.mjs && node --check tests/game-engine.test.js && node --check tests/nightfall-input.test.js && node --check tests/nightfall-config.test.js && node --check tests/nightfall-provenance.test.js && node --check tests/nightfall-runtime.test.js"
+    "check:syntax": "node --check games/lock-pop/src/game-engine.js && node --check games/lock-pop/src/renderer.js && node --check games/lock-pop/src/audio.js && node --check games/lock-pop/src/storage.js && node --check games/lock-pop/src/main.js && node --check games/soundboard/src/main.js && node --check games/soundboard/src/sound-library.js && node --check games/nightfall/src/config.js && node --check games/nightfall/src/input-state.js && node --check games/nightfall/src/input-dispatch.js && node --check games/nightfall/src/main.js && node --check scripts/audio/build-sound-library.mjs && node --check scripts/audio/wav-to-progmem.mjs && node --check scripts/nightfall/build.mjs && node --check scripts/nightfall/audit.mjs && node --check scripts/build-pages.mjs && node --check scripts/serve.mjs && node --check tests/game-engine.test.js && node --check tests/nightfall-input.test.js && node --check tests/nightfall-config.test.js && node --check tests/nightfall-provenance.test.js && node --check tests/nightfall-runtime.test.js"
   }
 }

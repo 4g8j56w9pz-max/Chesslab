@@ -6,6 +6,8 @@ Lock Pop Arcade is an original one-button circular timing game built with semant
 
 Sound FX Board is a static assignable-button audio toy for laser-tag cues, arcade effects, UI alerts, and hype-style stings. It reuses the local `games/lock-pop/assets/miss-fahhh.mp3` sample for the Fahhh button and generates the other pad sounds with Web Audio instead of bundling third-party clips. It has no runtime dependencies, backend, analytics, ads, CDNs, external images, or external fonts.
 
+The Sound FX Board also includes a file library. Each sound has a browser-downloadable mono 16-bit PCM WAV in `games/soundboard/audio/wav/` and an Arduino `PROGMEM` header in `games/soundboard/audio/headers/` for the ESP32/MAX98357A laser-tag audio prototype.
+
 NIGHTFALL is a static browser-based classic first-person shooter route. It uses a pinned Dwasm WebAssembly engine build with Freedoom Phase 1 v0.13.0 game content. The engine, WASM module, and packaged data are lazy-loaded only after the player presses Start Game. It has no backend, account, API key, analytics, ads, CDN, remote WAD loading, multiplayer, or runtime network dependency beyond the local static assets.
 
 NIGHTFALL also includes a small project-local PWAD, `games/nightfall/assets/nightfall-face.wad`, that replaces the status-bar portrait with a pixelated local artwork patch. The editable 24x32 source and preview live beside the WAD, and `scripts/nightfall/make-face-pwad.ps1` can rebuild the patch from a reference image using the Freedoom palette.
@@ -64,6 +66,18 @@ Build the local Pages artifact:
 
 ```bash
 npm run build:pages
+```
+
+Rebuild the Sound FX Board file library:
+
+```bash
+npm run audio:library
+```
+
+Convert a custom mono 16-bit PCM WAV into an Arduino header:
+
+```bash
+npm run audio:header -- path/to/input.wav laser-tag-audio/custom_wav.h CUSTOM_WAV
 ```
 
 ## Tests
@@ -125,8 +139,13 @@ After that, push to `main` or run the workflow manually from the Actions tab.
     soundboard/               Sound FX Board
       index.html
       styles.css
+      audio/
+        manifest.json
+        headers/              Arduino PROGMEM WAV headers
+        wav/                  Hardware-ready mono 16-bit PCM WAV files
       src/
         main.js
+        sound-library.js
     nightfall/                 NIGHTFALL static FPS route
       index.html
       styles.css
@@ -144,6 +163,9 @@ After that, push to `main` or run the workflow manually from the Actions tab.
         index.wasm
         index.data
         build-manifest.json
+  scripts/audio/
+    build-sound-library.mjs    Sound FX WAV/header generator
+    wav-to-progmem.mjs         Generic WAV to Arduino header converter
   scripts/nightfall/
     make-face-pwad.ps1         Local status-face PWAD builder
     rebuild-engine.ps1        Pinned local Dwasm rebuild script

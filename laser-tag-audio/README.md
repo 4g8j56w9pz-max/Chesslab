@@ -9,6 +9,12 @@ Arduino ESP32-S3 prototype for playing the local "fahhh" effect through a MAX983
 
 The embedded WAV was converted from `games/lock-pop/assets/miss-fahhh.mp3`. It is mono, 16-bit PCM, 22050 Hz.
 
+The larger sound library is available in:
+
+- `games/soundboard/audio/wav/` - mono 16-bit PCM WAV files.
+- `games/soundboard/audio/headers/` - matching Arduino `PROGMEM` headers.
+- `games/soundboard/audio/manifest.json` - labels, paths, symbols, and byte sizes.
+
 ## Wiring
 
 Button:
@@ -68,40 +74,53 @@ DONE
 
 Holding the button down should not repeatedly restart the sound. Release and press again to replay it.
 
-## Rebuilding `fahhh_wav.h`
+## Using a Library Sound on Hardware
 
-The source sound in this repository is:
+Each generated header contains a byte array and a matching size symbol. For example:
 
-```text
-games/lock-pop/assets/miss-fahhh.mp3
+```cpp
+#include "laser-shot_wav.h"
 ```
 
-If you need to regenerate the WAV, use FFmpeg:
+Then play it with the same `ESP_I2S` API already used by this sketch:
+
+```cpp
+i2s.playWAV(LASER_SHOT_WAV, LASER_SHOT_WAV_SIZE);
+```
+
+Keep the I2S pin constants matched to the actual MAX98357A wiring for the hardware build you are testing.
+
+## Rebuilding the Sound Library
+
+Run this from the repository root:
 
 ```powershell
-ffmpeg -y -i games\lock-pop\assets\miss-fahhh.mp3 -ac 1 -ar 22050 -sample_fmt s16 laser-tag-audio\fahhh.wav
+npm run audio:library
 ```
 
-Then convert the WAV into a C header:
+That regenerates:
+
+- `games/soundboard/audio/wav/*.wav`
+- `games/soundboard/audio/headers/*_wav.h`
+- `games/soundboard/audio/manifest.json`
+
+## Converting a Custom Audio File
+
+The converter expects a mono, 16-bit PCM WAV. If your source is MP3 or another format, convert it first:
 
 ```powershell
-$bytes = [System.IO.File]::ReadAllBytes('laser-tag-audio\fahhh.wav')
-$out = [System.Text.StringBuilder]::new()
-[void]$out.AppendLine('#pragma once')
-[void]$out.AppendLine('')
-[void]$out.AppendLine('#include <Arduino.h>')
-[void]$out.AppendLine('')
-[void]$out.AppendLine('const uint8_t FAHHH_WAV[] PROGMEM = {')
-for ($i = 0; $i -lt $bytes.Length; $i += 12) {
-  $count = [Math]::Min(12, $bytes.Length - $i)
-  $parts = for ($j = 0; $j -lt $count; $j++) { '0x{0:X2}' -f $bytes[$i + $j] }
-  $suffix = if (($i + $count) -lt $bytes.Length) { ',' } else { '' }
-  [void]$out.AppendLine('  ' + ($parts -join ', ') + $suffix)
-}
-[void]$out.AppendLine('};')
-[void]$out.AppendLine('')
-[void]$out.AppendLine('const size_t FAHHH_WAV_SIZE = sizeof(FAHHH_WAV);')
-[System.IO.File]::WriteAllText('laser-tag-audio\fahhh_wav.h', $out.ToString(), [System.Text.Encoding]::ASCII)
+ffmpeg -y -i path\to\source.mp3 -ac 1 -ar 22050 -sample_fmt s16 path\to\output.wav
 ```
 
-The temporary `laser-tag-audio\fahhh.wav` file is only for rebuilding the header and is not needed for normal sketch upload.
+Then convert the WAV into a C/C++ header:
+
+```powershell
+npm run audio:header -- path\to\output.wav laser-tag-audio\custom_wav.h CUSTOM_WAV
+```
+
+Use the generated symbols in the sketch:
+
+```cpp
+#include "custom_wav.h"
+i2s.playWAV(CUSTOM_WAV, CUSTOM_WAV_SIZE);
+```
