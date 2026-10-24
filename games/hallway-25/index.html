@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101d20">
+<meta name="description" content="JaxAttax's hallway challenge. Stop for A-90, hide from A-120, and survive 25 encounters to win.">
+<title>Hallway 25 · JaxAttax</title>
+<style>
+[hidden]{display:none!important}
+:root{color-scheme:dark;--bg:#0c1518;--panel:#132327;--line:#2b4042;--ink:#f4eee1;--muted:#a8bab7;--gold:#f5c779;--mint:#a8dfc8;--red:#ffada1;--blue:#a5d8ef;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#223332 0,transparent 65%),var(--bg);color:var(--ink);min-height:100svh}button{font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:4px}button:disabled{cursor:default;opacity:.45}.app{width:min(1060px,100%);margin:auto;padding:24px 24px 20px}.mast{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:38px;height:45px;border:2px solid var(--gold);border-radius:19px 19px 3px 3px;display:grid;place-items:center;color:var(--gold);font-family:Georgia,serif;font-size:19px;box-shadow:inset 0 0 0 5px #101d20}.eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:10px;color:var(--mint);font-weight:700;margin:0 0 3px}h1{font-family:Georgia,serif;font-size:29px;line-height:1;margin:0;font-weight:normal;letter-spacing:-.02em}h1 span{color:var(--gold)}.tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:7px}.tag i{width:6px;height:6px;border-radius:50%;background:var(--mint)}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px}.score{display:flex;align-items:center;gap:13px}.score strong{font-size:29px;font-variant-numeric:tabular-nums;font-weight:650}.score strong span{font-size:16px;color:var(--muted);font-weight:400}.score small{display:block;text-transform:uppercase;font-size:9px;letter-spacing:.13em;color:var(--muted);margin-bottom:1px}.tools{display:flex;gap:8px}.tool{border:1px solid var(--line);color:var(--ink);border-radius:8px;background:#182a2d;padding:9px 12px;font-size:12px}.tool:hover{background:#243a3d}.progress{display:flex;gap:4px;margin-bottom:14px}.progress i{height:4px;flex:1;background:#2a3b3c;border-radius:3px;transition:background .3s}.progress i.done{background:var(--mint)}.stage{position:relative;isolation:isolate;overflow:hidden;border:1px solid #3a4a45;border-radius:15px;background:#111d1e;box-shadow:0 22px 65px #0005;height:clamp(360px,52vw,512px)}canvas{width:100%;height:100%;display:block}.scene-label{position:absolute;left:20px;bottom:17px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#d9ded1b3;pointer-events:none}.scene-label b{color:var(--gold);font-weight:500}.signal{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:min(440px,calc(100% - 30px));padding:12px 18px;border-radius:10px;border:1px solid #b7d6bc40;background:#122323ef;text-align:center;pointer-events:none;box-shadow:0 10px 30px #0003}.signal .signal-title{font-size:17px;letter-spacing:.02em;font-weight:750;margin-bottom:3px}.signal .signal-note{font-size:12px;color:#d3dfd7}.signal[data-kind="A-90"]{background:#382626f5;border-color:#ffb4a079}.signal[data-kind="A-90"] .signal-title{color:var(--red)}.signal[data-kind="A-120"]{background:#172e3bf5;border-color:#a5d8ef79}.signal[data-kind="A-120"] .signal-title{color:var(--blue)}.timer{height:3px;background:#ffffff21;margin-top:10px;overflow:hidden;border-radius:4px}.timer span{display:block;height:100%;background:currentColor;color:var(--gold);width:100%;transform-origin:left}.signal[data-kind="A-90"] .timer span{color:var(--red)}.signal[data-kind="A-120"] .timer span{color:var(--blue)}.timer[hidden]{display:none}.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#071014b8;backdrop-filter:blur(5px);padding:18px;z-index:4}.overlay[hidden]{display:none}.card{width:min(490px,100%);text-align:center}.card .kicker{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:0 0 10px}.card h2{font-family:Georgia,serif;font-weight:400;font-size:42px;line-height:1.06;margin:0 0 12px}.card>p{font-size:14px;line-height:1.55;color:#c4d0c9;margin:0 auto 20px;max-width:370px}.rulelist{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 21px;text-align:left}.rule{padding:13px 14px;background:#1b292ce6;border:1px solid #56615c;border-radius:10px;font-size:12px;line-height:1.5}.rule b{display:block;font-size:14px;margin-bottom:4px;color:var(--red)}.rule:last-child b{color:var(--blue)}.rule span{color:#d8e0d9}.primary{border:0;border-radius:9px;padding:13px 26px;background:var(--gold);color:#27251c;font-weight:750;box-shadow:0 4px 0 #a57e40;min-width:180px}.primary:hover{background:#ffda9c}.primary:active{transform:translateY(2px);box-shadow:0 2px 0 #a57e40}.card .hint{font-size:10px;margin:16px 0 0;max-width:none;color:#a8bab7}.controls{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;margin-top:15px}.control{user-select:none;-webkit-user-select:none;min-height:72px;border-radius:11px;text-align:left;padding:14px 18px;border:1px solid #476052;color:var(--ink);background:linear-gradient(130deg,#294337,#1c302c);display:flex;align-items:center;gap:13px;position:relative;overflow:hidden}.control.walk:active,.control.walk.pressed{background:#3d6251;border-color:var(--mint)}.control.hide{border-color:#3e555d;background:linear-gradient(130deg,#243942,#192b32)}.control.hide[aria-pressed="true"]{background:#3b5f6b;border-color:var(--blue)}.control .icon{font-size:25px;line-height:1;color:var(--mint);width:28px;text-align:center}.control.hide .icon{color:var(--blue)}.control strong{display:block;font-size:14px;letter-spacing:.035em}.control small{display:block;font-size:11px;color:#b6c8be;margin-top:4px}.keycap{margin-left:auto;padding:4px 7px;border:1px solid #9ebcb344;border-bottom-width:3px;border-radius:5px;font-size:10px;color:#d2ded6;white-space:nowrap}.guide{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-top:17px;color:var(--muted);font-size:11px;line-height:1.6}.guide b{color:var(--ink);font-weight:500}.guide .rules-inline{display:flex;gap:18px;flex-wrap:wrap}.legend-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--red);margin-right:5px}.legend-dot.blue{background:var(--blue)}.footer{margin-top:18px;padding-top:13px;border-top:1px solid #253537;font-size:10px;color:#819b94;display:flex;justify-content:space-between;gap:15px}.footer span:last-child{text-align:right}kbd{font:inherit;color:#d9e2d9}.icon-inline{font-weight:400;color:var(--muted)}
+@media(max-width:600px){.app{padding:18px 14px 16px}.mast{margin-bottom:21px}.tag{font-size:9px;letter-spacing:.05em}.brand-mark{width:32px;height:39px;font-size:16px}.brand{gap:9px}h1{font-size:25px}.eyebrow{font-size:8px}.score strong{font-size:25px}.tool{font-size:11px;padding:9px 10px}.stage{height:clamp(360px,57svh,480px);border-radius:12px}.signal{top:13px;padding:10px 12px}.signal .signal-title{font-size:16px}.signal .signal-note{font-size:11px}.controls{gap:9px;margin-top:11px;grid-template-columns:1.15fr 1fr}.control{padding:13px 12px;gap:8px;min-height:75px}.control strong{font-size:13px}.control small{font-size:10px}.keycap{display:none}.control .icon{font-size:22px;width:23px}.guide{font-size:10px;margin-top:13px}.guide .rules-inline{gap:3px;flex-direction:column}.guide>span{text-align:right;max-width:125px}.footer{font-size:9px;margin-top:14px}.card h2{font-size:34px}.card>p{font-size:12px;margin-bottom:15px}.rulelist{gap:8px;margin-bottom:17px}.rule{padding:10px;font-size:11px}.rule b{font-size:13px}.primary{padding:12px 23px}.card .hint{margin-top:13px}.scene-label{left:14px;bottom:13px;font-size:9px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+.closet-meter,.hide-notice{position:absolute;bottom:51px;left:50%;transform:translateX(-50%);width:min(290px,calc(100% - 32px));padding:11px 15px;border:1px solid #a5d8ef7a;border-radius:9px;background:#142d37f5;box-shadow:0 6px 25px #0004;pointer-events:none}.closet-meter .meter-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#d8eced}.closet-meter strong{font-size:19px;color:var(--blue);font-variant-numeric:tabular-nums}.closet-meter .meter-track{height:4px;background:#ffffff20;border-radius:3px;margin:7px 0}.closet-meter .meter-track span{display:block;width:100%;height:100%;background:var(--blue);transform-origin:left}.closet-meter small{font-size:10px;color:#bccfd1;display:block}.closet-meter.restless{border-color:var(--gold);background:#372c1bf5}.closet-meter.restless strong{color:var(--gold)}.closet-meter.restless .meter-track span{background:var(--gold)}.hide-notice{text-align:center;border-color:var(--gold);background:#372c1bf5;font-size:11px;line-height:1.5;color:#f3dfb9}.hide-notice b{display:block;font-size:12px;color:var(--gold);margin-bottom:2px}
+.health{width:220px;margin-left:auto;margin-right:20px}.health-line{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:7px}.health-line>span{font-size:9px;letter-spacing:.13em;color:var(--mint)}.health-line strong{font-size:18px;color:var(--mint);font-variant-numeric:tabular-nums}.health-line strong span{font-size:10px;color:var(--muted);font-weight:400}.health-track{height:7px;border:1px solid #749a8560;background:#283e35;border-radius:5px;overflow:hidden}.health-track span{display:block;width:100%;height:100%;background:var(--mint);transform-origin:left}.health.low .health-line strong{color:var(--gold)}.health.low .health-track span{background:var(--gold)}.damage-toast{position:absolute;top:112px;left:50%;transform:translateX(-50%);width:min(320px,calc(100% - 34px));padding:10px 14px;border-radius:8px;background:#3b2d23f5;border:1px solid #e9bd8070;color:#f5deba;font-size:12px;text-align:center;pointer-events:none}.damage-toast strong{color:var(--gold)}@media(max-width:600px){.topbar{flex-wrap:wrap;gap:10px 16px}.tools{margin-left:auto}.health{order:3;flex-basis:100%;width:auto;margin:1px 0 0}.health-line{margin-bottom:5px}.health-line strong{font-size:16px}.damage-toast{top:107px;font-size:11px}}
+</style>
+</head>
+<body>
+<main class="app">
+ <header class="mast"><div class="brand"><div class="brand-mark" aria-hidden="true">25</div><div><p class="eyebrow">JaxAttax's challenge</p><h1>Hallway <span>25</span></h1></div></div><div class="tag"><i></i> A little spooky</div></header>
+ <div class="topbar"><div class="score"><div><small>Encounters survived</small><strong><output id="count">0</output> <span>/ 25</span></strong></div></div><div class="health" id="health"><div class="health-line"><span>HEALTH</span><strong><output id="hp">100</output> <span>/ 100 HP</span></strong></div><div class="health-track" id="hpbar" role="progressbar" aria-label="Health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span id="hpfill"></span></div></div><div class="tools"><button class="tool" id="pause" disabled aria-label="Pause game, P or Escape">Ⅱ Pause</button><button class="tool" id="restart" aria-label="Restart game, R">↻ Restart</button></div></div>
+ <div class="progress" aria-hidden="true" id="progress"></div>
+ <section class="stage" aria-label="The hallway game scene">
+  <canvas id="hall" aria-label="An atmospheric hallway with a closet. Follow the text warnings to survive."></canvas>
+  <div class="signal" id="signal" hidden><div class="signal-title" id="signalTitle"></div><div class="signal-note" id="signalNote"></div><div class="timer" id="timer"><span id="timerFill"></span></div></div>
+  <div class="damage-toast" id="damageToast" hidden><strong id="damageTitle"></strong><span id="damageText"></span></div>
+  <div class="closet-meter" id="closetMeter" hidden role="timer" aria-label="Closet time remaining"><div class="meter-row"><span id="closetTitle">Closet time</span><strong id="closetSeconds">20 s</strong></div><div class="meter-track"><span id="closetFill"></span></div><small id="closetHint">After 20 seconds, Hide deals 25 damage and pushes you out.</small></div>
+  <div class="hide-notice" id="hideNotice" hidden><b>HIDE PUSHED YOU OUT</b>20-second limit reached. You lost 25 HP.</div>
+  <div class="scene-label" id="sceneLabel">The long hallway <b>·</b> Exit after 25</div>
+  <div class="overlay" id="overlay"><div class="card"><p class="kicker" id="cardKicker">25 encounters. One way out.</p><h2 id="cardTitle">Can you reach<br>the light?</h2><p id="cardText">Start with 100 health. Watch the warnings.<br>Survive 25 encounters to reach the light.</p><div class="rulelist" id="rulelist"><div class="rule"><b>✋ A-90 · STOP</b><span>Release movement and stay still. A hit costs 90 HP.</span></div><div class="rule"><b>▥ A-120 · HIDE</b><span>Tap HIDE or press H / E. Getting caught ends your run.</span></div></div><button class="primary" id="mainAction" autofocus>Enter the hallway →</button><p class="hint" id="cardHint">Hold W, ↑, or Space to walk · P to pause · R to restart</p></div></div>
+ </section>
+ <div class="controls"><button class="control walk" id="walk" disabled aria-label="Hold to walk. Release to stop."><span class="icon" aria-hidden="true">↑</span><span><strong>HOLD TO WALK</strong><small id="walkHelp">Release to stand still</small></span><span class="keycap">W / ↑ / Space</span></button><button class="control hide" id="hide" disabled aria-pressed="false"><span class="icon" aria-hidden="true">▥</span><span><strong id="hideLabel">HIDE</strong><small id="hideHelp">Step into the closet</small></span><span class="keycap">H / E</span></button></div>
+ <div class="guide"><div class="rules-inline"><span><i class="legend-dot"></i><b>A-90:</b> stop moving</span><span><i class="legend-dot blue"></i><b>A-120:</b> hide in the closet</span><span><b>Hide:</b> 20s limit, 25 damage</span></div><span>Take your time between encounters.</span></div>
+ <footer class="footer"><span><a href="../../" style="color:inherit">Back to the arcade</a> · An original mini game.</span><span>No sound needed · No flashing lights</span></footer>
+ <div id="announcer" role="status" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)"></div>
+</main>
+<script>
+(function (root, factory) {
+  const HallwayEngine = factory();
+  if (typeof module === 'object' && module.exports) module.exports = HallwayEngine;
+  if (root) root.HallwayEngine = HallwayEngine;
+})(typeof globalThis === 'object' ? globalThis : this, function () {
+  'use strict';
+  const DURATIONS = Object.freeze({ explore: 2600, 'A-90': 3200, 'A-120': 4200,
+    active90: 1300, active120: 1600, survived: 1600, hide: 20000,
+    hideCooldown: 1000, hideNotice: 4000, damageNotice: 3000 });
+  const PLAYING = new Set(['explore', 'warning', 'active', 'survived']);
+  const INTERACTIVE = new Set(['explore', 'warning', 'active']);
+
+  class HallwayEngine {
+    constructor(options = {}) {
+      this.random = typeof options.random === 'function' ? options.random : Math.random;
+      this._reset('ready');
+    }
+    get remaining() { return this.timeLeft; }
+    get encounterNumber() { return Math.min(this.survived + 1, 25); }
+    _sample() {
+      const value = this.random();
+      return Number.isFinite(value) ? Math.max(0, Math.min(0.999999999, value)) : 0.5;
+    }
+    _makeDeck() {
+      const original = [...Array(13).fill('A-90'), ...Array(12).fill('A-120')];
+      for (let attempt = 0; attempt < 32; attempt++) {
+        const deck = original.slice();
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(this._sample() * (i + 1));
+          [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+        if (!deck.some((value, i) => i > 2 && deck.slice(i - 3, i + 1).every(v => v === value))) return deck;
+      }
+      // A deterministic random provider may produce the same invalid shuffle forever.
+      return Array.from({ length: 25 }, (_, i) => i % 2 ? 'A-120' : 'A-90');
+    }
+    _reset(state) {
+      this.state = state;
+      this.entity = null;
+      this.survived = 0;
+      this.travel = 0;
+      this.timeLeft = DURATIONS.explore;
+      this.moving = false;
+      this.hidden = false;
+      this.hideTimeLeft = DURATIONS.hide;
+      this.hideCooldown = 0;
+      this.hideNoticeTime = 0;
+      this.hideExpulsions = 0;
+      this.maxHealth = 100;
+      this.health = this.maxHealth;
+      this.a90Hit = false;
+      this.damageEvents = 0;
+      this.lastDamageAmount = 0;
+      this.lastDamageSource = '';
+      this.damageNoticeTime = 0;
+      this.paused = false;
+      this.reason = '';
+      this.deck = this._makeDeck();
+    }
+    start() {
+      if (this.state !== 'ready') return false;
+      this.state = 'explore';
+      return true;
+    }
+    restart() { this._reset('explore'); return true; }
+    setMoving(value) {
+      if (typeof value !== 'boolean' || this.paused || !INTERACTIVE.has(this.state)) return false;
+      this.moving = value;
+      if (value) this._exitHide();
+      this._validateActive();
+      return true;
+    }
+    setHidden(value) {
+      if (typeof value !== 'boolean' || this.paused || !INTERACTIVE.has(this.state)) return false;
+      if (value && !this.hidden && this.hideCooldown > 0) return false;
+      if (value === this.hidden) return true;
+      this.hidden = value;
+      if (value) this.moving = false;
+      else this._exitHide();
+      this._validateActive();
+      return true;
+    }
+    toggleHide() { return this.setHidden(!this.hidden); }
+    _exitHide() {
+      this.hidden = false;
+      this.hideTimeLeft = DURATIONS.hide;
+    }
+    _forceHideExit() {
+      this._exitHide();
+      this.moving = false;
+      this.hideCooldown = DURATIONS.hideCooldown;
+      this.hideNoticeTime = DURATIONS.hideNotice;
+      this.hideExpulsions += 1;
+      this._damage(25, 'Hide');
+      if (!PLAYING.has(this.state)) return;
+      if (this.state === 'active' && this.entity === 'A-120') {
+        this._lose('Hide forced you out after 20 seconds, then A-120 found you. Leave the closet before Hide gets restless.');
+      }
+    }
+    togglePause() {
+      if (!PLAYING.has(this.state)) return false;
+      this.paused = !this.paused;
+      this.moving = false;
+      return true;
+    }
+    _lose(reason) {
+      this.state = 'lost';
+      this.reason = reason;
+      this.moving = false;
+      this.timeLeft = 0;
+    }
+    _damage(amount, source) {
+      if (this.paused || !PLAYING.has(this.state) || typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0) return false;
+      amount = Math.min(this.maxHealth, amount);
+      source = typeof source === 'string' && source.trim() ? source : 'Encounter';
+      this.health = Math.max(0, Math.min(this.maxHealth, this.health) - amount);
+      this.damageEvents += 1;
+      this.lastDamageAmount = amount;
+      this.lastDamageSource = source;
+      this.damageNoticeTime = DURATIONS.damageNotice;
+      if (this.health === 0) {
+        this._lose(source === 'Hide'
+          ? 'Hide pushed you out after 20 seconds for 25 damage. Your health reached zero.'
+          : `${source} hit you for ${amount} damage. Your health reached zero. Release Walk when A-90 appears.`);
+      }
+      return true;
+    }
+    _validateActive() {
+      if (this.state !== 'active') return;
+      if (this.entity === 'A-90' && this.moving && !this.a90Hit) {
+        this.a90Hit = true;
+        this.moving = false;
+        this._damage(90, 'A-90');
+      }
+      else if (this.entity === 'A-120' && !this.hidden) this._lose('A-120 found you in the hallway. Hide before the warning runs out, then stay hidden.');
+    }
+    _nextExplore() {
+      this.state = 'explore';
+      this.entity = null;
+      this._exitHide();
+      this.moving = false;
+      this.travel = 0;
+      this.timeLeft = DURATIONS.explore;
+    }
+    _advance() {
+      if (this.state === 'explore') {
+        this.state = 'warning';
+        this.entity = this.deck[this.survived];
+        this.a90Hit = false;
+        this.timeLeft = DURATIONS[this.entity];
+      } else if (this.state === 'warning') {
+        this.state = 'active';
+        this.timeLeft = this.entity === 'A-90' ? DURATIONS.active90 : DURATIONS.active120;
+        this._validateActive();
+      } else if (this.state === 'active') {
+        this.survived += 1;
+        this.moving = false;
+        if (this.survived === 25) {
+          this.state = 'won';
+          this._exitHide();
+          this.timeLeft = 0;
+        } else {
+          this.state = 'survived';
+          this.timeLeft = DURATIONS.survived;
+        }
+      } else if (this.state === 'survived') this._nextExplore();
+    }
+    tick(milliseconds) {
+      if (typeof milliseconds !== 'number' || !Number.isFinite(milliseconds) || milliseconds <= 0 || this.paused || !PLAYING.has(this.state)) return;
+      // Bound hostile or accidental inputs while preserving ordinary phase boundaries.
+      let budget = Math.min(milliseconds, 60000);
+      while (budget > 0 && PLAYING.has(this.state)) {
+        this._validateActive();
+        if (!PLAYING.has(this.state)) break;
+        const phaseRunning = this.state !== 'explore' || (this.moving && !this.hidden);
+        const phaseBoundary = phaseRunning ? this.timeLeft : Infinity;
+        const hideBoundary = this.hidden ? this.hideTimeLeft : Infinity;
+        const consumed = Math.min(budget, phaseBoundary, hideBoundary);
+        if (phaseRunning) this.timeLeft = Math.max(0, this.timeLeft - consumed);
+        if (this.hidden) this.hideTimeLeft = Math.max(0, this.hideTimeLeft - consumed);
+        this.hideCooldown = Math.max(0, this.hideCooldown - consumed);
+        this.hideNoticeTime = Math.max(0, this.hideNoticeTime - consumed);
+        this.damageNoticeTime = Math.max(0, this.damageNoticeTime - consumed);
+        budget -= consumed;
+        if (this.state === 'explore') this.travel = 1 - this.timeLeft / DURATIONS.explore;
+        if (this.hidden && this.hideTimeLeft === 0) this._forceHideExit();
+        if (PLAYING.has(this.state) && this.timeLeft === 0) this._advance();
+      }
+    }
+    snapshot() {
+      return { state: this.state, entity: this.entity, survived: this.survived,
+        encounterNumber: this.encounterNumber, timeLeft: this.timeLeft, remaining: this.remaining,
+        travel: this.travel, moving: this.moving, hidden: this.hidden, paused: this.paused, reason: this.reason,
+        hideTimeLeft: this.hideTimeLeft, hideCooldown: this.hideCooldown,
+        hideNoticeTime: this.hideNoticeTime, hideExpulsions: this.hideExpulsions,
+        health: this.health, maxHealth: this.maxHealth, a90Hit: this.a90Hit,
+        damageEvents: this.damageEvents, lastDamageAmount: this.lastDamageAmount,
+        lastDamageSource: this.lastDamageSource, damageNoticeTime: this.damageNoticeTime };
+    }
+  }
+  HallwayEngine.DURATIONS = DURATIONS;
+  return HallwayEngine;
+});
+
+</script>
+<script>
+(() => {
+ 'use strict';
+ const game = new HallwayEngine();
+ const $=id=>document.getElementById(id);
+ const canvas=$('hall'),ctx=canvas.getContext('2d');
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const keys=new Set(),hideHeld=new Set(); let pointerWalk=false,hidePointerHeld=false,ignoreHideClick=false,lastExpulsions=0,last=performance.now(),clock=0,lastView='',cw=1000,ch=500;
+ const steps=Array.from({length:25},()=>{const e=document.createElement('i');$('progress').append(e);return e;});
+ const movementKeys=new Set(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space']);
+ function movement(){game.setMoving(pointerWalk||keys.size>0);}
+ function clearInput(){keys.clear();pointerWalk=false;game.setMoving(false);}
+ function start(){clearInput();hideHeld.clear();hidePointerHeld=false;ignoreHideClick=false;lastExpulsions=0;game.restart();renderUI(true);}
+ function pause(){clearInput();game.togglePause();renderUI(true);}
+ $('mainAction').addEventListener('click',()=>{if(game.paused)pause();else start();});
+ $('restart').addEventListener('click',start);
+ $('pause').addEventListener('click',pause);
+ $('hide').addEventListener('pointerdown',()=>{hidePointerHeld=true;ignoreHideClick=false;});
+ $('hide').addEventListener('pointerup',()=>{hidePointerHeld=false;});
+ $('hide').addEventListener('pointercancel',()=>{hidePointerHeld=false;});
+ $('hide').addEventListener('click',()=>{if(ignoreHideClick){ignoreHideClick=false;return;}clearInput();game.toggleHide();renderUI(true);});
+ $('walk').addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();pointerWalk=true;$('walk').setPointerCapture(e.pointerId);movement();renderUI();});
+ function releaseWalk(){pointerWalk=false;movement();renderUI();}
+ $('walk').addEventListener('pointerup',releaseWalk);$('walk').addEventListener('pointercancel',releaseWalk);$('walk').addEventListener('lostpointercapture',releaseWalk);
+ $('walk').addEventListener('contextmenu',e=>e.preventDefault());
+ document.addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  if(movementKeys.has(e.code)){
+   if((game.state==='ready'||game.state==='lost'||game.state==='won')||game.paused)return;
+   e.preventDefault();if(e.repeat&&!keys.has(e.code))return;keys.add(e.code);movement();
+  }else if(['KeyH','KeyE'].includes(e.code)||(e.code==='Enter'&&e.target===$('hide'))){e.preventDefault();if(e.repeat||hideHeld.has(e.code))return;hideHeld.add(e.code);clearInput();game.toggleHide();}
+  else if(!e.repeat&&['KeyP','Escape'].includes(e.code)){e.preventDefault();pause();}
+  else if(!e.repeat&&e.code==='KeyR'){e.preventDefault();start();}
+  renderUI();
+ });
+ document.addEventListener('keyup',e=>{hideHeld.delete(e.code);if(movementKeys.has(e.code)){keys.delete(e.code);movement();renderUI();}});
+ function autoPause(){clearInput();if(!['ready','lost','won'].includes(game.state)&&!game.paused){game.togglePause();renderUI(true);}}
+ window.addEventListener('blur',clearInput);
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)autoPause();last=performance.now();});
+ function renderUI(force=false){
+  const live=!['ready','won','lost'].includes(game.state);
+  const blocked=!live||game.paused;
+  if($('count').textContent!==String(game.survived))$('count').textContent=game.survived;
+  if($('hp').textContent!==String(game.health))$('hp').textContent=game.health;
+  $('hpbar').setAttribute('aria-valuenow',String(game.health));$('hpbar').setAttribute('aria-valuetext',game.health+' of 100 health');
+  $('hpfill').style.transform=`scaleX(${game.health/100})`;$('health').classList.toggle('low',game.health<=25);
+  $('damageToast').hidden=blocked||game.damageNoticeTime<=0;
+  $('damageTitle').textContent=game.lastDamageSource+' hit: -'+game.lastDamageAmount+' HP. ';$('damageText').textContent=game.health+' / 100 health remaining.';
+  steps.forEach((e,i)=>e.classList.toggle('done',i<game.survived));
+  $('pause').disabled=!live;$('pause').textContent=game.paused?'▶ Resume':'Ⅱ Pause';
+  $('pause').setAttribute('aria-label',game.paused?'Resume game, P or Escape':'Pause game, P or Escape');
+  $('walk').disabled=blocked;$('hide').disabled=blocked||game.state==='survived'||game.hideCooldown>0;
+  $('walk').classList.toggle('pressed',game.moving&&!blocked);
+  $('hide').setAttribute('aria-pressed',String(game.hidden));
+  $('hideLabel').textContent=game.hidden?'LEAVE CLOSET':'HIDE';$('hideHelp').textContent=game.hidden?'Tap when it is safe':game.hideCooldown>0?`Ready in ${Math.ceil(game.hideCooldown/1000)} s`:'Step into the closet';
+  if(game.hideExpulsions!==lastExpulsions){if(hidePointerHeld)ignoreHideClick=true;lastExpulsions=game.hideExpulsions;}
+  const restless=game.hidden&&game.hideTimeLeft<=5000;
+  $('closetMeter').hidden=!game.hidden||blocked;$('closetMeter').classList.toggle('restless',restless);
+  const closetSeconds=`${Math.ceil(game.hideTimeLeft/1000)} s`;if($('closetSeconds').textContent!==closetSeconds)$('closetSeconds').textContent=closetSeconds;
+  $('closetFill').style.transform=`scaleX(${Math.max(0,Math.min(1,game.hideTimeLeft/20000))})`;
+  $('closetTitle').textContent=restless?'Hide is getting restless…':'Closet time';$('closetHint').textContent=restless?'Leave soon — Hide will push you out.':'After 20 seconds, Hide deals 25 damage and pushes you out.';
+  $('hideNotice').hidden=game.hidden||blocked||game.hideNoticeTime<=0;
+  $('walkHelp').textContent=game.moving?'Walking… release to stop':'Release to stand still';
+  let title='',note='',kind='',timer=false;
+  if(game.state==='explore'){title=game.hidden?'YOU ARE HIDDEN':'FOLLOW THE HALLWAY';note=game.hidden?'Leave the closet, then hold WALK to continue.':'Hold WALK to reach the next encounter.';}
+  if(game.state==='warning'||game.state==='active'){
+   kind=game.entity;timer=true;
+   if(kind==='A-90'){title=game.state==='warning'?'✋ A-90 · STOP MOVING!':'✋ A-90 · STAY STILL';note=game.state==='warning'?'Release WALK and every movement key. A hit costs 90 HP.':(game.a90Hit?'You took 90 damage. Stay still until it leaves.':'Keep still until it leaves. A hit costs 90 HP.');}
+   else{title=game.state==='warning'?'▥ A-120 · HIDE NOW!':'▥ A-120 · STAY HIDDEN';note=game.hidden?'You are safe inside. Stay in the closet.':'Tap HIDE or press H / E to enter the closet.';}
+  }
+  if(game.state==='survived'){title='✓ ENCOUNTER SURVIVED';note=`${game.survived} down. ${25-game.survived} to go. Catch your breath.`;}
+  $('signal').hidden=!live||game.paused;$('signal').dataset.kind=kind;$('signalTitle').textContent=title;$('signalNote').textContent=note;$('timer').hidden=!timer;
+  const duration=game.state==='warning'?(game.entity==='A-90'?3200:4200):(game.entity==='A-90'?1300:1600);
+  const left=Number.isFinite(game.timeLeft)?game.timeLeft:(Number.isFinite(game.remaining)?game.remaining:duration);
+  $('timerFill').style.transform=`scaleX(${Math.max(0,Math.min(1,left/duration))})`;
+  $('sceneLabel').innerHTML=game.hidden?'Inside the closet <b>·</b> 20 seconds maximum':`The long hallway <b>·</b> Encounter ${Math.min(25,game.survived+1)}`;
+  const view=game.paused?'paused':game.state;
+  $('overlay').hidden=!['ready','paused','won','lost'].includes(view);
+  $('rulelist').hidden=view!=='ready';
+  if(view==='paused'){
+   $('cardKicker').textContent='Take a breather';$('cardTitle').textContent='Hallway paused';$('cardText').textContent='The hallway will wait. Resume whenever you are ready.';$('mainAction').textContent='Resume game →';$('cardHint').textContent='P or Escape also resumes. Timers are frozen.';
+  }else if(view==='lost'){
+   $('cardKicker').textContent=game.health===0?'Health depleted':'A close encounter';$('cardTitle').textContent='Try another run';$('cardText').textContent=`${game.reason} You survived ${game.survived} of 25.`;$('mainAction').textContent='Try again →';$('cardHint').textContent='A-90: 90 damage. Hide: 25 damage after 20 seconds.';
+  }else if(view==='won'){
+   $('cardKicker').textContent='Challenge complete';$('cardTitle').textContent='You reached the light!';$('cardText').textContent='All 25 encounters survived. Nice work, JaxAttax — the hallway is yours.';$('mainAction').textContent='Play again →';$('cardHint').textContent='25 / 25 · A-90 and A-120 survived';
+  }
+  const announce=`${view}|${kind}|${title}|${game.hidden}|${game.survived}|${restless}|${game.hideExpulsions}|${game.damageEvents}`;
+  if(announce!==lastView){$('announcer').textContent=game.paused?'Game paused':game.state==='lost'?$('cardText').textContent:game.state==='won'?$('cardText').textContent:game.damageNoticeTime>0?(game.lastDamageSource==='Hide'?'Hide pushed you out after 20 seconds. ':'')+game.lastDamageSource+' dealt '+game.lastDamageAmount+' damage. '+game.health+' health remaining.':restless?'Hide is getting restless. Five seconds or less left in the closet.':game.hideNoticeTime>0&&!game.hidden?'Hide pushed you out after 20 seconds.':title+'. '+note;lastView=announce;}
+ }
+ function size(){const rect=canvas.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);cw=rect.width;ch=rect.height;canvas.width=Math.round(cw*d);canvas.height=Math.round(ch*d);ctx.setTransform(d,0,0,d,0,0);}
+ new ResizeObserver(size).observe(canvas);
+ const poly=(points,fill,stroke)=>{ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.stroke();}};
+ function draw(){
+  const w=cw,h=ch,playing=!['ready','won','lost'].includes(game.state),walk=game.moving&&!game.paused&&playing;
+  const bob=reduced?0:(walk?Math.sin(clock*.011)*2:Math.sin(clock*.0008)*.5);
+  ctx.save();ctx.translate(0,bob);ctx.fillStyle='#182526';ctx.fillRect(0,-4,w,h+8);
+  const vx=w*.5,vy=h*.40,backW=w*.19,backH=h*.27,l=vx-backW/2,r=vx+backW/2,t=vy-backH/2,b=vy+backH/2;
+  poly([[0,0],[w,0],[r,t],[l,t]],'#172424');poly([[0,h],[w,h],[r,b],[l,b]],'#3d3c30');
+  poly([[0,0],[l,t],[l,b],[0,h]],'#344039');poly([[w,0],[r,t],[r,b],[w,h]],'#2b3631');
+  ctx.fillStyle='#25342e';ctx.fillRect(l,t,backW,backH);
+  // Warm panels and a carpet lead to the next door.
+  poly([[w*.26,h],[w*.74,h],[vx+backW*.21,b],[vx-backW*.21,b]],'#634938','#b08a5340');
+  poly([[w*.29,h],[w*.71,h],[vx+backW*.18,b],[vx-backW*.18,b]],'#764f3c');
+  ctx.strokeStyle='#ac98612d';ctx.lineWidth=1;
+  for(let i=0;i<8;i++){const z=(i+1)/8,y=b+(h-b)*z*z;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  for(let side of [-1,1]){
+   const ex=side<0?l:r;ctx.strokeStyle='#08181780';
+   for(let i=1;i<5;i++){
+    const z=i/5,x=ex+(side<0?-l:w-r)*z*z,ty=t*(1-z*z),by=b+(h-b)*z*z;
+    ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,ty);ctx.lineTo(x,by);ctx.stroke();
+    const x2=ex+(side<0?-l:w-r)*(z*z+.08),yt=t*(1-z*z-.08),yb=b+(h-b)*(z*z+.08);
+    poly([[x,ty+(by-ty)*.55],[x2,yt+(yb-yt)*.55],[x2,yb],[x,by]],'#1c2e29','#81907825');
+   }
+   const outer=side<0?0:w;poly([[outer,h*.60],[ex,t+backH*.56],[ex,t+backH*.61],[outer,h*.65]],'#837350');
+  }
+  // Exit door, framed with soft amber light.
+  const doorX=vx-backW*.26,doorY=t+backH*.21,doorW=backW*.52,doorH=backH*.79;
+  ctx.shadowColor='#f4ca73';ctx.shadowBlur=game.state==='won'?45:13;ctx.fillStyle=game.state==='won'?'#ffe9ad':'#aa8150';ctx.fillRect(doorX-3,doorY-4,doorW+6,doorH+4);ctx.shadowBlur=0;
+  ctx.fillStyle=game.state==='won'?'#f9e2a2':'#384333';ctx.fillRect(doorX,doorY,doorW,doorH);
+  ctx.strokeStyle='#8b8b6080';ctx.strokeRect(doorX+doorW*.13,doorY+doorH*.14,doorW*.74,doorH*.60);
+  ctx.fillStyle='#d5b779';ctx.beginPath();ctx.arc(doorX+doorW*.8,doorY+doorH*.6,2,0,7);ctx.fill();
+  ctx.fillStyle='#222b25';ctx.fillRect(vx-20,doorY-24,40,15);ctx.fillStyle='#ddcca0';ctx.textAlign='center';ctx.font='9px ui-monospace,monospace';ctx.fillText(String(Math.min(25,game.survived+1)).padStart(3,'0'),vx,doorY-13);
+  // Ceiling lamp: steady, with no flickering.
+  ctx.strokeStyle='#0b1718';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(vx,0);ctx.lineTo(vx,h*.11);ctx.stroke();
+  const glow=ctx.createRadialGradient(vx,h*.14,2,vx,h*.14,h*.55);glow.addColorStop(0,'#f4d28f21');glow.addColorStop(1,'#f4d28f00');ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
+  poly([[vx-21,h*.11],[vx+21,h*.11],[vx+30,h*.16],[vx-30,h*.16]],'#c0a477');ctx.shadowColor='#f8d987';ctx.shadowBlur=22;ctx.fillStyle='#ffe1a0';ctx.fillRect(vx-23,h*.16,46,4);ctx.shadowBlur=0;
+  // A broad, easily recognized closet on the near right wall.
+  const cx=w*.80,cy=h*.28,ww=w*.17,hh=h*.65;
+  poly([[cx,cy],[cx+ww,cy-h*.06],[cx+ww,cy+hh],[cx,cy+hh-h*.05]],'#172624','#ae9b6d');
+  ctx.strokeStyle='#65765e';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx+ww*.5,cy-h*.03);ctx.lineTo(cx+ww*.5,cy+hh-h*.025);ctx.stroke();
+  ctx.strokeStyle='#6a7960';ctx.lineWidth=2;for(let i=0;i<8;i++){let y=cy+hh*.13+i*hh*.048;ctx.beginPath();ctx.moveTo(cx+ww*.12,y);ctx.lineTo(cx+ww*.87,y-h*.035);ctx.stroke();}
+  ctx.fillStyle='#d2b775';ctx.fillRect(cx+ww*.44,cy+hh*.58,3,hh*.06);ctx.fillRect(cx+ww*.56,cy+hh*.58,3,hh*.06);
+  ctx.fillStyle='#e5d5a4';ctx.font=`${Math.max(8,Math.min(11,w*.012))}px ui-sans-serif,system-ui`;ctx.save();ctx.translate(cx+ww*.5,cy+hh*.83);ctx.rotate(-.06);ctx.fillText('HIDE',0,0);ctx.restore();
+  // Dust drifts slowly in steady lamplight.
+  if(!reduced){ctx.fillStyle='#d4c8a329';for(let i=0;i<17;i++){const x=(w*(i*.183+Math.sin(i)*.4)%w+w)%w,y=(h*(i*.139)+clock*.003*(1+i%3))%h;ctx.beginPath();ctx.arc(x,y,i%3===0?1.3:.7,0,7);ctx.fill();}}
+  if(['warning','active','lost'].includes(game.state))drawEntity(vx,vy+h*.03,Math.min(w,h),game.entity,game.state==='warning'?.8:1);
+  const vignette=ctx.createRadialGradient(vx,vy,h*.16,vx,vy,Math.max(w,h)*.65);vignette.addColorStop(0,'#0000');vignette.addColorStop(1,'#020d13cf');ctx.fillStyle=vignette;ctx.fillRect(0,0,w,h);
+  if(game.hidden&&game.state!=='won'){
+   ctx.fillStyle='#0a1718dd';ctx.fillRect(0,0,w,h);
+   for(let i=0;i<8;i++){const y=h*.18+i*h*.088;ctx.fillStyle='#54776b1c';ctx.fillRect(w*.08,y,w*.84,h*.012);ctx.fillStyle='#8ab2a710';ctx.fillRect(w*.08,y+h*.012,w*.84,h*.014);}
+   ctx.fillStyle='#d1e3d2';ctx.font='12px ui-sans-serif,system-ui';ctx.fillText('▥  Inside the closet',w*.5,h*.77);
+   if(game.hideTimeLeft<=5000){ctx.fillStyle='#e4c28760';for(const side of [-1,1]){ctx.beginPath();ctx.ellipse(w*.5+side*18,h*.46,5,3,0,0,7);ctx.fill();}}
+   if(game.entity==='A-120'&&game.state==='active'){ctx.fillStyle='#b7e4ee35';ctx.beginPath();ctx.ellipse(w*.5+Math.sin(clock*.002)*w*.12,h*.52,w*.12,h*.16,0,0,7);ctx.fill();}
+  }
+  ctx.restore();
+ }
+ function drawEntity(x,y,s,entity,opacity){
+  ctx.save();ctx.translate(x,y);ctx.globalAlpha=opacity;
+  const z=s*.11;
+  if(entity==='A-90'){
+   ctx.shadowColor='#db9b8a';ctx.shadowBlur=23;ctx.fillStyle='#b6715e';ctx.beginPath();for(let i=0;i<8;i++){const a=Math.PI/8+i*Math.PI/4,xx=Math.cos(a)*z,yy=Math.sin(a)*z;i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#ffcfb0';ctx.lineWidth=2;ctx.stroke();
+   ctx.fillStyle='#ffdfbe';ctx.beginPath();ctx.ellipse(0,z*.03,z*.43,z*.54,0,0,7);ctx.fill();ctx.strokeStyle='#58382f';ctx.lineWidth=z*.11;ctx.lineCap='round';for(let i=-1;i<=2;i++){const xx=(i-.4)*z*.15;ctx.beginPath();ctx.moveTo(xx,-z*.07);ctx.lineTo(xx,-z*(.39-(Math.abs(i-.4)*.05)));ctx.stroke();}ctx.beginPath();ctx.moveTo(-z*.3,z*.05);ctx.lineTo(-z*.46,-z*.11);ctx.stroke();
+   ctx.font='bold 10px ui-sans-serif,system-ui';ctx.fillStyle='#ffdcbd';ctx.fillText('A-90',0,z*1.4);
+  }else{
+   ctx.shadowColor='#a5dbed';ctx.shadowBlur=25;ctx.fillStyle='#a5d8ef';ctx.beginPath();ctx.moveTo(-z*.85,z);ctx.bezierCurveTo(-z*.45,z*.2,-z*.95,-z*.9,0,-z);ctx.bezierCurveTo(z*.95,-z*.9,z*.55,z*.4,z*.85,z);ctx.quadraticCurveTo(z*.32,z*.66,0,z*1.2);ctx.quadraticCurveTo(-z*.4,z*.7,-z*.85,z);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#294654';ctx.beginPath();ctx.ellipse(-z*.27,-z*.19,z*.10,z*.17,0,0,7);ctx.ellipse(z*.27,-z*.19,z*.10,z*.17,0,0,7);ctx.fill();ctx.strokeStyle='#294654';ctx.lineWidth=z*.055;ctx.beginPath();ctx.arc(0,z*.02,z*.31,.25,Math.PI-.25);ctx.stroke();ctx.fillStyle='#c8ecf4';ctx.font='bold 10px ui-sans-serif,system-ui';ctx.fillText('A-120',0,z*1.65);
+  }
+  ctx.restore();
+ }
+ function frame(now){let dt=Math.max(0,now-last);last=now;const before=game.state;game.tick(dt);if(before!=='explore'&&game.state==='explore')movement();if(!game.paused)clock+=dt;renderUI();draw();requestAnimationFrame(frame);}
+ size();renderUI();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
