@@ -172,7 +172,7 @@ test('delivered keyboard and touch handlers update numeric and accessible health
   assert.equal(page.game.paused, true);
 });
 
-test('standalone game scripts parse and contain readable controls without external APIs', () => {
+test('game scripts parse, retain readable controls and limit network code to the public scoreboard', () => {
   assert.ok(scripts.length >= 2);
   for (const [index, script] of scripts.entries()) assert.doesNotThrow(() => new vm.Script(script, { filename: `inline-${index}.js` }));
   assert.match(html, /name="viewport"/); assert.match(html, /prefers-reduced-motion/);
@@ -180,7 +180,10 @@ test('standalone game scripts parse and contain readable controls without extern
   assert.match(html, /HOLD TO WALK/); assert.match(html, /H\s*\/\s*E/);
   assert.match(html, /A-90/); assert.match(html, /90 HP/); assert.match(html, /A-120/);
   assert.match(html, /20 seconds/); assert.match(html, /25 damage/);
-  assert.doesNotMatch(html, /<script[^>]+src\s*=|\bfetch\s*\(|XMLHttpRequest|WebSocket|sendBeacon|https?:\/\//i);
+  assert.doesNotMatch(scripts[0], /\bfetch\s*\(|XMLHttpRequest|WebSocket|sendBeacon|https?:\/\//i);
+  assert.doesNotMatch(html, /<script[^>]+src\s*=|XMLHttpRequest|WebSocket|sendBeacon|sb_secret_/i);
+  assert.deepEqual([...html.matchAll(/https?:\/\/[^'"\s<>]+/g)].map(match => match[0]), ['https://qrjbpdqqwezzloadwggs.supabase.co']);
+  assert.match(html, /hallway25_leaderboard/); assert.match(html, /hallway25_submit_score/);
 });
 
 test('service worker refreshes the old arcade cache and precaches both Hallway25 routes', async () => {
@@ -195,14 +198,14 @@ test('service worker refreshes the old arcade cache and precaches both Hallway25
     },
     caches: {
       async open(name) { cacheName = name; return { async addAll(paths) { shell = Array.from(paths); } }; },
-      async keys() { return ['midnight-games-v23', cacheName]; },
+      async keys() { return ['midnight-games-v23', 'midnight-games-v24', cacheName]; },
       async delete(name) { deleted.push(name); return true; }
     }
   });
   vm.runInContext(worker, context, { filename: 'service-worker.js' });
   handlers.get('install')({ waitUntil(work) { pending = work; } });
   await pending;
-  assert.notEqual(cacheName, 'midnight-games-v23');
+  assert.equal(cacheName, 'midnight-games-v25');
   assert.match(cacheName, /^midnight-games-v\d+$/);
   assert.ok(shell.includes('./index.html'));
   for (const route of ['./games/hallway-25/', './games/hallway-25/index.html']) {
@@ -211,6 +214,6 @@ test('service worker refreshes the old arcade cache and precaches both Hallway25
   assert.equal(skipped, true);
   handlers.get('activate')({ waitUntil(work) { pending = work; } });
   await pending;
-  assert.deepEqual(deleted, ['midnight-games-v23']);
+  assert.deepEqual(deleted, ['midnight-games-v23', 'midnight-games-v24']);
   assert.equal(claimed, true);
 });

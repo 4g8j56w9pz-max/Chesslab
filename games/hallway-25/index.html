@@ -14,6 +14,7 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 .closet-meter,.hide-notice{position:absolute;bottom:51px;left:50%;transform:translateX(-50%);width:min(290px,calc(100% - 32px));padding:11px 15px;border:1px solid #a5d8ef7a;border-radius:9px;background:#142d37f5;box-shadow:0 6px 25px #0004;pointer-events:none}.closet-meter .meter-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#d8eced}.closet-meter strong{font-size:19px;color:var(--blue);font-variant-numeric:tabular-nums}.closet-meter .meter-track{height:4px;background:#ffffff20;border-radius:3px;margin:7px 0}.closet-meter .meter-track span{display:block;width:100%;height:100%;background:var(--blue);transform-origin:left}.closet-meter small{font-size:10px;color:#bccfd1;display:block}.closet-meter.restless{border-color:var(--gold);background:#372c1bf5}.closet-meter.restless strong{color:var(--gold)}.closet-meter.restless .meter-track span{background:var(--gold)}.hide-notice{text-align:center;border-color:var(--gold);background:#372c1bf5;font-size:11px;line-height:1.5;color:#f3dfb9}.hide-notice b{display:block;font-size:12px;color:var(--gold);margin-bottom:2px}
 .health{width:220px;margin-left:auto;margin-right:20px}.health-line{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:7px}.health-line>span{font-size:9px;letter-spacing:.13em;color:var(--mint)}.health-line strong{font-size:18px;color:var(--mint);font-variant-numeric:tabular-nums}.health-line strong span{font-size:10px;color:var(--muted);font-weight:400}.health-track{height:7px;border:1px solid #749a8560;background:#283e35;border-radius:5px;overflow:hidden}.health-track span{display:block;width:100%;height:100%;background:var(--mint);transform-origin:left}.health.low .health-line strong{color:var(--gold)}.health.low .health-track span{background:var(--gold)}.damage-toast{position:absolute;top:112px;left:50%;transform:translateX(-50%);width:min(320px,calc(100% - 34px));padding:10px 14px;border-radius:8px;background:#3b2d23f5;border:1px solid #e9bd8070;color:#f5deba;font-size:12px;text-align:center;pointer-events:none}.damage-toast strong{color:var(--gold)}@media(max-width:600px){.topbar{flex-wrap:wrap;gap:10px 16px}.tools{margin-left:auto}.health{order:3;flex-basis:100%;width:auto;margin:1px 0 0}.health-line{margin-bottom:5px}.health-line strong{font-size:16px}.damage-toast{top:107px;font-size:11px}}
+.leaderboard{margin-top:24px;padding:22px;border:1px solid var(--line);border-radius:14px;background:#132327}.board-head{display:flex;justify-content:space-between;align-items:center;gap:14px}.board-head h2{font-family:Georgia,serif;font-size:26px;font-weight:400;margin:0 0 5px}.board-intro,.board-privacy,.board-status,.run-summary{font-size:12px;line-height:1.6;color:var(--muted);margin:8px 0}.board-privacy{max-width:760px}.board-status{min-height:20px;color:var(--mint)}.board-status[data-error="true"]{color:var(--gold)}.board-scroll{overflow-x:auto;margin:14px 0 20px}.board-table{width:100%;border-collapse:collapse;font-size:12px;text-align:left}.board-table th{color:var(--muted);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:10px 8px;border-bottom:1px solid var(--line)}.board-table td{padding:11px 8px;border-bottom:1px solid #293c3d;overflow-wrap:anywhere}.board-table td:first-child{width:35px;color:var(--gold)}.board-table td:nth-child(2){font-weight:650}.board-table td:nth-child(n+3){white-space:nowrap}.score-entry{border-top:1px solid var(--line);padding-top:17px}.score-entry label{font-size:12px;display:block;margin-bottom:7px;color:var(--ink)}.score-fields{display:flex;gap:10px;max-width:550px}.score-fields input{font:inherit;font-size:14px;min-width:0;flex:1;min-height:45px;padding:10px 12px;border:1px solid #527066;border-radius:8px;background:#0b191b;color:var(--ink)}.score-fields input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.score-fields button{min-height:45px}.run-summary{color:var(--ink)}@media(max-width:600px){.leaderboard{padding:17px 12px;margin-top:20px}.board-head h2{font-size:23px}.board-table td,.board-table th{padding:10px 5px;font-size:11px}.board-table th{font-size:9px}.board-intro,.board-privacy,.board-status,.run-summary{font-size:11px}.score-fields{flex-wrap:wrap}.score-fields input{flex-basis:100%}.score-fields button{width:100%}}
 </style>
 </head>
 <body>
@@ -34,6 +35,14 @@
  <div class="guide"><div class="rules-inline"><span><i class="legend-dot"></i><b>A-90:</b> stop moving</span><span><i class="legend-dot blue"></i><b>A-120:</b> hide in the closet</span><span><b>Hide:</b> 20s limit, 25 damage</span></div><span>Take your time between encounters.</span></div>
  <footer class="footer"><span><a href="../../" style="color:inherit">Back to the arcade</a> · An original mini game.</span><span>No sound needed · No flashing lights</span></footer>
  <div id="announcer" role="status" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)"></div>
+ <section class="leaderboard" aria-labelledby="boardHeading">
+  <div class="board-head"><div><p class="eyebrow">Shared scores</p><h2 id="boardHeading">Hallway leaderboard</h2></div><button class="tool" id="refreshScores" type="button">Refresh</button></div>
+  <p class="board-intro">Top 20 nicknames. Best run per nickname, ranked by encounters survived, then health remaining. Earlier submissions break ties.</p>
+  <p class="board-privacy">Nicknames and scores are public. Use a nickname, never your real name or private information. There are no accounts: anyone can reuse a nickname, and scores are not verified.</p>
+  <p class="board-status" id="boardStatus" role="status" aria-live="polite">Loading shared scores...</p>
+  <div class="board-scroll"><table class="board-table" aria-label="Public Hallway 25 leaderboard"><thead><tr><th scope="col">Rank</th><th scope="col">Nickname</th><th scope="col">Survived</th><th scope="col">HP</th><th scope="col">Result</th></tr></thead><tbody id="scoreRows"></tbody></table></div>
+  <div class="score-entry"><p class="run-summary" id="runSummary">Finish a run to share your score.</p><label for="scoreNickname">Your nickname (2-20 letters, numbers, spaces, _ or -)</label><div class="score-fields"><input id="scoreNickname" type="text" maxlength="20" minlength="2" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="submitStatus" placeholder="Choose a nickname" disabled><button class="tool" id="submitScore" type="button" disabled>Share this run</button></div><p class="board-status" id="submitStatus" role="status" aria-live="polite">Sharing is optional. Your game works without the scoreboard.</p></div>
+ </section>
 </main>
 <script>
 (function (root, factory) {
@@ -244,6 +253,55 @@
 <script>
 (() => {
  'use strict';
+ // Public browser configuration. Never place a secret or service-role key here.
+ const SCOREBOARD_URL = 'https://qrjbpdqqwezzloadwggs.supabase.co';
+ const SCOREBOARD_PUBLISHABLE_KEY = 'sb_publishable_05cXnBE2ccCJTGd3-2DJ3Q_F-y3lI-t';
+ const LEGAL_HEALTH = new Set([0,10,25,50,75,100]);
+ function normalizeNickname(value){
+  if(typeof value!=='string'||!/^[A-Za-z0-9 _-]*$/.test(value))throw new Error('Use only letters, numbers, spaces, _ or -.');
+  const nickname=value.trim().replace(/ +/g,' ');
+  if(nickname.length<2||nickname.length>20)throw new Error('Choose a nickname with 2 to 20 characters.');
+  return nickname;
+ }
+ function scoreFromGame(value){
+  const result={encounters:value.survived,health:value.health,outcome:value.state};
+  if(!Number.isInteger(result.encounters)||result.encounters<0||result.encounters>25||!LEGAL_HEALTH.has(result.health)||!['won','lost'].includes(result.outcome)||(result.outcome==='won'&&(result.encounters!==25||result.health===0))||(result.outcome==='lost'&&result.encounters>24))throw new Error('Only a finished run can be shared.');
+  return Object.freeze(result);
+ }
+ function compareScores(a,b){
+  if(a.encounters!==b.encounters)return b.encounters-a.encounters;
+  if(a.health!==b.health)return b.health-a.health;
+  const first=Date.parse(a.submitted_at),second=Date.parse(b.submitted_at);
+  if(Number.isFinite(first)&&Number.isFinite(second)&&first!==second)return first-second;
+  const x=String(a.id||''),y=String(b.id||'');return x<y?-1:x>y?1:0;
+ }
+ class BoardError extends Error{constructor(message,retryable=true){super(message);this.retryable=retryable;}}
+ function createApi({url,key,fetchImpl=globalThis.fetch,timeoutMs=8000}){
+  const ready=/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)&&/^sb_publishable_/.test(key);
+  async function request(name,payload){
+   if(!ready)throw new BoardError('The shared board is not connected yet.',false);
+   if(typeof fetchImpl!=='function')throw new BoardError('The shared board is unavailable in this browser.');
+   const controller=typeof AbortController==='function'?new AbortController():null;let timeout;
+   try{
+    const options={method:payload?'POST':'GET',headers:{apikey:key,Accept:'application/json'},credentials:'omit',cache:'no-store'};
+    if(controller)options.signal=controller.signal;
+    if(payload){options.headers['Content-Type']='application/json';options.body=JSON.stringify(payload);}
+    const operation=(async()=>{
+     const response=await fetchImpl(url+'/rest/v1/rpc/'+name,options);
+     if(!response.ok){
+      if(response.status===409)throw new BoardError('This run already has a different saved score. Start a new run to share again.',false);
+      if(response.status===400||response.status===422)throw new BoardError('This score was not accepted. Please start a new run.',false);
+      throw new BoardError(response.status===429?'The board is busy. Wait a moment, then retry.':'The board is unavailable. Please retry.');
+     }
+     return await response.json();
+    })();
+    return await Promise.race([operation,new Promise((_,reject)=>{timeout=setTimeout(()=>{if(controller)controller.abort();reject(new BoardError('The request timed out. Please retry.'));},timeoutMs);})]);
+   }catch(error){if(error instanceof BoardError)throw error;throw new BoardError('Could not reach the shared board. Please retry.');}
+   finally{if(timeout!==undefined)clearTimeout(timeout);}
+  }
+  return Object.freeze({ready,async read(){const rows=await request('hallway25_leaderboard',{});if(!Array.isArray(rows))throw new BoardError('Could not load the scores. Please retry.');return rows.filter(row=>{try{scoreFromGame({survived:row.encounters,health:row.health,state:row.outcome});return typeof row.nickname==='string'&&row.nickname.length>=2&&row.nickname.length<=20&&Number.isFinite(Date.parse(row.submitted_at));}catch{return false;}}).sort(compareScores).slice(0,20);},async submit(payload){const result=await request('hallway25_submit_score',payload);if(!result||!['submitted','duplicate'].includes(result.status))throw new BoardError('Could not confirm the save. Retry safely with the same run.');return result;}});
+ }
+ globalThis.HallwayBoard=Object.freeze({normalizeNickname,scoreFromGame,compareScores,createApi});
  const game = new HallwayEngine();
  const $=id=>document.getElementById(id);
  const canvas=$('hall'),ctx=canvas.getContext('2d');
@@ -251,9 +309,58 @@
  const keys=new Set(),hideHeld=new Set(); let pointerWalk=false,hidePointerHeld=false,ignoreHideClick=false,lastExpulsions=0,last=performance.now(),clock=0,lastView='',cw=1000,ch=500;
  const steps=Array.from({length:25},()=>{const e=document.createElement('i');$('progress').append(e);return e;});
  const movementKeys=new Set(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space']);
+ const boardApi=createApi({url:SCOREBOARD_URL,key:SCOREBOARD_PUBLISHABLE_KEY});
+ let scoreRun=null,readingScores=false;
+ function newRunId(){
+  try{
+  const source=globalThis.crypto;
+  if(source&&typeof source.randomUUID==='function')return source.randomUUID();
+  if(!source||typeof source.getRandomValues!=='function')return null;
+  const bytes=source.getRandomValues(new Uint8Array(16));bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;
+  const text=Array.from(bytes,byte=>byte.toString(16).padStart(2,'0')).join('');return text.slice(0,8)+'-'+text.slice(8,12)+'-'+text.slice(12,16)+'-'+text.slice(16,20)+'-'+text.slice(20);
+  }catch{return null;}
+ }
+ function newScoreRun(){scoreRun={id:newRunId(),final:null,payload:null,status:'idle',message:'',retryable:true};}
+ function setText(id,text){if($(id).textContent!==text)$(id).textContent=text;}
+ function updateScoreControls(){
+  if(scoreRun&&!scoreRun.final&&['won','lost'].includes(game.state)){try{scoreRun.final=scoreFromGame(game);}catch{scoreRun.message='This run cannot be shared. Please start a new run.';scoreRun.retryable=false;}}
+  const finished=Boolean(scoreRun&&scoreRun.final),busy=finished&&scoreRun.status==='saving',saved=finished&&scoreRun.status==='saved';
+  $('scoreNickname').disabled=!finished||busy||saved||Boolean(scoreRun&&scoreRun.payload);
+  $('submitScore').disabled=!finished||busy||saved||!boardApi.ready||!scoreRun.id||!scoreRun.retryable;
+  setText('submitScore',saved?'Score shared':busy?'Sharing...':scoreRun&&scoreRun.payload?'Retry sharing':'Share this run');
+  setText('runSummary',finished?`Your finished run: ${scoreRun.final.encounters} / 25 encounters, ${scoreRun.final.health} / 100 HP.`:'Finish a run to share your score.');
+  let message='Sharing is optional. Your game works without the scoreboard.';
+  if(!boardApi.ready)message='The shared board is not connected yet. You can still play.';
+  else if(finished&&!scoreRun.id)message='Score sharing is unavailable in this browser. You can still play.';
+  else if(scoreRun&&scoreRun.message)message=scoreRun.message;
+  else if(finished)message='Choose a nickname, then share this run publicly.';
+  setText('submitStatus',message);$('submitStatus').dataset.error=String(Boolean(scoreRun&&scoreRun.status==='error'));
+ }
+ function renderScores(rows){
+  $('scoreRows').textContent='';
+  rows.forEach((row,index)=>{const line=document.createElement('tr');for(const value of [index+1,row.nickname,row.encounters+' / 25',row.health,row.outcome==='won'?'Win':'Run ended']){const cell=document.createElement('td');cell.textContent=String(value);line.append(cell);}$('scoreRows').append(line);});
+ }
+ async function refreshLeaderboard(){
+  if(readingScores)return;readingScores=true;$('refreshScores').disabled=true;$('boardStatus').dataset.error='false';
+  setText('boardStatus',boardApi.ready?'Loading shared scores...':'The shared board is not connected yet. You can still play.');
+  try{if(boardApi.ready){const rows=await boardApi.read();renderScores(rows);setText('boardStatus',rows.length?'Shared scores loaded. Refresh to see new runs.':'No scores yet. Finish a run and be the first!');}}
+  catch(error){setText('boardStatus','Scores are unavailable right now. You can keep playing; tap Refresh to retry.');$('boardStatus').dataset.error='true';}
+  finally{readingScores=false;$('refreshScores').disabled=!boardApi.ready;}
+ }
+ async function submitScore(){
+  const run=scoreRun;if(!run||!run.final||!run.id||run.status==='saving'||run.status==='saved'||!run.retryable||!boardApi.ready)return;
+  if(!run.payload){try{run.payload=Object.freeze({p_run_id:run.id,p_nickname:normalizeNickname($('scoreNickname').value||''),p_encounters:run.final.encounters,p_health:run.final.health,p_outcome:run.final.outcome});}catch(error){run.status='error';run.message=error.message;updateScoreControls();return;}}
+  run.status='saving';run.message='Sharing your score...';updateScoreControls();
+  try{await boardApi.submit(run.payload);run.status='saved';run.message='Score shared! Your nickname and stats are public.';void refreshLeaderboard();}
+  catch(error){run.status='error';run.retryable=error.retryable!==false;run.message=run.retryable?'Could not confirm the save. Retry safely: the same run will not be counted twice.':error.message;}
+  updateScoreControls();
+ }
+ $('refreshScores').addEventListener('click',()=>{void refreshLeaderboard();});
+ $('submitScore').addEventListener('click',()=>{void submitScore();});
+ $('scoreNickname').addEventListener('focus',()=>{clearInput();});
  function movement(){game.setMoving(pointerWalk||keys.size>0);}
  function clearInput(){keys.clear();pointerWalk=false;game.setMoving(false);}
- function start(){clearInput();hideHeld.clear();hidePointerHeld=false;ignoreHideClick=false;lastExpulsions=0;game.restart();renderUI(true);}
+ function start(){clearInput();hideHeld.clear();hidePointerHeld=false;ignoreHideClick=false;lastExpulsions=0;game.restart();newScoreRun();renderUI(true);}
  function pause(){clearInput();game.togglePause();renderUI(true);}
  $('mainAction').addEventListener('click',()=>{if(game.paused)pause();else start();});
  $('restart').addEventListener('click',start);
@@ -268,6 +375,7 @@
  $('walk').addEventListener('contextmenu',e=>e.preventDefault());
  document.addEventListener('keydown',e=>{
   if(e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.target&&(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)||e.target.isContentEditable))return;
   if(movementKeys.has(e.code)){
    if((game.state==='ready'||game.state==='lost'||game.state==='won')||game.paused)return;
    e.preventDefault();if(e.repeat&&!keys.has(e.code))return;keys.add(e.code);movement();
@@ -281,6 +389,7 @@
  window.addEventListener('blur',clearInput);
  document.addEventListener('visibilitychange',()=>{if(document.hidden)autoPause();last=performance.now();});
  function renderUI(force=false){
+  updateScoreControls();
   const live=!['ready','won','lost'].includes(game.state);
   const blocked=!live||game.paused;
   if($('count').textContent!==String(game.survived))$('count').textContent=game.survived;
@@ -400,7 +509,7 @@
   ctx.restore();
  }
  function frame(now){let dt=Math.max(0,now-last);last=now;const before=game.state;game.tick(dt);if(before!=='explore'&&game.state==='explore')movement();if(!game.paused)clock+=dt;renderUI();draw();requestAnimationFrame(frame);}
- size();renderUI();requestAnimationFrame(frame);
+ size();renderUI();void refreshLeaderboard();requestAnimationFrame(frame);
 })();
 </script>
 </body>
